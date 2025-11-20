@@ -11,4 +11,4 @@ python-dotenv>=1.0
 gunicorn>=21.2
 whitenoise>=6.6
 django-extensions>=3.2
-cuids>=2.4
+cuid2>=2.0
