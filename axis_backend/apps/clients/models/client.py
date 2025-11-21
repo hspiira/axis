@@ -181,9 +181,9 @@ class Client(BaseModel):
         return self.status == BaseStatus.ACTIVE and self.deleted_at is None
 
     @property
-    def is_verified(self) -> bool:
+    def verified_status(self) -> bool:
         """Check verification status."""
-        return self._is_verified
+        return self.is_verified
 
     # === State Transition Methods ===
 
