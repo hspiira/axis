@@ -82,7 +82,7 @@ class Role(BaseModel):
         Returns:
             bool: True if role has permission
         """
-        return self.permissions.filter(name=permission_name).exists()
+        return self.permissions.filter(permission__name=permission_name).exists()
 
     def get_permissions(self):
         """
