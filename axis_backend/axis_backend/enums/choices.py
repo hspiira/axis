@@ -132,6 +132,12 @@ class PaymentStatus(models.TextChoices):
 # Type/Role Enums
 # =========================================
 
+class PersonType(models.TextChoices):
+    """Type of person in EAP system"""
+    EMPLOYEE = "Employee", "Employee"
+    DEPENDENT = "Dependent", "Dependent"
+
+
 class StaffRole(models.TextChoices):
     """Role for staff members"""
     ADMIN = "Admin", "Admin"

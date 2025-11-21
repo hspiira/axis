@@ -16,6 +16,7 @@ from .choices import (
     AssignmentStatus,
     PaymentStatus,
     # Type/Role enums
+    PersonType,
     StaffRole,
     RelationType,
     DocumentType,
@@ -42,6 +43,7 @@ __all__ = [
     'AssignmentStatus',
     'PaymentStatus',
     # Type/Role enums
+    'PersonType',
     'StaffRole',
     'RelationType',
     'DocumentType',

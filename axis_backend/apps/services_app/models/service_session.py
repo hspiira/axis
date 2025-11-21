@@ -1,6 +1,7 @@
 """ServiceSession model - actual service delivery sessions."""
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 
 from axis_backend.models import BaseModel
 from axis_backend.enums import SessionStatus
@@ -12,7 +13,7 @@ class ServiceSession(BaseModel):
 
     Responsibilities:
     - Track scheduled and completed sessions
-    - Link sessions to staff/beneficiaries and providers
+    - Link sessions to persons (employees/dependents) and providers
     - Manage session lifecycle and outcomes
     """
 
@@ -30,21 +31,12 @@ class ServiceSession(BaseModel):
         db_index=True,
         help_text="Provider delivering service"
     )
-    staff = models.ForeignKey(
-        'staff.Staff',
+    person = models.ForeignKey(
+        'persons.Person',
         on_delete=models.PROTECT,
-        null=True,
-        blank=True,
         related_name='service_sessions',
-        help_text="Staff member receiving service"
-    )
-    beneficiary = models.ForeignKey(
-        'beneficiaries.Beneficiary',
-        on_delete=models.PROTECT,
-        null=True,
-        blank=True,
-        related_name='service_sessions',
-        help_text="Beneficiary receiving service"
+        db_index=True,
+        help_text="Person (employee or dependent) receiving service"
     )
     scheduled_at = models.DateTimeField(
         db_index=True,
@@ -113,8 +105,7 @@ class ServiceSession(BaseModel):
         indexes = [
             models.Index(fields=['service']),
             models.Index(fields=['provider']),
-            models.Index(fields=['staff']),
-            models.Index(fields=['beneficiary']),
+            models.Index(fields=['person']),
             models.Index(fields=['status']),
             models.Index(fields=['scheduled_at']),
             models.Index(fields=['is_group_session']),
@@ -122,11 +113,20 @@ class ServiceSession(BaseModel):
         ]
 
     def __str__(self):
-        recipient = self.staff or self.beneficiary
-        return f"{self.service.name} - {recipient} ({self.scheduled_at.date()})"
+        return f"{self.service.name} - {self.person.profile.full_name} ({self.scheduled_at.date()})"
+
+    def clean(self):
+        """Validate session eligibility."""
+        super().clean()
+
+        # Verify person is eligible for services
+        if self.person and not self.person.is_eligible_for_services:
+            raise ValidationError(
+                f"{self.person.profile.full_name} is not currently eligible for EAP services."
+            )
 
     def complete(self, duration: int = None, notes: str = None) -> None:
-        """Mark session as completed."""
+        """Mark session as completed and update person's service tracking."""
         from django.utils import timezone
         self.status = SessionStatus.COMPLETED
         self.completed_at = timezone.now()
@@ -135,6 +135,10 @@ class ServiceSession(BaseModel):
         if notes:
             self.notes = notes
         self.save(update_fields=['status', 'completed_at', 'duration', 'notes', 'updated_at'])
+
+        # Update person's last service date
+        if self.person:
+            self.person.update_last_service_date(self.completed_at.date())
 
     def cancel(self, reason: str) -> None:
         """Cancel session."""
