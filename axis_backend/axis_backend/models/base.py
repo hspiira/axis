@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
-from .utils import generate_cuid
+from axis_backend.utils import generate_cuid
 
 class SoftDeleteManager(models.Manager):
     """Manager that excludes soft-deleted records"""
