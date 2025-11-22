@@ -137,6 +137,61 @@ class CanManagePersons(permissions.BasePermission):
         return True
 
 
+class CanManageDocuments(permissions.BasePermission):
+    """
+    Permission for document management.
+
+    Use for operations that require document management privileges:
+    - Publishing/archiving documents
+    - Creating new versions
+    - Managing document lifecycle
+    """
+
+    def has_permission(self, request, view) -> bool:
+        """
+        Check if user has document management privileges.
+
+        Args:
+            request: HTTP request
+            view: View being accessed
+
+        Returns:
+            True if user can manage documents
+        """
+        if not request.user or not request.user.is_authenticated:
+            return False
+
+        # Superuser has all permissions
+        if request.user.is_superuser:
+            return True
+
+        # Check if user has document manager role
+        # TODO: Implement role checking once User/Profile models are complete
+        # For now, allow authenticated users (will be restricted later)
+        return True
+
+    def has_object_permission(self, request, view, obj: Any) -> bool:
+        """
+        Check if user can manage specific document.
+
+        Args:
+            request: HTTP request
+            view: View being accessed
+            obj: Document object being accessed
+
+        Returns:
+            True if user can manage this document
+        """
+        # Superuser has all permissions
+        if request.user.is_superuser:
+            return True
+
+        # Check if user is authorized for document's client
+        # TODO: Implement client-based authorization once relationships are complete
+        # For now, allow authenticated users (will be restricted later)
+        return True
+
+
 class IsReadOnly(permissions.BasePermission):
     """
     Permission for read-only access.

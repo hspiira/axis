@@ -36,6 +36,7 @@ urlpatterns = [
     # API Endpoints
     path("api/auth/", include("apps.authentication.urls")),
     path("api/", include("apps.persons.urls")),
+    path("api/", include("apps.documents.urls")),
 ]
 
 # Debug toolbar (only in development)
