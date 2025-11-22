@@ -46,8 +46,30 @@ class TestPersonAPI(TestCase):
 
     def tearDown(self):
         """Clean up test data."""
-        Person.objects.all().delete()
-        Profile.objects.all().delete()
+        # Delete in proper order due to PROTECT foreign keys
+        # Need to handle soft-deleted records that prevent deletion
+        from django.db.models.deletion import ProtectedError
+
+        # 1. Try to delete dependents first (they reference employees)
+        try:
+            Person.objects.filter(person_type=PersonType.DEPENDENT).delete()
+        except ProtectedError:
+            # Clear primary_employee FK for any remaining dependents
+            Person.objects.filter(person_type=PersonType.DEPENDENT).update(primary_employee=None)
+            Person.objects.filter(person_type=PersonType.DEPENDENT).delete()
+
+        # 2. Delete employees
+        Person.objects.filter(person_type=PersonType.EMPLOYEE).delete()
+
+        # 3. Delete profiles - handle soft-deleted persons that still reference profiles
+        try:
+            Profile.objects.all().delete()
+        except ProtectedError:
+            # Soft-deleted persons still reference profiles, hard delete them using all_objects manager
+            Person.all_objects.all().delete()
+            Profile.objects.all().delete()
+
+        # 4. Delete users and clients
         User.objects.all().delete()
         Client.objects.all().delete()
 
@@ -227,7 +249,8 @@ class TestPersonAPI(TestCase):
             'profile_id': str(dep_profile.id),
             'user_id': str(dep_user.id),
             'primary_employee_id': str(employee.id),
-            'relationship_to_employee': RelationType.CHILD
+            'relationship_to_employee': RelationType.CHILD,
+            'guardian_id': str(self.user.id)  # Required for minors
         }
 
         response = self.client_api.post('/api/persons/create-dependent/', data, format='json')
@@ -338,7 +361,8 @@ class TestPersonAPI(TestCase):
             profile=dep_profile,
             user=dep_user,
             primary_employee=employee,
-            relationship_to_employee=RelationType.CHILD
+            relationship_to_employee=RelationType.CHILD,
+            guardian=self.user  # Required for minors
         )
 
         response = self.client_api.get(f'/api/persons/{employee.id}/family/')

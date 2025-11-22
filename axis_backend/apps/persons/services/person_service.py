@@ -460,8 +460,18 @@ class PersonService(BaseService[Person]):
                 'person_id': 'Can only update employment status for employees'
             })
 
-        # Validate end date if provided
+        # Validate and convert end date if provided
         if employment_end_date:
+            # Convert string to date if necessary
+            if isinstance(employment_end_date, str):
+                from datetime import datetime
+                try:
+                    employment_end_date = datetime.strptime(employment_end_date, '%Y-%m-%d').date()
+                except ValueError:
+                    raise ValidationError({
+                        'employment_end_date': 'Invalid date format. Expected YYYY-MM-DD'
+                    })
+
             if employment_end_date < person.employment_start_date:
                 raise ValidationError({
                     'employment_end_date': 'Employment end date must be after start date'

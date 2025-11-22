@@ -466,14 +466,15 @@ class PersonUpdateSerializer(BaseUpdateSerializer):
 
         instance = self.instance
 
-        if instance.is_employee:
+        # For create operations, instance will be None
+        if instance and instance.is_employee:
             # Validate employee updates
             if 'relationship_to_employee' in data:
                 raise serializers.ValidationError({
                     'relationship_to_employee': 'Cannot set relationship for employees'
                 })
 
-        if instance.is_dependent:
+        if instance and instance.is_dependent:
             # Validate dependent updates
             employee_fields = [
                 'employee_role',
