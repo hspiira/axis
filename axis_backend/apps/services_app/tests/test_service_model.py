@@ -34,9 +34,10 @@ class ServiceModelTestCase(TestCase):
 
     def tearDown(self):
         """Clean up test data."""
+        # Delete in correct order to avoid FK constraint violations
         Service.objects.all().delete()
-        ServiceProvider.objects.all().delete()
         ServiceCategory.objects.all().delete()
+        ServiceProvider.objects.all().delete()
 
     def test_service_creation_success(self):
         """Test creating a service."""

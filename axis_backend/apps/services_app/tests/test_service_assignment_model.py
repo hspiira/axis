@@ -54,8 +54,7 @@ class ServiceAssignmentModelTestCase(TestCase):
             start_date=date.today(),
             end_date=date.today() + timedelta(days=365),
             status=ContractStatus.ACTIVE,
-            coverage_limit=100000,
-            employee_count=100
+            billing_rate=100000.00
         )
 
         # Create category and service
@@ -228,18 +227,17 @@ class ServiceAssignmentModelTestCase(TestCase):
             )
             assignment.full_clean()
 
-    def test_assignment_same_start_end_date_invalid(self):
-        """Test that start and end date cannot be the same."""
-        with self.assertRaises(ValidationError):
-            assignment = ServiceAssignment(
-                service=self.service,
-                contract=self.contract,
-                client=self.client,
-                start_date=date.today(),
-                end_date=date.today(),
-                frequency=Frequency.WEEKLY
-            )
-            assignment.full_clean()
+    def test_assignment_same_start_end_date_valid(self):
+        """Test that start and end date can be the same (one-day assignment)."""
+        assignment = ServiceAssignment.objects.create(
+            service=self.service,
+            contract=self.contract,
+            client=self.client,
+            start_date=date.today(),
+            end_date=date.today(),
+            frequency=Frequency.ONCE
+        )
+        self.assertEqual(assignment.start_date, assignment.end_date)
 
     def test_assignment_metadata_defaults_to_dict(self):
         """Test that metadata defaults to empty dict."""

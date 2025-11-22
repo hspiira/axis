@@ -19,6 +19,7 @@ class ServiceCategoryModelTestCase(TestCase):
 
     def tearDown(self):
         """Clean up test data."""
+        # Delete in correct order to avoid FK constraint violations
         Service.objects.all().delete()
         ServiceCategory.objects.all().delete()
 
