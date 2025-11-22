@@ -37,6 +37,8 @@ urlpatterns = [
     path("api/auth/", include("apps.authentication.urls")),
     path("api/", include("apps.persons.urls")),
     path("api/", include("apps.documents.urls")),
+    path("api/", include("apps.kpis.urls")),
+    path("api/", include("apps.audit.urls")),
 ]
 
 # Debug toolbar (only in development)
