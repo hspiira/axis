@@ -11,15 +11,28 @@ from axis_backend.serializers.base import (
 )
 
 
-class IndustryListSerializer(BaseListSerializer, NestedRelationshipMixin):
+def _validate_non_empty_trimmed_name(value):
     """
-    Lightweight serializer for industry lists.
+    Validate and trim industry name.
 
-    Single Responsibility: List view data only
-    Interface Segregation: Minimal fields for performance
-    Extends: BaseListSerializer for common list patterns
+    Args:
+        value: Industry name (may be None for optional fields)
+
+    Returns:
+        Stripped name value
+
+    Raises:
+        serializers.ValidationError: If name is empty or whitespace-only
     """
+    if value is None:
+        return None
+    stripped = value.strip()
+    if not stripped:
+        raise serializers.ValidationError("Industry name cannot be empty")
+    return stripped
 
+
+class IndustryListSerializer(BaseListSerializer, TimestampMixin, NestedRelationshipMixin):
     parent_name = serializers.CharField(
         source='parent.name',
         read_only=True,
@@ -41,7 +54,8 @@ class IndustryListSerializer(BaseListSerializer, NestedRelationshipMixin):
         read_only_fields = ['id', 'created_at', 'updated_at']
 
     def get_client_count(self, obj):
-        """Get number of clients in this industry."""
+        if hasattr(obj, 'client_count'):
+            return obj.client_count
         return obj.clients.count()
 
 
@@ -110,7 +124,8 @@ class IndustryDetailSerializer(BaseDetailSerializer, TimestampMixin, NestedRelat
         ]
 
     def get_client_count(self, obj):
-        """Get number of clients in this industry."""
+        if hasattr(obj, 'client_count'):
+            return obj.client_count
         return obj.clients.count()
 
 
@@ -160,21 +175,7 @@ class IndustryCreateSerializer(BaseCreateSerializer):
     )
 
     def validate_name(self, value):
-        """
-        Validate industry name.
-
-        Args:
-            value: Industry name
-
-        Returns:
-            Validated and stripped name
-
-        Raises:
-            serializers.ValidationError: If name is empty
-        """
-        if not value or not value.strip():
-            raise serializers.ValidationError("Industry name cannot be empty")
-        return value.strip()
+        return _validate_non_empty_trimmed_name(value)
 
 
 class IndustryUpdateSerializer(BaseUpdateSerializer):
@@ -224,18 +225,4 @@ class IndustryUpdateSerializer(BaseUpdateSerializer):
     )
 
     def validate_name(self, value):
-        """
-        Validate industry name.
-
-        Args:
-            value: Industry name
-
-        Returns:
-            Validated and stripped name
-
-        Raises:
-            serializers.ValidationError: If name is empty
-        """
-        if value is not None and (not value or not value.strip()):
-            raise serializers.ValidationError("Industry name cannot be empty")
-        return value.strip() if value else value
+        return _validate_non_empty_trimmed_name(value)

@@ -1,7 +1,8 @@
 """Service for FieldChange business logic."""
-from typing import Optional, List
+from typing import Optional
 from django.db import transaction
 
+from axis_backend.enums.choices import ChangeType
 from axis_backend.services.base import BaseService
 from apps.audit.models import FieldChange
 from apps.audit.repositories import FieldChangeRepository
@@ -28,7 +29,7 @@ class FieldChangeService(BaseService[FieldChange]):
         field_name: str,
         old_value,
         new_value,
-        change_type: str
+        change_type: str = ChangeType.UPDATE
     ) -> FieldChange:
         """
         Record a field change.
@@ -53,7 +54,7 @@ class FieldChangeService(BaseService[FieldChange]):
 
     # Query Operations
 
-    def get_by_entity_change(self, entity_change_id: str) -> List[FieldChange]:
+    def get_by_entity_change(self, entity_change_id: str) -> list[FieldChange]:
         """Get all field changes for an entity change."""
         return list(self.repository.filter_by_entity_change(entity_change_id))
 
@@ -62,20 +63,21 @@ class FieldChangeService(BaseService[FieldChange]):
         entity_type: str,
         entity_id: str,
         field_name: str
-    ) -> List[FieldChange]:
+    ) -> list[FieldChange]:
         """Get complete history for a specific field."""
         return list(self.repository.get_field_history(entity_type, entity_id, field_name))
 
-    def get_by_field_name(self, field_name: str) -> List[FieldChange]:
+    def get_by_field_name(self, field_name: str) -> list[FieldChange]:
         """Get all changes for a specific field name."""
         return list(self.repository.filter_by_field_name(field_name))
 
     def search_field_changes(
         self,
+        *,
         entity_change_id: Optional[str] = None,
         field_name: Optional[str] = None,
         change_type: Optional[str] = None
-    ) -> List[FieldChange]:
+    ) -> list[FieldChange]:
         """Advanced field change search."""
         return list(self.repository.search_field_changes(
             entity_change_id=entity_change_id,

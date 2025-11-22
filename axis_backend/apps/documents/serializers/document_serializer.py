@@ -12,14 +12,7 @@ from axis_backend.serializers.base import (
 from axis_backend.enums import DocumentType, DocumentStatus
 
 
-class DocumentListSerializer(BaseListSerializer, NestedRelationshipMixin):
-    """
-    Lightweight serializer for document lists.
-
-    Single Responsibility: List view data only
-    Interface Segregation: Minimal fields for performance
-    Extends: BaseListSerializer for common list patterns
-    """
+class DocumentListSerializer(TimestampMixin, BaseListSerializer, NestedRelationshipMixin):
 
     uploaded_by_name = serializers.CharField(
         source='uploaded_by.email',
@@ -41,7 +34,7 @@ class DocumentListSerializer(BaseListSerializer, NestedRelationshipMixin):
 
     class Meta:
         model = Document
-        fields = [
+        fields = (
             'id',
             'title',
             'type',
@@ -57,8 +50,8 @@ class DocumentListSerializer(BaseListSerializer, NestedRelationshipMixin):
             'is_active',
             'created_at',
             'updated_at'
-        ]
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        )
+        read_only_fields = ('id', 'created_at', 'updated_at')
 
 
 class DocumentDetailSerializer(BaseDetailSerializer, TimestampMixin, NestedRelationshipMixin):
@@ -107,7 +100,7 @@ class DocumentDetailSerializer(BaseDetailSerializer, TimestampMixin, NestedRelat
 
     class Meta:
         model = Document
-        fields = [
+        fields = (
             # IDs and basic info
             'id',
             'title',
@@ -140,11 +133,11 @@ class DocumentDetailSerializer(BaseDetailSerializer, TimestampMixin, NestedRelat
             'created_at',
             'updated_at',
             'deleted_at'
-        ]
-        read_only_fields = [
+        )
+        read_only_fields = (
             'id', 'version', 'is_latest', 'previous_version_id',
             'is_expired', 'is_active', 'created_at', 'updated_at', 'deleted_at'
-        ]
+        )
 
 
 class DocumentCreateSerializer(BaseCreateSerializer):
@@ -207,15 +200,15 @@ class DocumentCreateSerializer(BaseCreateSerializer):
             from apps.contracts.models import Contract
             try:
                 contract = Contract.objects.get(id=attrs['contract_id'])
-                if str(contract.client_id) != attrs['client_id']:
-                    raise serializers.ValidationError({
-                        'contract_id': 'Contract does not belong to specified client'
-                    })
             except Contract.DoesNotExist:
                 raise serializers.ValidationError({
                     'contract_id': 'Contract does not exist'
                 })
-
+            if str(contract.client_id) != attrs['client_id']:
+                raise serializers.ValidationError({
+                    'contract_id': 'Contract does not belong to specified client'
+                })
+            
         return attrs
 
 
@@ -286,7 +279,7 @@ class DocumentVersionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Document
-        fields = [
+        fields = (
             'id',
             'version',
             'url',
@@ -295,5 +288,5 @@ class DocumentVersionSerializer(serializers.ModelSerializer):
             'uploaded_by_email',
             'created_at',
             'updated_at'
-        ]
+        )
         read_only_fields = fields

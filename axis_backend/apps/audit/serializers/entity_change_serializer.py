@@ -33,4 +33,4 @@ class EntityChangeDetailSerializer(BaseDetailSerializer):
 
     def get_field_changes_count(self, obj) -> int:
         """Get count of field-level changes."""
-        return obj.field_changes.filter(deleted_at__isnull=True).count()
+        return obj.field_changes_count.count()

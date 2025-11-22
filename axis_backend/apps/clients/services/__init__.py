@@ -2,4 +2,4 @@
 from .industry_service import IndustryService
 from .client_service import ClientService
 
-__all__ = ['IndustryService', 'ClientService']
+__all__ = ['ClientService', 'IndustryService']

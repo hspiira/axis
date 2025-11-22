@@ -10,6 +10,7 @@ from drf_spectacular.types import OpenApiTypes
 from django.core.exceptions import ValidationError
 
 from axis_backend.views.base import BaseModelViewSet
+from axis_backend.utils.query_params import parse_positive_int
 from axis_backend.permissions import IsAdminOrManager, IsOwnerOrAdmin, CanManagePersons
 from apps.persons.services.person_service import PersonService
 from apps.persons.serializers.person_serializer import (
@@ -214,8 +215,24 @@ class PersonViewSet(BaseModelViewSet):
         Returns:
             Response with eligible persons
         """
-        page = int(request.query_params.get('page', 1))
-        page_size = int(request.query_params.get('page_size', 10))
+        # Parse and validate pagination parameters
+        page, error_response = parse_positive_int(
+            request.query_params.get('page'),
+            'page',
+            default=1,
+            min_value=1
+        )
+        if error_response:
+            return error_response
+
+        page_size, error_response = parse_positive_int(
+            request.query_params.get('page_size'),
+            'page_size',
+            default=10,
+            min_value=1
+        )
+        if error_response:
+            return error_response
 
         result = self.service.get_eligible_persons(
             page=page,

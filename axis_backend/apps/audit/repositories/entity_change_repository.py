@@ -23,6 +23,49 @@ class EntityChangeRepository(BaseRepository[EntityChange]):
         """Get queryset."""
         return super().get_queryset()
 
+    # Create Operations
+
+    def record_change(
+        self,
+        entity_type: str,
+        entity_id: str,
+        change_type: str,
+        changed_by: Optional[str] = None,
+        change_reason: Optional[str] = None,
+        old_data: Optional[dict] = None,
+        new_data: Optional[dict] = None,
+        **kwargs
+    ) -> EntityChange:
+        """
+        Record an entity change.
+
+        Encapsulates persistence logic for entity change records.
+        All writes to EntityChange should go through this method.
+
+        Args:
+            entity_type: Entity model name
+            entity_id: Entity identifier
+            change_type: Type of change
+            changed_by: User ID
+            change_reason: Explanation
+            old_data: Previous state
+            new_data: New state
+            **kwargs: Additional metadata
+
+        Returns:
+            EntityChange: Created change record
+        """
+        return self.model.objects.create(
+            entity_type=entity_type,
+            entity_id=entity_id,
+            change_type=change_type,
+            changed_by=changed_by,
+            change_reason=change_reason,
+            old_data=old_data,
+            new_data=new_data,
+            metadata=kwargs
+        )
+
     # Query Methods
 
     def filter_by_entity(self, entity_type: str, entity_id: Optional[str] = None) -> QuerySet:
@@ -66,12 +109,14 @@ class EntityChangeRepository(BaseRepository[EntityChange]):
 
     def get_recent_changes(self, days: int = 7) -> QuerySet:
         """Get changes from recent days."""
+        from datetime import timedelta
         from django.utils import timezone
-        cutoff = timezone.now() - timezone.timedelta(days=days)
+        cutoff = timezone.now() - timedelta(days=days)
         return self.get_queryset().filter(changed_at__gte=cutoff)
 
     def search_changes(
         self,
+        *,
         entity_type: Optional[str] = None,
         entity_id: Optional[str] = None,
         change_type: Optional[str] = None,

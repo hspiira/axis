@@ -60,11 +60,6 @@ class KPIViewSet(BaseModelViewSet):
                 {'error': e.message_dict if hasattr(e, 'message_dict') else str(e)},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        except Exception as e:
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
 
     @extend_schema(
         summary="Get public KPIs",
@@ -98,12 +93,6 @@ class KPIViewSet(BaseModelViewSet):
     @action(detail=True, methods=['post'])
     def toggle_visibility(self, request, pk=None):
         """Toggle KPI public/private visibility."""
-        try:
-            kpi = self.service.toggle_visibility(pk)
-            serializer = self.detail_serializer_class(kpi)
-            return Response(serializer.data)
-        except Exception as e:
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        kpi = self.service.toggle_visibility(pk)
+        serializer = self.detail_serializer_class(kpi)
+        return Response(serializer.data)

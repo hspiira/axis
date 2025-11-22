@@ -19,16 +19,16 @@ from .kpi_assignment_serializer import (
 )
 
 __all__ = [
-    'KPITypeListSerializer',
-    'KPITypeDetailSerializer',
-    'KPITypeCreateSerializer',
-    'KPITypeUpdateSerializer',
-    'KPIListSerializer',
-    'KPIDetailSerializer',
-    'KPICreateSerializer',
-    'KPIUpdateSerializer',
-    'KPIAssignmentListSerializer',
-    'KPIAssignmentDetailSerializer',
     'KPIAssignmentCreateSerializer',
+    'KPIAssignmentDetailSerializer',
+    'KPIAssignmentListSerializer',
     'KPIAssignmentUpdateSerializer',
+    'KPICreateSerializer',
+    'KPIDetailSerializer',
+    'KPIListSerializer',
+    'KPITypeCreateSerializer',
+    'KPITypeDetailSerializer',
+    'KPITypeListSerializer',
+    'KPITypeUpdateSerializer',
+    'KPIUpdateSerializer',
 ]

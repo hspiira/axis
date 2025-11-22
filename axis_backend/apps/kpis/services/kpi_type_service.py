@@ -1,5 +1,5 @@
 """Service for KPIType business logic."""
-from typing import Optional, List, Dict, Any
+from typing import Optional, Any
 from django.db import transaction
 from django.core.exceptions import ValidationError
 
@@ -108,6 +108,8 @@ class KPITypeService(BaseService[KPIType]):
             ValidationError: If validation fails
         """
         kpi_type = self.repository.get_by_id(kpi_type_id)
+        if not kpi_type:
+            raise ValidationError(f"KPI type with id {kpi_type_id} not found")
 
         # Validate name uniqueness if changing
         if name and name != kpi_type.name:
@@ -126,7 +128,7 @@ class KPITypeService(BaseService[KPIType]):
         if weight is not None:
             kwargs['weight'] = weight
 
-        return self.repository.update(kpi_type_id, **kwargs)
+        return self.repository.update(kpi_type, **kwargs)
 
     # Query Operations
 
@@ -142,7 +144,7 @@ class KPITypeService(BaseService[KPIType]):
         """
         return self.repository.find_by_name(name)
 
-    def search_by_name(self, query: str) -> List[KPIType]:
+    def search_by_name(self, query: str) -> list[KPIType]:
         """
         Search KPI types by name.
 
@@ -158,7 +160,7 @@ class KPITypeService(BaseService[KPIType]):
         self,
         min_weight: Optional[int] = None,
         max_weight: Optional[int] = None
-    ) -> List[KPIType]:
+    ) -> list[KPIType]:
         """
         Get KPI types within weight range.
 
@@ -171,7 +173,7 @@ class KPITypeService(BaseService[KPIType]):
         """
         return list(self.repository.filter_by_weight_range(min_weight, max_weight))
 
-    def get_ordered_by_weight(self) -> List[KPIType]:
+    def get_ordered_by_weight(self) -> list[KPIType]:
         """
         Get all KPI types ordered by weight (highest first).
 
@@ -183,7 +185,7 @@ class KPITypeService(BaseService[KPIType]):
     # Bulk Operations
 
     @transaction.atomic
-    def create_bulk_kpi_types(self, types_data: List[Dict[str, Any]]) -> List[KPIType]:
+    def create_bulk_kpi_types(self, types_data: list[dict[str, Any]]) -> list[KPIType]:
         """
         Create multiple KPI types.
 

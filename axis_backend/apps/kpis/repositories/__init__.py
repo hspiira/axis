@@ -4,7 +4,7 @@ from .kpi_repository import KPIRepository
 from .kpi_assignment_repository import KPIAssignmentRepository
 
 __all__ = [
-    'KPITypeRepository',
-    'KPIRepository',
     'KPIAssignmentRepository',
+    'KPIRepository',
+    'KPITypeRepository',
 ]

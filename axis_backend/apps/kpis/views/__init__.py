@@ -4,7 +4,7 @@ from .kpi_viewset import KPIViewSet
 from .kpi_assignment_viewset import KPIAssignmentViewSet
 
 __all__ = [
+    'KPIAssignmentViewSet',
     'KPITypeViewSet',
     'KPIViewSet',
-    'KPIAssignmentViewSet',
 ]

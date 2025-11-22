@@ -1,5 +1,5 @@
 """Service for EntityChange business logic."""
-from typing import Optional, List
+from typing import Optional
 from datetime import datetime
 from django.db import transaction
 
@@ -50,7 +50,7 @@ class EntityChangeService(BaseService[EntityChange]):
         Returns:
             EntityChange: Created change record
         """
-        return EntityChange.record_change(
+        return self.repository.record_change(
             entity_type=entity_type,
             entity_id=entity_id,
             change_type=change_type,
@@ -63,24 +63,25 @@ class EntityChangeService(BaseService[EntityChange]):
 
     # Query Operations
 
-    def get_entity_history(self, entity_type: str, entity_id: str) -> List[EntityChange]:
+    def get_entity_history(self, entity_type: str, entity_id: str) -> list[EntityChange]:
         """Get complete change history for an entity."""
         return list(self.repository.get_entity_history(entity_type, entity_id))
 
-    def get_recent_changes(self, days: int = 7) -> List[EntityChange]:
+    def get_recent_changes(self, days: int = 7) -> list[EntityChange]:
         """Get recent entity changes."""
         return list(self.repository.get_recent_changes(days))
 
-    def get_by_user(self, user_id: str) -> List[EntityChange]:
+    def get_by_user(self, user_id: str) -> list[EntityChange]:
         """Get all changes made by a user."""
         return list(self.repository.filter_by_user(user_id))
 
-    def get_by_change_type(self, change_type: str) -> List[EntityChange]:
+    def get_by_change_type(self, change_type: str) -> list[EntityChange]:
         """Get changes of a specific type."""
         return list(self.repository.filter_by_change_type(change_type))
 
     def search_changes(
         self,
+        *,
         entity_type: Optional[str] = None,
         entity_id: Optional[str] = None,
         change_type: Optional[str] = None,
@@ -88,7 +89,7 @@ class EntityChangeService(BaseService[EntityChange]):
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
         is_active: Optional[bool] = None
-    ) -> List[EntityChange]:
+    ) -> list[EntityChange]:
         """Advanced entity change search."""
         return list(self.repository.search_changes(
             entity_type=entity_type,

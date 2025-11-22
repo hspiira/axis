@@ -70,7 +70,11 @@ class IndustryViewSet(BaseModelViewSet):
     @action(detail=True, methods=['get'])
     def descendants(self, request, pk=None):
         """Get all descendants of an industry."""
-        descendants = self.service.get_descendants(pk)
+        descendants = [
+            industry 
+            for industry in self.service.get_descendants(pk)
+            if str(industry.id) != str(pk)
+        ]
         serializer = IndustryListSerializer(descendants, many=True)
         return Response(serializer.data)
 

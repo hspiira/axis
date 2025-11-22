@@ -7,6 +7,8 @@ from rest_framework import filters
 from typing import Optional, Type
 from django.core.exceptions import ValidationError as DjangoValidationError
 
+from axis_backend.utils.query_params import parse_positive_int
+
 
 class BaseModelViewSet(viewsets.ModelViewSet):
     """
@@ -100,8 +102,25 @@ class BaseModelViewSet(viewsets.ModelViewSet):
         filters = self.get_filters_from_request(request)
         search = request.query_params.get('search', '')
         ordering = self.get_ordering_from_request(request)
-        page = int(request.query_params.get('page', 1))
-        page_size = int(request.query_params.get('page_size', 10))
+
+        # Parse and validate pagination parameters
+        page, error_response = parse_positive_int(
+            request.query_params.get('page'),
+            'page',
+            default=1,
+            min_value=1
+        )
+        if error_response:
+            return error_response
+
+        page_size, error_response = parse_positive_int(
+            request.query_params.get('page_size'),
+            'page_size',
+            default=10,
+            min_value=1
+        )
+        if error_response:
+            return error_response
 
         # Get data from service
         result = self.service.list(

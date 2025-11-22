@@ -1,5 +1,5 @@
 """Service for AuditLog business logic."""
-from typing import Optional, List
+from typing import Optional
 from datetime import datetime
 
 from apps.audit.models import AuditLog
@@ -19,7 +19,7 @@ class AuditLogService:
     - Audit reporting
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize service with repository."""
         self.repository = AuditLogRepository()
 
@@ -29,14 +29,14 @@ class AuditLogService:
         """Get audit log by ID."""
         return self.repository.get_by_id(audit_id)
 
-    def list_logs(self, limit: Optional[int] = None) -> List[AuditLog]:
+    def list_logs(self, limit: Optional[int] = None) -> list[AuditLog]:
         """List audit logs."""
         return self.repository.list(limit=limit)
 
-    def get_user_activity(self, user_id: str, limit: Optional[int] = None) -> List[AuditLog]:
+    def get_user_activity(self, user_id: str, limit: Optional[int] = None) -> list[AuditLog]:
         """Get all activity for a user."""
         queryset = self.repository.filter_by_user(user_id)
-        if limit:
+        if limit is not None:
             queryset = queryset[:limit]
         return list(queryset)
 
@@ -44,16 +44,17 @@ class AuditLogService:
         self,
         entity_type: str,
         entity_id: Optional[str] = None
-    ) -> List[AuditLog]:
+    ) -> list[AuditLog]:
         """Get all logs for an entity type or specific entity."""
         return list(self.repository.filter_by_entity(entity_type, entity_id))
 
-    def get_recent_activity(self, days: int = 7) -> List[AuditLog]:
+    def get_recent_activity(self, days: int = 7) -> list[AuditLog]:
         """Get recent audit logs."""
         return list(self.repository.get_recent(days))
 
     def search_logs(
         self,
+        *,
         user_id: Optional[str] = None,
         action: Optional[str] = None,
         entity_type: Optional[str] = None,
@@ -61,7 +62,7 @@ class AuditLogService:
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
         ip_address: Optional[str] = None
-    ) -> List[AuditLog]:
+    ) -> list[AuditLog]:
         """Advanced audit log search."""
         return list(self.repository.search_logs(
             user_id=user_id,
@@ -78,12 +79,12 @@ class AuditLogService:
     def log_action(
         self,
         action: str,
-        user=None,
-        entity_type: str = None,
-        entity_id: str = None,
-        data: dict = None,
-        ip_address: str = None,
-        user_agent: str = None
+        user: object | None = None,
+        entity_type: str | None = None,
+        entity_id: str | None = None,
+        data: dict | None = None,
+        ip_address: str | None = None,
+        user_agent: str | None = None
     ) -> AuditLog:
         """
         Create an audit log entry.

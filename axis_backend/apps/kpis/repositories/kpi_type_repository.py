@@ -1,6 +1,6 @@
 """Repository for KPIType model data access."""
-from typing import Optional, List, Dict, Any
-from django.db.models import QuerySet, Q
+from typing import Optional, Any
+from django.db.models import QuerySet
 
 from axis_backend.repositories.base import BaseRepository
 from apps.kpis.models import KPIType
@@ -86,7 +86,7 @@ class KPITypeRepository(BaseRepository[KPIType]):
 
     # Bulk Operations
 
-    def bulk_create_types(self, types_data: List[Dict[str, Any]]) -> List[KPIType]:
+    def bulk_create_types(self, types_data: list[dict[str, Any]]) -> list[KPIType]:
         """
         Create multiple KPI types in a single operation.
 

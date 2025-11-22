@@ -112,6 +112,7 @@ class ClientRepository(BaseRepository[Client]):
         email: Optional[str] = None,
         status: Optional[str] = None,
         industry_id: Optional[str] = None,
+        *,
         is_verified: Optional[bool] = None,
         contact_method: Optional[str] = None
     ) -> QuerySet:

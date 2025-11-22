@@ -13,12 +13,12 @@ from .client_serializer import (
 )
 
 __all__ = [
-    'IndustryListSerializer',
+    'ClientCreateSerializer',
+    'ClientDetailSerializer',
+    'ClientListSerializer',
+    'ClientUpdateSerializer',
     'IndustryDetailSerializer',
     'IndustryCreateSerializer',
+    'IndustryListSerializer',
     'IndustryUpdateSerializer',
-    'ClientListSerializer',
-    'ClientDetailSerializer',
-    'ClientCreateSerializer',
-    'ClientUpdateSerializer',
 ]

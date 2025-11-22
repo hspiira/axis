@@ -4,7 +4,7 @@ from .kpi_service import KPIService
 from .kpi_assignment_service import KPIAssignmentService
 
 __all__ = [
-    'KPITypeService',
-    'KPIService',
     'KPIAssignmentService',
+    'KPIService',
+    'KPITypeService',
 ]

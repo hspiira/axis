@@ -1,6 +1,6 @@
 """Repository for Industry model data access."""
-from typing import Optional, List
-from django.db.models import QuerySet, Q
+from typing import Optional
+from django.db.models import QuerySet, Count
 
 from axis_backend.repositories.base import BaseRepository
 from apps.clients.models import Industry
@@ -19,13 +19,9 @@ class IndustryRepository(BaseRepository[Industry]):
     model = Industry
 
     def get_queryset(self) -> QuerySet:
-        """
-        Get queryset with parent relationship optimized.
-
-        Returns:
-            QuerySet with select_related for parent
-        """
-        return super().get_queryset().select_related('parent')
+        return super().get_queryset().select_related('parent').annotate(
+            client_count=Count('clients')
+        )
 
     # Query Methods
 
@@ -69,7 +65,7 @@ class IndustryRepository(BaseRepository[Industry]):
             return self.get_root_industries()
         return self.get_queryset().filter(parent_id=parent_id)
 
-    def get_descendants_ids(self, industry_id: str) -> List[str]:
+    def get_descendants_ids(self, industry_id: str) -> list[str]:
         """
         Get all descendant industry IDs recursively.
 

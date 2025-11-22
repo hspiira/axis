@@ -18,11 +18,11 @@ class KPIListSerializer(BaseListSerializer):
 
     class Meta:
         model = KPI
-        fields = [
+        fields = (
             'id', 'name', 'type_name', 'unit', 'unit_type',
             'frequency', 'is_public', 'client_name', 'created_at'
-        ]
-        read_only_fields = ['id', 'created_at']
+        )
+        read_only_fields = ('id', 'created_at')
 
 
 class KPIDetailSerializer(BaseDetailSerializer):
@@ -36,13 +36,13 @@ class KPIDetailSerializer(BaseDetailSerializer):
 
     class Meta:
         model = KPI
-        fields = [
+        fields = (
             'id', 'name', 'description', 'type_id', 'type_name',
             'unit', 'unit_type', 'target_value', 'calculation_method',
             'frequency', 'is_public', 'client_id', 'client_name',
             'contract_id', 'metadata', 'created_at', 'updated_at', 'deleted_at'
-        ]
-        read_only_fields = ['id', 'created_at', 'updated_at', 'deleted_at']
+        )
+        read_only_fields = ('id', 'created_at', 'updated_at', 'deleted_at')
 
 
 class KPICreateSerializer(BaseCreateSerializer):

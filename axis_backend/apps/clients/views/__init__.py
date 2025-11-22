@@ -2,4 +2,4 @@
 from .industry_viewset import IndustryViewSet
 from .client_viewset import ClientViewSet
 
-__all__ = ['IndustryViewSet', 'ClientViewSet']
+__all__ = ['ClientViewSet', 'IndustryViewSet']

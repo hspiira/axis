@@ -1,4 +1,5 @@
 """ViewSet for KPIType model."""
+from typing import Any
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -39,9 +40,9 @@ class KPITypeViewSet(BaseModelViewSet):
     create_serializer_class = KPITypeCreateSerializer
     update_serializer_class = KPITypeUpdateSerializer
 
-    def create(self, request, *args, **kwargs):
+    def create(self, request, *args: Any, **kwargs: Any):
         """Create new KPI type."""
-        serializer = self.create_serializer_class(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         try:
@@ -56,8 +57,6 @@ class KPITypeViewSet(BaseModelViewSet):
                 {'error': e.message_dict if hasattr(e, 'message_dict') else str(e)},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        except Exception as e:
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        except Exception as e:  # noqa: BLE001
+            # Delegate unexpected errors to standard handler (logs, proper status, etc.).
+            return self.handle_exception(e)

@@ -70,6 +70,7 @@ class FieldChangeRepository(BaseRepository[FieldChange]):
 
     def search_field_changes(
         self,
+        *,
         entity_change_id: Optional[str] = None,
         field_name: Optional[str] = None,
         change_type: Optional[str] = None
@@ -77,11 +78,11 @@ class FieldChangeRepository(BaseRepository[FieldChange]):
         """Advanced field change search."""
         queryset = self.get_queryset()
 
-        if entity_change_id:
+        if entity_change_id is not None:
             queryset = queryset.filter(entity_change_id=entity_change_id)
-        if field_name:
+        if field_name is not None:
             queryset = queryset.filter(field_name=field_name)
-        if change_type:
+        if change_type is not None:
             queryset = queryset.filter(change_type=change_type)
 
         return queryset

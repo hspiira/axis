@@ -1,7 +1,7 @@
 """Repository for AuditLog model data access."""
-from typing import Optional, List
-from datetime import datetime, date
-from django.db.models import QuerySet, Q
+from typing import Optional
+from datetime import datetime
+from django.db.models import QuerySet
 
 from apps.audit.models import AuditLog
 
@@ -34,10 +34,10 @@ class AuditLogRepository:
         """Get audit log by ID."""
         return self.get_queryset().filter(id=audit_id).first()
 
-    def list(self, limit: Optional[int] = None) -> List[AuditLog]:
+    def list(self, limit: Optional[int] = None) -> list[AuditLog]:
         """List audit logs."""
         queryset = self.get_queryset()
-        if limit:
+        if limit is not None:
             queryset = queryset[:limit]
         return list(queryset)
 

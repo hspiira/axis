@@ -1,5 +1,5 @@
 """Service for Client business logic."""
-from typing import Optional, List, Dict, Any
+from typing import Optional, Any
 from django.db import transaction
 from django.core.exceptions import ValidationError
 
@@ -42,7 +42,7 @@ class ClientService(BaseService[Client]):
         preferred_contact_method: Optional[str] = None,
         is_verified: bool = False,
         notes: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: Optional[dict[str, Any]] = None,
         **kwargs
     ) -> Client:
         """
@@ -151,7 +151,7 @@ class ClientService(BaseService[Client]):
         preferred_contact_method: Optional[str] = None,
         is_verified: Optional[bool] = None,
         notes: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: Optional[dict[str, Any]] = None,
         **kwargs
     ) -> Client:
         """
@@ -204,7 +204,7 @@ class ClientService(BaseService[Client]):
         if industry_id is not None:
             try:
                 industry = Industry.objects.get(id=industry_id)
-                update_data['industry_id'] = industry_id
+                update_data['industry_id'] = industry
             except Industry.DoesNotExist:
                 raise ValidationError(f"Industry with ID '{industry_id}' does not exist")
 
@@ -352,7 +352,7 @@ class ClientService(BaseService[Client]):
         industry_id: Optional[str] = None,
         is_verified: Optional[bool] = None,
         contact_method: Optional[str] = None
-    ) -> List[Client]:
+    ) -> list[Client]:
         """
         Search clients with filters.
 
@@ -376,22 +376,22 @@ class ClientService(BaseService[Client]):
             contact_method=contact_method
         ))
 
-    def get_active_clients(self) -> List[Client]:
+    def get_active_clients(self) -> list[Client]:
         """Get all active clients."""
         return list(self.repository.get_active_clients())
 
-    def get_verified_clients(self) -> List[Client]:
+    def get_verified_clients(self) -> list[Client]:
         """Get all verified clients."""
         return list(self.repository.get_verified_clients())
 
-    def get_clients_by_industry(self, industry_id: str) -> List[Client]:
+    def get_clients_by_industry(self, industry_id: str) -> list[Client]:
         """Get clients in specific industry."""
         return list(self.repository.filter_by_industry(industry_id))
 
-    def get_recent_clients(self, days: int = 30) -> List[Client]:
+    def get_recent_clients(self, days: int = 30) -> list[Client]:
         """Get recently created clients."""
         return list(self.repository.get_recent_clients(days))
 
-    def get_clients_needing_verification(self) -> List[Client]:
+    def get_clients_needing_verification(self) -> list[Client]:
         """Get active unverified clients."""
         return list(self.repository.get_clients_needing_verification())

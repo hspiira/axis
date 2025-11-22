@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view
 
+from axis_backend.utils.query_params import parse_positive_int
 from apps.audit.models import EntityChange
 from apps.audit.services import EntityChangeService
 from apps.audit.serializers import (
@@ -61,7 +62,15 @@ class EntityChangeViewSet(viewsets.ReadOnlyModelViewSet):
     @action(detail=False, methods=['get'])
     def recent(self, request):
         """Get recent entity changes."""
-        days = int(request.query_params.get('days', 7))
+        days, error_response = parse_positive_int(
+            request.query_params.get('days'),
+            'days',
+            default=7,
+            min_value=1
+        )
+        if error_response:
+            return error_response
+
         changes = self.service.get_recent_changes(days)
         serializer = EntityChangeListSerializer(changes, many=True)
         return Response(serializer.data)
