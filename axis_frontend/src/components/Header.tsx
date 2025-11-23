@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { Logo } from './Logo'
 
 interface HeaderProps {
   className?: string
@@ -13,19 +14,7 @@ export function Header({ className }: HeaderProps) {
       className
     )}>
       <div className="flex items-center justify-between w-full">
-        <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center">
-            <span className="text-white font-semibold text-sm">A</span>
-          </div>
-          <div>
-            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Alchemy
-            </h1>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              Enterprise Platform
-            </p>
-          </div>
-        </div>
+        <Logo size="md" showText={true} />
         <nav className="flex items-center gap-1">
           <button className="px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors">
             Dashboard
