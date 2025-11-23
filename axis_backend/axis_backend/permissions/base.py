@@ -11,6 +11,12 @@ class IsAdminOrManager(permissions.BasePermission):
     - Creating employees/dependents
     - Bulk operations
     - System-wide queries
+
+    Authorization Rules:
+    - Superusers bypass all checks
+    - Staff users (is_staff=True) have admin access
+    - Users with 'admin' or 'manager' role via RBAC
+    - Default deny if no authorization found
     """
 
     def has_permission(self, request, view) -> bool:
@@ -31,10 +37,28 @@ class IsAdminOrManager(permissions.BasePermission):
         if request.user.is_superuser:
             return True
 
-        # Check if user has admin or manager role
-        # TODO: Implement role checking once User/Profile models are complete
-        # For now, allow authenticated users (will be restricted later)
-        return True
+        # Staff users have admin access
+        if request.user.is_staff:
+            return True
+
+        # Check if user has admin or manager role via RBAC
+        return self._has_admin_or_manager_role(request.user)
+
+    def _has_admin_or_manager_role(self, user) -> bool:
+        """
+        Check if user has admin or manager role assigned.
+
+        Returns True if user has:
+        - 'admin' role, OR
+        - 'manager' role via RBAC
+        """
+        from apps.authentication.models.role import UserRole
+
+        return UserRole.objects.filter(
+            user=user,
+            role__name__in=['admin', 'manager'],
+            deleted_at__isnull=True
+        ).exists()
 
 
 class IsOwnerOrAdmin(permissions.BasePermission):
@@ -45,6 +69,13 @@ class IsOwnerOrAdmin(permissions.BasePermission):
     - Viewing own profile
     - Updating own information
     - Viewing own family members
+
+    Authorization Rules:
+    - Superusers bypass all checks
+    - Staff users have admin access to all objects
+    - Users can access objects they own
+    - Ownership determined by 'user', 'user_id', 'owner', or 'owner_id' attributes
+    - Default deny if no ownership found
     """
 
     def has_permission(self, request, view) -> bool:
@@ -76,10 +107,54 @@ class IsOwnerOrAdmin(permissions.BasePermission):
         if request.user.is_superuser:
             return True
 
-        # Check if user owns the person record
-        # TODO: Implement ownership checking once User/Profile relationship is complete
-        # For now, allow authenticated users (will be restricted later)
-        return True
+        # Staff users have admin access
+        if request.user.is_staff:
+            return True
+
+        # Check if user owns the object
+        return self._is_owner(request.user, obj)
+
+    def _is_owner(self, user, obj) -> bool:
+        """
+        Check if user owns the object.
+
+        Checks multiple common ownership patterns:
+        - obj.user == user
+        - obj.user_id == user.id
+        - obj.owner == user
+        - obj.owner_id == user.id
+        - obj.created_by == user (for audit trails)
+
+        Args:
+            user: User instance
+            obj: Object to check ownership
+
+        Returns:
+            True if user owns the object
+        """
+        # Check direct user relationship
+        if hasattr(obj, 'user'):
+            return obj.user == user if obj.user else False
+
+        if hasattr(obj, 'user_id'):
+            return obj.user_id == user.id
+
+        # Check owner relationship
+        if hasattr(obj, 'owner'):
+            return obj.owner == user if obj.owner else False
+
+        if hasattr(obj, 'owner_id'):
+            return obj.owner_id == user.id
+
+        # Check created_by (audit trail)
+        if hasattr(obj, 'created_by'):
+            return obj.created_by == user if obj.created_by else False
+
+        if hasattr(obj, 'created_by_id'):
+            return obj.created_by_id == user.id
+
+        # Default deny if no ownership attribute found
+        return False
 
 
 class CanManagePersons(permissions.BasePermission):
@@ -90,6 +165,13 @@ class CanManagePersons(permissions.BasePermission):
     - Activating/deactivating persons
     - Updating employment status
     - Managing person records
+
+    Authorization Rules:
+    - Superusers bypass all checks
+    - Staff users have access to all persons
+    - Users with 'hr_manager' or 'manager' role via RBAC
+    - For object-level: user must be authorized for person's client
+    - Default deny if no authorization found
     """
 
     def has_permission(self, request, view) -> bool:
@@ -110,10 +192,12 @@ class CanManagePersons(permissions.BasePermission):
         if request.user.is_superuser:
             return True
 
+        # Staff users have access
+        if request.user.is_staff:
+            return True
+
         # Check if user has HR or manager role
-        # TODO: Implement role checking once User/Profile models are complete
-        # For now, allow authenticated users (will be restricted later)
-        return True
+        return self._has_hr_or_manager_role(request.user)
 
     def has_object_permission(self, request, view, obj: Any) -> bool:
         """
@@ -131,10 +215,76 @@ class CanManagePersons(permissions.BasePermission):
         if request.user.is_superuser:
             return True
 
-        # Check if user is HR/manager for person's client
-        # TODO: Implement client-based authorization once relationships are complete
-        # For now, allow authenticated users (will be restricted later)
+        # Staff users have access to all persons
+        if request.user.is_staff:
+            return True
+
+        # Check if user has HR/manager role
+        if not self._has_hr_or_manager_role(request.user):
+            return False
+
+        # Check if user is authorized for person's client
+        person_client_id = self._get_person_client(obj)
+        if person_client_id:
+            return self._is_user_authorized_for_client(request.user, person_client_id)
+
+        # If no client association, allow if user has role
         return True
+
+    def _has_hr_or_manager_role(self, user) -> bool:
+        """
+        Check if user has HR manager or manager role.
+
+        Returns True if user has:
+        - 'hr_manager' role, OR
+        - 'manager' role via RBAC
+        """
+        from apps.authentication.models.role import UserRole
+
+        return UserRole.objects.filter(
+            user=user,
+            role__name__in=['hr_manager', 'manager'],
+            deleted_at__isnull=True
+        ).exists()
+
+    def _get_person_client(self, person_obj) -> str | None:
+        """
+        Extract client ID from person object.
+
+        Args:
+            person_obj: Person instance
+
+        Returns:
+            Client ID string or None
+        """
+        if hasattr(person_obj, 'client_id'):
+            return person_obj.client_id
+        elif hasattr(person_obj, 'client'):
+            return person_obj.client.id if person_obj.client else None
+
+        return None
+
+    def _is_user_authorized_for_client(self, user, client_id: str) -> bool:
+        """
+        Verify user is authorized to access specific client's persons.
+
+        Args:
+            user: User instance
+            client_id: Client ID to check authorization for
+
+        Returns:
+            True if user authorized for client
+        """
+        if user.is_superuser or user.is_staff:
+            return True
+
+        # Check UserClient junction table for authorization
+        from apps.authentication.models import UserClient
+        return UserClient.objects.filter(
+            user=user,
+            client_id=client_id,
+            deleted_at__isnull=True
+        ).exists()
 
 
 class CanManageDocuments(permissions.BasePermission):
@@ -292,25 +442,43 @@ class CanManageDocuments(permissions.BasePermission):
 
     def _get_client_context(self, request) -> str | None:
         """
-        Extract client ID from request context.
+        Extract and validate client ID from request context.
 
         Checks in order:
         1. X-Client-ID header
         2. client_id query parameter
 
         Returns:
-            Client ID string or None if not provided
+            Validated client ID string or None if not provided
+
+        Raises:
+            PermissionDenied: If client ID format is invalid or client doesn't exist
         """
+        import re
+        from rest_framework.exceptions import PermissionDenied
+
         # Check header first
         client_id = request.headers.get('X-Client-ID')
-        if client_id:
-            return client_id
 
-        # Check query parameter (DRF Request has query_params, Django Request has GET)
-        if hasattr(request, 'query_params'):
-            client_id = request.query_params.get('client_id')
-        else:
-            client_id = request.GET.get('client_id')
+        # Check query parameter if header not found
+        if not client_id:
+            if hasattr(request, 'query_params'):
+                client_id = request.query_params.get('client_id')
+            else:
+                client_id = request.GET.get('client_id')
+
+        # If no client context provided, return None (not an error)
+        if not client_id:
+            return None
+
+        # Validate client ID format (CUID: 25 alphanumeric characters)
+        if not re.match(r'^[a-z0-9]{25}$', client_id):
+            raise PermissionDenied("Invalid client ID format")
+
+        # Verify client exists and is not deleted
+        from apps.clients.models import Client
+        if not Client.objects.filter(id=client_id, deleted_at__isnull=True).exists():
+            raise PermissionDenied("Client not found or has been deleted")
 
         return client_id
 
@@ -321,7 +489,7 @@ class CanManageDocuments(permissions.BasePermission):
         Authorization logic:
         - Superusers: always authorized
         - Staff users: authorized for all clients
-        - Regular users: check client relationship via metadata
+        - Regular users: check UserClient junction table
 
         Args:
             user: User instance
@@ -333,16 +501,13 @@ class CanManageDocuments(permissions.BasePermission):
         if user.is_superuser or user.is_staff:
             return True
 
-        # Check metadata for authorized clients list
-        # This can be customized based on your business model:
-        # - User.metadata['authorized_clients'] list (current implementation)
-        # - Separate UserClient junction table
-        # - Through employment/contract relationships
-        if user.metadata and 'authorized_clients' in user.metadata:
-            return client_id in user.metadata['authorized_clients']
-
-        # Default deny if no authorization found
-        return False
+        # Check UserClient junction table for authorization
+        from apps.authentication.models import UserClient
+        return UserClient.objects.filter(
+            user=user,
+            client_id=client_id,
+            deleted_at__isnull=True
+        ).exists()
 
     def _get_document_client(self, document_obj) -> str | None:
         """

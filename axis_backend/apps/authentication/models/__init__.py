@@ -4,6 +4,7 @@ from .profile import Profile
 from .account import Account
 from .session import Session
 from .role import Role, Permission, RolePermission, UserRole
+from .user_client import UserClient
 
 __all__ = [
     'User',
@@ -15,4 +16,5 @@ __all__ = [
     'Permission',
     'RolePermission',
     'UserRole',
+    'UserClient',
 ]
