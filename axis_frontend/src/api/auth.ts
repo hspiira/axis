@@ -6,26 +6,17 @@
  * - Dependency Inversion: Uses axios instance that can be injected
  */
 
-import axios, { type AxiosInstance } from 'axios'
+import axios from 'axios'
+import { authClient } from './axios-config'
 import type { LoginCredentials, AuthTokens, AuthResponse, AuthError } from '@/types/auth'
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 
 /**
  * Authentication API client class.
  * Encapsulates all authentication-related API calls.
+ * Uses dedicated authClient to avoid interceptor loops.
  */
 export class AuthApiClient {
-  private client: AxiosInstance
-
-  constructor(baseURL: string = API_BASE_URL) {
-    this.client = axios.create({
-      baseURL: `${baseURL}/api/auth`,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-  }
+  private client = authClient
 
   /**
    * Login with email and password.

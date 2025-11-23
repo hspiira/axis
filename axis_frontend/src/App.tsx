@@ -1,15 +1,26 @@
-import { LandingPage } from './pages/LandingPage'
-import { Footer } from './components/Footer'
+/**
+ * Main Application Component
+ *
+ * SOLID Principles:
+ * - Single Responsibility: Bootstrap application with providers and routing
+ * - Dependency Inversion: Depends on router abstraction, not concrete routes
+ */
+
+import { RouterProvider } from 'react-router-dom'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { AuthProvider } from './contexts/AuthContext'
+import { ClientProvider } from './contexts/ClientContext'
+import { router } from './router'
 
 function App() {
   return (
-    <AuthProvider>
-      <div className="min-h-screen flex flex-col">
-        <LandingPage />
-        <Footer />
-      </div>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <ClientProvider>
+          <RouterProvider router={router} />
+        </ClientProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   )
 }
 

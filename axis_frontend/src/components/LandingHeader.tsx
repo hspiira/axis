@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { Logo } from './Logo'
 import { SignInModal } from './auth/SignInModal'
 import { useAuth } from '@/contexts/AuthContext'
@@ -7,6 +8,7 @@ export function LandingHeader() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isSignInOpen, setIsSignInOpen] = useState(false)
   const { isAuthenticated, user, logout } = useAuth()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,11 +53,20 @@ export function LandingHeader() {
             </a>
             {isAuthenticated ? (
               <div className="flex items-center gap-4">
+                <Link
+                  to="/dashboard"
+                  className="text-sm text-gray-400 hover:text-white transition-colors"
+                >
+                  Dashboard
+                </Link>
                 <span className="text-sm text-gray-400">
                   {user?.email}
                 </span>
-                <button 
-                  onClick={() => logout()}
+                <button
+                  onClick={() => {
+                    logout()
+                    navigate('/')
+                  }}
                   className="px-4 py-2 text-sm font-medium text-white bg-gray-700 hover:bg-gray-600 rounded-lg transition-all duration-300"
                 >
                   Sign Out

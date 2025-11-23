@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { LandingHeader } from '@/components/LandingHeader'
+import { Footer } from '@/components/Footer'
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver'
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter'
 
@@ -75,7 +76,7 @@ export function LandingPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-gray-950 to-black">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-black via-gray-950 to-black">
       <LandingHeader />
       {/* Hero Section */}
       <section className="relative overflow-hidden min-h-screen flex items-center" id="home">
@@ -622,6 +623,8 @@ export function LandingPage() {
           </div>
         </div>
       </section>
+
+      <Footer />
     </div>
   )
 }
