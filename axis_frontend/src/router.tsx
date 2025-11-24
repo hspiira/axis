@@ -13,6 +13,10 @@ import { DashboardPage } from '@/pages/DashboardPage'
 import { CasesPage } from '@/pages/CasesPage'
 import { ClientsPage } from '@/pages/ClientsPage'
 import { ContractsPage } from '@/pages/ContractsPage'
+import { PersonsPage } from '@/pages/PersonsPage'
+import { ServicesPage } from '@/pages/ServicesPage'
+import { DocumentsPage } from '@/pages/DocumentsPage'
+import { SettingsPage } from '@/pages/SettingsPage'
 import { ProfilePage } from '@/pages/ProfilePage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 
@@ -57,6 +61,38 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <ContractsPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/persons',
+    element: (
+      <ProtectedRoute>
+        <PersonsPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/services',
+    element: (
+      <ProtectedRoute>
+        <ServicesPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/documents',
+    element: (
+      <ProtectedRoute>
+        <DocumentsPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/settings',
+    element: (
+      <ProtectedRoute>
+        <SettingsPage />
       </ProtectedRoute>
     ),
   },

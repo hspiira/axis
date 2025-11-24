@@ -14,9 +14,13 @@ import {
   FileText,
   Building2,
   FileCheck,
+  Users,
+  Stethoscope,
+  FolderOpen,
   Search,
   ChevronRight,
   X,
+  Settings,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { Logo } from './Logo'
@@ -33,12 +37,19 @@ interface NavItem {
   icon: React.ComponentType<{ className?: string }>
 }
 
+// Frequently accessed operational models
 const navItems: NavItem[] = [
   { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
   { label: 'Cases', path: '/cases', icon: FileText },
   { label: 'Clients', path: '/clients', icon: Building2 },
   { label: 'Contracts', path: '/contracts', icon: FileCheck },
+  { label: 'Persons', path: '/persons', icon: Users },
+  { label: 'Services', path: '/services', icon: Stethoscope },
+  { label: 'Documents', path: '/documents', icon: FolderOpen },
 ]
+
+// Configuration/settings models (less frequently accessed)
+const settingsPath = '/settings'
 
 export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
   const location = useLocation()
@@ -115,7 +126,7 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
           <nav className="px-2 space-y-0">
             {navItems.map((item) => {
               const Icon = item.icon
-              const isActive = location.pathname === item.path
+              const isActive = location.pathname === item.path || location.pathname.startsWith(`${item.path}/`)
               return (
                 <Link
                   key={item.path}
@@ -134,6 +145,23 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
               )
             })}
           </nav>
+        </div>
+
+        {/* Settings Section */}
+        <div className="px-3 py-2 border-t border-white/10">
+          <Link
+            to={settingsPath}
+            onClick={onClose}
+            className={cn(
+              'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all',
+              location.pathname.startsWith(settingsPath)
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                : 'text-gray-400 hover:text-emerald-300 hover:bg-emerald-500/10'
+            )}
+          >
+            <Settings className="h-5 w-5 flex-shrink-0" />
+            <span>Settings</span>
+          </Link>
         </div>
 
         {/* User Profile Section */}

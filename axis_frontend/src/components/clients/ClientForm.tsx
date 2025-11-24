@@ -9,48 +9,24 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { BaseStatus, ContactMethod, type ClientFormData } from '@/api/clients'
 import { FormField, FormSelect, FormTextarea, type SelectOption } from '@/components/forms'
 import { useIndustries } from '@/hooks/useClients'
-import { Building2, Mail, Phone, Globe, MapPin, User, Briefcase, FileText, ChevronRight, ChevronLeft, Check } from 'lucide-react'
+import {
+  Building2,
+  Mail,
+  Phone,
+  Globe,
+  MapPin,
+  User,
+  Briefcase,
+  FileText,
+  ChevronRight,
+  ChevronLeft,
+  Check,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
-
-// Validation schema
-const clientFormSchema = z
-  .object({
-    name: z.string().min(1, 'Client name is required').max(255, 'Name is too long'),
-    email: z.string().email('Invalid email address').optional().or(z.literal('')),
-    phone: z.string().optional().or(z.literal('')),
-    website: z.string().url('Invalid URL').optional().or(z.literal('')),
-    address: z.string().optional().or(z.literal('')),
-    billing_address: z.string().optional().or(z.literal('')),
-    timezone: z.string().optional().or(z.literal('')),
-    tax_id: z.string().optional().or(z.literal('')),
-    contact_person: z.string().optional().or(z.literal('')),
-    contact_email: z.string().email('Invalid email address').optional().or(z.literal('')),
-    contact_phone: z.string().optional().or(z.literal('')),
-    industry_id: z.string().optional().or(z.literal('')),
-    status: z.nativeEnum(BaseStatus).optional(),
-    preferred_contact_method: z.nativeEnum(ContactMethod).optional().nullable(),
-    is_verified: z.boolean().optional(),
-    notes: z.string().optional().or(z.literal('')),
-  })
-  .refine(
-    (data) => {
-      // At least one contact method required
-      const hasContact =
-        (data.email && data.email.trim() !== '') ||
-        (data.phone && data.phone.trim() !== '') ||
-        (data.contact_email && data.contact_email.trim() !== '') ||
-        (data.contact_phone && data.contact_phone.trim() !== '')
-      return hasContact
-    },
-    {
-      message: 'At least one contact method (email or phone) is required',
-      path: ['email'],
-    }
-  )
+import { clientFormSchema, type ClientFormValues } from '@/schemas'
 
 interface ClientFormProps {
   initialData?: Partial<ClientFormData>
@@ -78,7 +54,7 @@ export function ClientForm({ initialData, onSubmit, onCancel, isLoading = false 
     formState: { errors },
     watch,
     trigger,
-  } = useForm<ClientFormData>({
+  } = useForm<ClientFormValues>({
     resolver: zodResolver(clientFormSchema),
     defaultValues: {
       name: initialData?.name || '',
@@ -94,13 +70,13 @@ export function ClientForm({ initialData, onSubmit, onCancel, isLoading = false 
       contact_phone: initialData?.contact_phone || '',
       industry_id: initialData?.industry_id || '',
       status: initialData?.status || BaseStatus.ACTIVE,
-      preferred_contact_method: initialData?.preferred_contact_method || null,
+      preferred_contact_method: initialData?.preferred_contact_method || undefined,
       is_verified: initialData?.is_verified || false,
       notes: initialData?.notes || '',
     },
   })
 
-  const onSubmitForm = async (data: ClientFormData) => {
+  const onSubmitForm = async (data: ClientFormValues) => {
     // Convert empty strings to undefined for optional fields
     const cleanedData: ClientFormData = {
       ...data,

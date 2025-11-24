@@ -85,7 +85,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
       // Default fallback UI
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-black via-gray-950 to-black px-6">
+        <div className="min-h-screen flex items-center justify-center bg-linear-to-b from-black via-gray-950 to-black px-6">
           <div className="max-w-2xl w-full text-center">
             {/* Error Icon */}
             <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red-500/10 border border-red-500/20 mb-6">
@@ -136,7 +136,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
                 onClick={this.handleReset}
-                className="px-8 py-4 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white rounded-lg font-semibold hover:from-emerald-700 hover:to-emerald-800 transition-all shadow-lg shadow-emerald-500/50 hover:shadow-xl hover:shadow-emerald-500/50"
+                className="px-8 py-4 bg-linear-to-r from-emerald-600 to-emerald-700 text-white rounded-lg font-semibold hover:from-emerald-700 hover:to-emerald-800 transition-all shadow-lg shadow-emerald-500/50 hover:shadow-xl hover:shadow-emerald-500/50"
               >
                 Try Again
               </button>

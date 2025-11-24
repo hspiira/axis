@@ -10,6 +10,8 @@ import { usePageTitle } from '@/contexts/PageTitleContext'
 import { ClientsTable } from '@/components/clients/ClientsTable'
 import { ClientsFilters } from '@/components/clients/ClientsFilters'
 import { ClientFormModal } from '@/components/clients/ClientFormModal'
+import { ClientDetailModal } from '@/components/clients/ClientDetailModal'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import {
   useClients,
   useSearchClients,
@@ -23,13 +25,20 @@ import {
   useClient,
 } from '@/hooks/useClients'
 import type { ClientList, ClientSearchParams, ClientFormData } from '@/api/clients'
-import { toast } from '@/lib/toast'
+
+type ConfirmAction =
+  | { type: 'deactivate'; client: ClientList }
+  | { type: 'archive'; client: ClientList }
+  | { type: 'delete'; client: ClientList }
+  | null
 
 export function ClientsPage() {
   const { setPageTitle } = usePageTitle()
   const [filters, setFilters] = useState<ClientSearchParams>({})
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [editingClient, setEditingClient] = useState<ClientList | null>(null)
+  const [viewingClient, setViewingClient] = useState<ClientList | null>(null)
+  const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null)
 
   // Use search if filters are active, otherwise use regular list
   const hasFilters = Object.keys(filters).length > 0
@@ -51,17 +60,18 @@ export function ClientsPage() {
   }, [setPageTitle])
 
   const handleView = (client: ClientList) => {
-    // TODO: Open detail modal or navigate to detail page
-    toast.info(`Viewing ${client.name}`)
+    setViewingClient(client)
   }
 
   const handleEdit = (client: ClientList) => {
     setEditingClient(client)
+    setViewingClient(null)
     setIsCreateModalOpen(true)
   }
 
-  // Fetch full client data when editing
-  const { data: clientDetail } = useClient(editingClient?.id || '')
+  // Fetch full client data when viewing or editing
+  const { data: clientDetail } = useClient(editingClient?.id || viewingClient?.id || '')
+  const { data: viewClientDetail } = useClient(viewingClient?.id || '')
 
   const handleActivate = async (client: ClientList) => {
     try {
@@ -71,25 +81,12 @@ export function ClientsPage() {
     }
   }
 
-  const handleDeactivate = async (client: ClientList) => {
-    if (window.confirm(`Are you sure you want to deactivate ${client.name}?`)) {
-      try {
-        await deactivateClient.mutateAsync({ id: client.id })
-      } catch (error) {
-        // Error handled by hook
-      }
-    }
+  const handleDeactivate = (client: ClientList) => {
+    setConfirmAction({ type: 'deactivate', client })
   }
 
-  const handleArchive = async (client: ClientList) => {
-    const reason = window.prompt(`Enter reason for archiving ${client.name}:`)
-    if (reason !== null) {
-      try {
-        await archiveClient.mutateAsync({ id: client.id, reason })
-      } catch (error) {
-        // Error handled by hook
-      }
-    }
+  const handleArchive = (client: ClientList) => {
+    setConfirmAction({ type: 'archive', client })
   }
 
   const handleVerify = async (client: ClientList) => {
@@ -100,17 +97,29 @@ export function ClientsPage() {
     }
   }
 
-  const handleDelete = async (client: ClientList) => {
-    if (
-      window.confirm(
-        `Are you sure you want to delete ${client.name}? This action cannot be undone.`
-      )
-    ) {
-      try {
-        await deleteClient.mutateAsync(client.id)
-      } catch (error) {
-        // Error handled by hook
+  const handleDelete = (client: ClientList) => {
+    setConfirmAction({ type: 'delete', client })
+  }
+
+  const handleConfirmAction = async (inputValue?: string) => {
+    if (!confirmAction) return
+
+    try {
+      switch (confirmAction.type) {
+        case 'deactivate':
+          await deactivateClient.mutateAsync({ id: confirmAction.client.id })
+          break
+        case 'archive':
+          if (!inputValue?.trim()) return
+          await archiveClient.mutateAsync({ id: confirmAction.client.id, reason: inputValue })
+          break
+        case 'delete':
+          await deleteClient.mutateAsync(confirmAction.client.id)
+          break
       }
+      setConfirmAction(null)
+    } catch (error) {
+      // Error handled by hook
     }
   }
 
@@ -192,6 +201,62 @@ export function ClientsPage() {
         isLoading={createClient.isPending || updateClient.isPending}
         title={editingClient ? 'Edit Client' : 'Add New Client'}
       />
+
+      {/* Detail Modal */}
+      {viewClientDetail && (
+        <ClientDetailModal
+          client={viewClientDetail}
+          isOpen={!!viewingClient}
+          onClose={() => setViewingClient(null)}
+          onEdit={handleEdit}
+        />
+      )}
+
+      {/* Confirm Dialogs */}
+      {confirmAction?.type === 'deactivate' && (
+        <ConfirmDialog
+          isOpen={true}
+          onClose={() => setConfirmAction(null)}
+          onConfirm={handleConfirmAction}
+          title="Deactivate Client"
+          message={`Are you sure you want to deactivate ${confirmAction.client.name}? This will prevent the client from being used in new contracts or cases.`}
+          confirmText="Deactivate"
+          cancelText="Cancel"
+          variant="warning"
+          isLoading={deactivateClient.isPending}
+        />
+      )}
+
+      {confirmAction?.type === 'archive' && (
+        <ConfirmDialog
+          isOpen={true}
+          onClose={() => setConfirmAction(null)}
+          onConfirm={handleConfirmAction}
+          title="Archive Client"
+          message={`Please provide a reason for archiving ${confirmAction.client.name}. Archived clients can be restored later.`}
+          confirmText="Archive"
+          cancelText="Cancel"
+          variant="warning"
+          requireInput={true}
+          inputLabel="Reason for archiving"
+          inputPlaceholder="e.g., Client no longer active, Contract ended..."
+          isLoading={archiveClient.isPending}
+        />
+      )}
+
+      {confirmAction?.type === 'delete' && (
+        <ConfirmDialog
+          isOpen={true}
+          onClose={() => setConfirmAction(null)}
+          onConfirm={handleConfirmAction}
+          title="Delete Client"
+          message={`Are you sure you want to delete ${confirmAction.client.name}? This action cannot be undone and will permanently remove all client data.`}
+          confirmText="Delete"
+          cancelText="Cancel"
+          variant="danger"
+          isLoading={deleteClient.isPending}
+        />
+      )}
     </AppLayout>
   )
 }

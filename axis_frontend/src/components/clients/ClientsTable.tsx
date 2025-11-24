@@ -6,7 +6,7 @@
  * - Open/Closed: Extensible with additional columns or actions
  */
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import {
   Building2,
   Mail,
@@ -20,9 +20,19 @@ import {
   Archive,
   ShieldCheck,
   Trash2,
+  ChevronUp,
+  ChevronDown,
+  ChevronsUpDown,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
 import { type ClientList, BaseStatus } from '@/api/clients'
 import { cn } from '@/lib/utils'
+import { getStatusColor } from '@/components/ui/StatusBadge'
+import { formatShortDate } from '@/utils/formatters'
+
+type SortField = 'name' | 'email' | 'industry_name' | 'status' | 'is_verified' | 'created_at'
+type SortDirection = 'asc' | 'desc'
 
 interface ClientsTableProps {
   clients: ClientList[]
@@ -34,6 +44,7 @@ interface ClientsTableProps {
   onArchive?: (client: ClientList) => void
   onVerify?: (client: ClientList) => void
   onDelete?: (client: ClientList) => void
+  pageSize?: number
 }
 
 export function ClientsTable({
@@ -46,31 +57,74 @@ export function ClientsTable({
   onArchive,
   onVerify,
   onDelete,
+  pageSize = 10,
 }: ClientsTableProps) {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
+  const [sortField, setSortField] = useState<SortField>('created_at')
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
+  const [currentPage, setCurrentPage] = useState(1)
 
-  const getStatusColor = (status: BaseStatus) => {
-    switch (status) {
-      case BaseStatus.ACTIVE:
-        return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
-      case BaseStatus.INACTIVE:
-        return 'bg-gray-500/20 text-gray-400 border-gray-500/30'
-      case BaseStatus.PENDING:
-        return 'bg-amber-500/20 text-amber-400 border-amber-500/30'
-      case BaseStatus.ARCHIVED:
-        return 'bg-slate-500/20 text-slate-400 border-slate-500/30'
-      default:
-        return 'bg-gray-500/20 text-gray-400 border-gray-500/30'
+  // Sorting logic
+  const sortedClients = useMemo(() => {
+    const sorted = [...clients].sort((a, b) => {
+      let aValue: any = a[sortField]
+      let bValue: any = b[sortField]
+
+      // Handle null/undefined values
+      if (aValue === null || aValue === undefined) return 1
+      if (bValue === null || bValue === undefined) return -1
+
+      // Special handling for boolean (is_verified)
+      if (typeof aValue === 'boolean') {
+        aValue = aValue ? 1 : 0
+        bValue = bValue ? 1 : 0
+      }
+
+      // String comparison
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        return sortDirection === 'asc'
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue)
+      }
+
+      // Number/Date comparison
+      return sortDirection === 'asc' ? aValue - bValue : bValue - aValue
+    })
+
+    return sorted
+  }, [clients, sortField, sortDirection])
+
+  // Pagination logic
+  const totalPages = Math.ceil(sortedClients.length / pageSize)
+  const startIndex = (currentPage - 1) * pageSize
+  const endIndex = startIndex + pageSize
+  const paginatedClients = sortedClients.slice(startIndex, endIndex)
+
+  // Reset to page 1 when clients change
+  useMemo(() => {
+    setCurrentPage(1)
+  }, [clients])
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortField(field)
+      setSortDirection('asc')
     }
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) {
+      return <ChevronsUpDown className="h-4 w-4 text-gray-500" />
+    }
+    return sortDirection === 'asc' ? (
+      <ChevronUp className="h-4 w-4 text-emerald-400" />
+    ) : (
+      <ChevronDown className="h-4 w-4 text-emerald-400" />
+    )
   }
+
 
   if (isLoading) {
     return (
@@ -91,36 +145,67 @@ export function ClientsTable({
   }
 
   return (
-    <div className="bg-white/5 border border-white/10 rounded-lg overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-white/5 border-b border-white/10">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                Client
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                Contact
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                Industry
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                Verified
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                Created
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/10">
-            {clients.map((client) => (
+    <div className="space-y-4">
+      <div className="bg-white/5 border border-white/10 rounded-lg overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-white/5 border-b border-white/10">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  <button
+                    onClick={() => handleSort('name')}
+                    className="flex items-center gap-2 hover:text-white transition-colors"
+                  >
+                    Client
+                    {getSortIcon('name')}
+                  </button>
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  Contact
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  <button
+                    onClick={() => handleSort('industry_name')}
+                    className="flex items-center gap-2 hover:text-white transition-colors"
+                  >
+                    Industry
+                    {getSortIcon('industry_name')}
+                  </button>
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  <button
+                    onClick={() => handleSort('status')}
+                    className="flex items-center gap-2 hover:text-white transition-colors"
+                  >
+                    Status
+                    {getSortIcon('status')}
+                  </button>
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  <button
+                    onClick={() => handleSort('is_verified')}
+                    className="flex items-center gap-2 hover:text-white transition-colors"
+                  >
+                    Verified
+                    {getSortIcon('is_verified')}
+                  </button>
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  <button
+                    onClick={() => handleSort('created_at')}
+                    className="flex items-center gap-2 hover:text-white transition-colors"
+                  >
+                    Created
+                    {getSortIcon('created_at')}
+                  </button>
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/10">
+              {paginatedClients.map((client) => (
               <tr
                 key={client.id}
                 className="hover:bg-white/5 transition-colors cursor-pointer"
@@ -183,7 +268,7 @@ export function ClientsTable({
                   )}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                  {formatDate(client.created_at)}
+                  {formatShortDate(client.created_at)}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <div className="relative inline-block">
@@ -305,10 +390,89 @@ export function ClientsTable({
                   </div>
                 </td>
               </tr>
-            ))}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between bg-white/5 border border-white/10 rounded-lg px-6 py-4">
+          <div className="text-sm text-gray-400">
+            Showing <span className="font-medium text-white">{startIndex + 1}</span> to{' '}
+            <span className="font-medium text-white">{Math.min(endIndex, sortedClients.length)}</span> of{' '}
+            <span className="font-medium text-white">{sortedClients.length}</span> results
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+              className={cn(
+                'p-2 rounded-lg transition-colors',
+                currentPage === 1
+                  ? 'text-gray-600 cursor-not-allowed'
+                  : 'text-gray-400 hover:text-white hover:bg-white/10'
+              )}
+              aria-label="Previous page"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+
+            {/* Page Numbers */}
+            <div className="flex items-center gap-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                // Show first page, last page, current page, and pages around current
+                const showPage =
+                  page === 1 ||
+                  page === totalPages ||
+                  (page >= currentPage - 1 && page <= currentPage + 1)
+
+                if (!showPage) {
+                  // Show ellipsis
+                  if (page === currentPage - 2 || page === currentPage + 2) {
+                    return (
+                      <span key={page} className="px-2 text-gray-600">
+                        ...
+                      </span>
+                    )
+                  }
+                  return null
+                }
+
+                return (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={cn(
+                      'px-3 py-1 rounded-lg text-sm font-medium transition-colors',
+                      currentPage === page
+                        ? 'bg-emerald-600 text-white'
+                        : 'text-gray-400 hover:text-white hover:bg-white/10'
+                    )}
+                  >
+                    {page}
+                  </button>
+                )
+              })}
+            </div>
+
+            <button
+              onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+              disabled={currentPage === totalPages}
+              className={cn(
+                'p-2 rounded-lg transition-colors',
+                currentPage === totalPages
+                  ? 'text-gray-600 cursor-not-allowed'
+                  : 'text-gray-400 hover:text-white hover:bg-white/10'
+              )}
+              aria-label="Next page"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
