@@ -9,39 +9,20 @@
  * Used in multi-tenancy scenarios where users have access to multiple clients.
  */
 
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useClient } from '@/contexts/ClientContext'
-import { getClients, type Client } from '@/api/clients'
+import { useClients } from '@/hooks/useClients'
 
 export function ClientSelector() {
   const { clientId, setClientId } = useClient()
-  const [clients, setClients] = useState<Client[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { data: clients = [], isLoading, error } = useClients()
 
-  // Fetch available clients
+  // Auto-select first client if none selected
   useEffect(() => {
-    const fetchClients = async () => {
-      try {
-        setIsLoading(true)
-        setError(null)
-        const data = await getClients()
-        setClients(data)
-
-        // Auto-select first client if none selected
-        if (!clientId && data.length > 0) {
-          setClientId(data[0].id)
-        }
-      } catch (err) {
-        console.error('Failed to fetch clients:', err)
-        setError('Failed to load clients')
-      } finally {
-        setIsLoading(false)
-      }
+    if (!clientId && clients.length > 0) {
+      setClientId(clients[0].id)
     }
-
-    fetchClients()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [clientId, clients, setClientId])
 
   if (isLoading) {
     return (
@@ -52,10 +33,18 @@ export function ClientSelector() {
     )
   }
 
-  if (error || clients.length === 0) {
+  if (error) {
     return (
       <div className="px-3 py-2 text-sm text-red-400">
-        {error || 'No clients available'}
+        Failed to load clients
+      </div>
+    )
+  }
+
+  if (!isLoading && clients.length === 0) {
+    return (
+      <div className="px-3 py-2 text-sm text-gray-400">
+        No clients available
       </div>
     )
   }

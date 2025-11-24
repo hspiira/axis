@@ -8,18 +8,23 @@
 
 import { RouterProvider } from 'react-router-dom'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { Toaster } from './components/Toaster'
 import { AuthProvider } from './contexts/AuthContext'
 import { ClientProvider } from './contexts/ClientContext'
+import { QueryClientProvider, queryClient } from './lib/react-query'
 import { router } from './router'
 
 function App() {
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <ClientProvider>
-          <RouterProvider router={router} />
-        </ClientProvider>
-      </AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <ClientProvider>
+            <RouterProvider router={router} />
+            <Toaster />
+          </ClientProvider>
+        </AuthProvider>
+      </QueryClientProvider>
     </ErrorBoundary>
   )
 }

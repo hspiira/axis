@@ -9,7 +9,7 @@ import { AppLayout } from '@/components/AppLayout'
 export function ContractsPage() {
   return (
     <AppLayout>
-      <div className="max-w-7xl mx-auto px-6 py-12">
+      <div className="max-w-7xl mx-auto px-4 lg:px-6 py-6 lg:py-12">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-white mb-2">Provider Network</h1>
           <p className="text-gray-400">
