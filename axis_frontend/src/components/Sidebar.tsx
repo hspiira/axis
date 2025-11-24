@@ -100,7 +100,7 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
         {/* Search Section */}
         <div className="px-3 py-2">
           <button
-            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-all"
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-emerald-300 hover:bg-emerald-500/10 transition-all"
             onClick={() => {
               // TODO: Implement search functionality
             }}
@@ -124,8 +124,8 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
                   className={cn(
                     'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all',
                     isActive
-                      ? 'bg-white/10 text-white'
-                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                      : 'text-gray-400 hover:text-emerald-300 hover:bg-emerald-500/10'
                   )}
                 >
                   <Icon className="h-5 w-5 flex-shrink-0" />
@@ -141,9 +141,9 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
           <Link
             to="/profile"
             onClick={onClose}
-            className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-white/5 transition-all group"
+            className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-emerald-500/10 transition-all group"
           >
-            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">
+            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">
               {getUserInitials()}
             </div>
             <div className="flex-1 min-w-0">
@@ -151,7 +151,7 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
                 {getUserDisplayName()}
               </p>
             </div>
-            <ChevronRight className="h-4 w-4 flex-shrink-0 text-gray-400 group-hover:text-white transition-colors" />
+            <ChevronRight className="h-4 w-4 flex-shrink-0 text-gray-400 group-hover:text-emerald-300 transition-colors" />
           </Link>
         </div>
     </aside>

@@ -21,7 +21,7 @@ export function CasesPage() {
       <div className="max-w-7xl mx-auto px-4 lg:px-6 py-6">
 
         <div className="bg-white/5 border border-white/10 rounded-xl p-12 text-center">
-          <div className="text-purple-400 mb-4 inline-block">
+          <div className="text-emerald-400 mb-4 inline-block">
             <svg className="h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
@@ -30,7 +30,7 @@ export function CasesPage() {
           <p className="text-gray-400 mb-6">
             Case management interface will be implemented here
           </p>
-          <button className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-all">
+          <button className="px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-all">
             Create New Case
           </button>
         </div>

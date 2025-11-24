@@ -36,24 +36,24 @@ export function Logo({ size = 'md', className = '', showText = true }: LogoProps
           <circle cx="16" cy="46" r="2.5" fill="url(#accentGradient)" opacity="0.5"/>
           <circle cx="48" cy="46" r="2.5" fill="url(#accentGradient)" opacity="0.5"/>
           
-          {/* Gradient definitions */}
+          {/* Gradient definitions - Wellness colors */}
           <defs>
             <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#9333ea" stopOpacity="1" />
-              <stop offset="100%" stopColor="#ec4899" stopOpacity="1" />
+              <stop offset="0%" stopColor="#10b981" stopOpacity="1" />
+              <stop offset="100%" stopColor="#14b8a6" stopOpacity="1" />
             </linearGradient>
             <linearGradient id="mainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#a855f7" stopOpacity="1" />
-              <stop offset="50%" stopColor="#ec4899" stopOpacity="1" />
-              <stop offset="100%" stopColor="#f43f5e" stopOpacity="1" />
+              <stop offset="0%" stopColor="#10b981" stopOpacity="1" />
+              <stop offset="50%" stopColor="#14b8a6" stopOpacity="1" />
+              <stop offset="100%" stopColor="#06b6d4" stopOpacity="1" />
             </linearGradient>
             <linearGradient id="crossbarGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#f43f5e" stopOpacity="1" />
-              <stop offset="100%" stopColor="#ec4899" stopOpacity="1" />
+              <stop offset="0%" stopColor="#14b8a6" stopOpacity="1" />
+              <stop offset="100%" stopColor="#06b6d4" stopOpacity="1" />
             </linearGradient>
             <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#a855f7" stopOpacity="1" />
-              <stop offset="100%" stopColor="#ec4899" stopOpacity="1" />
+              <stop offset="0%" stopColor="#10b981" stopOpacity="1" />
+              <stop offset="100%" stopColor="#14b8a6" stopOpacity="1" />
             </linearGradient>
           </defs>
         </svg>

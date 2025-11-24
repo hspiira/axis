@@ -102,7 +102,7 @@ export function ProfilePage() {
           <h2 className="text-2xl font-bold text-white mb-6">Account Actions</h2>
 
           <div className="space-y-4">
-            <button className="w-full px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition-all text-left">
+            <button className="w-full px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-all text-left">
               Change Password
             </button>
 

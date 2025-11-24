@@ -125,10 +125,10 @@ function StatCard({ title, value, change, trend, icon }: StatCardProps) {
   return (
     <div className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 transition-all backdrop-blur-sm">
       <div className="flex items-center justify-between mb-4">
-        <div className="text-purple-400">{icon}</div>
+        <div className="text-emerald-400">{icon}</div>
         <span
           className={`text-sm font-medium ${
-            trend === 'up' ? 'text-green-400' : 'text-red-400'
+            trend === 'up' ? 'text-emerald-400' : 'text-rose-400'
           }`}
         >
           {change}
@@ -151,12 +151,12 @@ function QuickActionCard({ title, description, href, icon }: QuickActionCardProp
   return (
     <Link
       to={href}
-      className="group bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 hover:border-purple-500/30 transition-all backdrop-blur-sm hover:scale-105"
+      className="group bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/10 hover:border-emerald-500/30 transition-all backdrop-blur-sm hover:scale-105"
     >
-      <div className="text-purple-400 mb-4 group-hover:scale-110 transition-transform">
+      <div className="text-emerald-400 mb-4 group-hover:scale-110 transition-transform">
         {icon}
       </div>
-      <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-purple-300 transition-colors">
+      <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-emerald-300 transition-colors">
         {title}
       </h3>
       <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors">
