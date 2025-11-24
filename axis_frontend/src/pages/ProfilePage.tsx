@@ -4,13 +4,21 @@
  * Displays and manages user profile and account settings.
  */
 
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
+import { usePageTitle } from '@/contexts/PageTitleContext'
 import { AppLayout } from '@/components/AppLayout'
 
 export function ProfilePage() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const { setPageTitle } = usePageTitle()
+
+  useEffect(() => {
+    setPageTitle('Profile Settings', 'Manage your account settings and preferences')
+    return () => setPageTitle(null)
+  }, [setPageTitle])
 
   const handleLogout = async () => {
     await logout()
@@ -19,13 +27,7 @@ export function ProfilePage() {
 
   return (
     <AppLayout>
-      <div className="max-w-4xl mx-auto px-4 lg:px-6 py-6 lg:py-12">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Profile Settings</h1>
-          <p className="text-gray-400">
-            Manage your account settings and preferences
-          </p>
-        </div>
+      <div className="max-w-4xl mx-auto px-4 lg:px-6 py-6">
 
         {/* User Info Card */}
         <div className="bg-white/5 border border-white/10 rounded-xl p-8 mb-6">

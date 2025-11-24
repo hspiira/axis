@@ -5,28 +5,30 @@
  * Displays overview metrics and quick actions.
  */
 
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
+import { usePageTitle } from '@/contexts/PageTitleContext'
 import { AppLayout } from '@/components/AppLayout'
 
 export function DashboardPage() {
   const { user } = useAuth()
+  const { setPageTitle } = usePageTitle()
+
+  useEffect(() => {
+    setPageTitle(
+      `Welcome back, ${user?.first_name || user?.email || 'User'}`,
+      "Here's what's happening with your wellness programs today."
+    )
+    return () => setPageTitle(null)
+  }, [user, setPageTitle])
 
   return (
     <AppLayout>
-      <div className="w-full max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-12">
-          <h1 className="text-4xl font-bold text-white mb-2">
-            Welcome back, {user?.first_name || user?.email || 'User'}
-          </h1>
-          <p className="text-gray-400">
-            Here's what's happening with your wellness programs today.
-          </p>
-        </div>
+      <div className="w-full max-w-7xl mx-auto px-4 lg:px-6 py-6">
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
           <StatCard
             title="Active Cases"
             value="1,247"

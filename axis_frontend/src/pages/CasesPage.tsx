@@ -4,18 +4,21 @@
  * Displays and manages employee wellness cases.
  */
 
+import { useEffect } from 'react'
 import { AppLayout } from '@/components/AppLayout'
+import { usePageTitle } from '@/contexts/PageTitleContext'
 
 export function CasesPage() {
+  const { setPageTitle } = usePageTitle()
+
+  useEffect(() => {
+    setPageTitle('Cases Management', 'View and manage employee wellness cases')
+    return () => setPageTitle(null)
+  }, [setPageTitle])
+
   return (
     <AppLayout>
-      <div className="max-w-7xl mx-auto px-4 lg:px-6 py-6 lg:py-12">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Cases Management</h1>
-          <p className="text-gray-400">
-            View and manage employee wellness cases
-          </p>
-        </div>
+      <div className="max-w-7xl mx-auto px-4 lg:px-6 py-6">
 
         <div className="bg-white/5 border border-white/10 rounded-xl p-12 text-center">
           <div className="text-purple-400 mb-4 inline-block">

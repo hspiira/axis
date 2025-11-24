@@ -11,6 +11,7 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 import { Toaster } from './components/Toaster'
 import { AuthProvider } from './contexts/AuthContext'
 import { ClientProvider } from './contexts/ClientContext'
+import { PageTitleProvider } from './contexts/PageTitleContext'
 import { QueryClientProvider, queryClient } from './lib/react-query'
 import { router } from './router'
 
@@ -20,8 +21,10 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <ClientProvider>
-            <RouterProvider router={router} />
-            <Toaster />
+            <PageTitleProvider>
+              <RouterProvider router={router} />
+              <Toaster />
+            </PageTitleProvider>
           </ClientProvider>
         </AuthProvider>
       </QueryClientProvider>
