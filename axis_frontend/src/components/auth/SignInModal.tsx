@@ -159,7 +159,7 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
             </label>
             <div className="relative group">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10">
-                <Mail className="h-5 w-5 text-gray-500 group-focus-within:text-purple-400 transition-colors" strokeWidth={2} />
+                <Mail className="h-5 w-5 text-gray-500 group-focus-within:text-emerald-400 transition-colors" strokeWidth={2} />
               </div>
               <input
                 id="email"
@@ -168,7 +168,7 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
                 className={cn(
                   'w-full pl-12 pr-4 py-3.5 bg-white/5 border rounded-xl',
                   'text-white placeholder-gray-500',
-                  'focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50',
+                  'focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50',
                   'transition-all duration-200',
                   'backdrop-blur-sm',
                   errors.email
@@ -194,7 +194,7 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
             </label>
             <div className="relative group">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10">
-                <Lock className="h-5 w-5 text-gray-500 group-focus-within:text-purple-400 transition-colors" strokeWidth={2} />
+                <Lock className="h-5 w-5 text-gray-500 group-focus-within:text-emerald-400 transition-colors" strokeWidth={2} />
               </div>
               <input
                 id="password"
@@ -203,7 +203,7 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
                 className={cn(
                   'w-full pl-12 pr-12 py-3.5 bg-white/5 border rounded-xl',
                   'text-white placeholder-gray-500',
-                  'focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50',
+                  'focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50',
                   'transition-all duration-200',
                   'backdrop-blur-sm',
                   errors.password
@@ -217,7 +217,7 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-purple-400 transition-colors z-10"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-emerald-400 transition-colors z-10"
                 tabIndex={-1}
               >
                 {showPassword ? (
@@ -240,12 +240,12 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
             disabled={isSubmitting || isLoading}
             className={cn(
               'w-full py-3.5 px-4 rounded-xl font-semibold',
-              'bg-gradient-to-r from-purple-600 to-purple-700 text-white',
-              'hover:from-purple-700 hover:to-purple-800',
-              'focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-black',
+              'bg-gradient-to-r from-emerald-600 to-emerald-700 text-white',
+              'hover:from-emerald-700 hover:to-emerald-800',
+              'focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:ring-offset-2 focus:ring-offset-black',
               'transition-all duration-200',
               'disabled:opacity-50 disabled:cursor-not-allowed',
-              'shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40',
+              'shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/40',
               'transform hover:scale-[1.02] active:scale-[0.98]'
             )}
           >

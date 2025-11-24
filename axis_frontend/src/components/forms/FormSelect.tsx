@@ -62,9 +62,9 @@ export const FormSelect = forwardRef<HTMLSelectElement, FormSelectProps>(
           <select
             ref={ref}
             className={cn(
-              'w-full py-3.5 px-4 pr-10 bg-white/5 border rounded-xl',
-              'text-white',
-              'focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50',
+              'w-full py-2 px-3 pr-10 bg-white/5 border rounded-lg',
+              'text-white text-sm',
+              'focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50',
               'transition-all duration-200',
               'backdrop-blur-sm',
               'appearance-none cursor-pointer',
@@ -89,8 +89,8 @@ export const FormSelect = forwardRef<HTMLSelectElement, FormSelectProps>(
           </select>
 
           {/* Dropdown Arrow */}
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"

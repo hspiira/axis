@@ -49,12 +49,12 @@ export const FormTextarea = forwardRef<HTMLTextAreaElement, FormTextareaProps>(
         <textarea
           ref={ref}
           className={cn(
-            'w-full py-3.5 px-4 bg-white/5 border rounded-xl',
-            'text-white placeholder-gray-500',
-            'focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50',
+            'w-full py-2 px-3 bg-white/5 border rounded-lg',
+            'text-white placeholder-gray-500 text-sm',
+            'focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50',
             'transition-all duration-200',
             'backdrop-blur-sm',
-            'resize-y min-h-[100px]',
+            'resize-y min-h-[80px]',
             'disabled:opacity-50 disabled:cursor-not-allowed',
             error
               ? 'border-red-900/50 focus:ring-red-500/50 focus:border-red-500/50'

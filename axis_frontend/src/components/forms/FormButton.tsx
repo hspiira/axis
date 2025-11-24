@@ -21,9 +21,9 @@ export interface FormButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>
 
 const variantClasses = {
   primary: cn(
-    'bg-gradient-to-r from-purple-600 to-purple-700 text-white',
-    'hover:from-purple-700 hover:to-purple-800',
-    'shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40'
+    'bg-gradient-to-r from-emerald-600 to-emerald-700 text-white',
+    'hover:from-emerald-700 hover:to-emerald-800',
+    'shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/40'
   ),
   secondary: cn(
     'bg-white/5 border border-white/10 text-white',
@@ -69,8 +69,8 @@ export const FormButton = forwardRef<HTMLButtonElement, FormButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         className={cn(
-          'py-3.5 px-6 rounded-xl font-semibold',
-          'focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-black',
+          'py-2.5 px-5 rounded-lg font-semibold text-sm',
+          'focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:ring-offset-2 focus:ring-offset-black',
           'transition-all duration-200',
           'disabled:opacity-50 disabled:cursor-not-allowed',
           'transform hover:scale-[1.02] active:scale-[0.98]',
