@@ -11,18 +11,30 @@ import { apiClient } from './axios-config'
 export interface Client {
   id: string
   name: string
-  industry: string
+  email: string
+  phone: string | null
+  industry_name: string
   status: string
+  is_verified: boolean
+  is_active: boolean
   created_at: string
   updated_at: string
+}
+
+interface PaginatedResponse<T> {
+  results: T[]
+  count: number
+  page: number
+  page_size: number
+  total_pages: number
 }
 
 /**
  * Fetch all clients
  */
 export async function getClients(): Promise<Client[]> {
-  const response = await apiClient.get<Client[]>('/clients/')
-  return response.data
+  const response = await apiClient.get<PaginatedResponse<Client>>('/clients/')
+  return response.data.results
 }
 
 /**

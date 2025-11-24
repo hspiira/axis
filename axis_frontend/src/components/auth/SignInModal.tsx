@@ -8,9 +8,10 @@
  */
 
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { X, Mail, Lock, Loader2 } from 'lucide-react'
+import { X, Mail, Lock, Loader2, Eye, EyeOff } from 'lucide-react'
 import { loginSchema, type LoginFormData } from '@/schemas/auth'
 import { useAuth } from '@/contexts/AuthContext'
 import { cn } from '@/lib/utils'
@@ -25,9 +26,11 @@ interface SignInModalProps {
  * Provides email/password authentication form.
  */
 export function SignInModal({ isOpen, onClose }: SignInModalProps) {
+  const navigate = useNavigate()
   const { login, isLoading, error } = useAuth()
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [isAnimating, setIsAnimating] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   const {
     register,
@@ -58,14 +61,27 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
 
   const onSubmit = async (data: LoginFormData) => {
     setSubmitError(null)
-    
+
     try {
       await login(data)
       reset()
       onClose()
+      // Navigate to dashboard after successful login
+      navigate('/dashboard')
     } catch (err) {
       const authError = err as { message?: string }
       setSubmitError(authError.message || 'Login failed. Please try again.')
+    }
+  }
+
+  const handleMicrosoftSignIn = async () => {
+    setSubmitError(null)
+    try {
+      // TODO: Implement Microsoft OAuth login
+      // This will be integrated with @azure/msal-react in Phase 2
+      setSubmitError('Microsoft sign-in coming soon')
+    } catch (err) {
+      setSubmitError('Microsoft sign-in failed')
     }
   }
 
@@ -81,10 +97,9 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center p-4"
-      onClick={handleClose}
     >
-      {/* Backdrop with blur */}
-      <div 
+      {/* Backdrop with blur - NO CLICK TO CLOSE */}
+      <div
         className={cn(
           'absolute inset-0 bg-black/90 backdrop-blur-md transition-opacity duration-300',
           isAnimating ? 'opacity-100' : 'opacity-0'
@@ -143,22 +158,24 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
               Email Address
             </label>
             <div className="relative group">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-600 group-focus-within:text-gray-400 transition-colors" />
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10">
+                <Mail className="h-5 w-5 text-gray-500 group-focus-within:text-purple-400 transition-colors" strokeWidth={2} />
+              </div>
               <input
                 id="email"
                 type="email"
                 {...register('email')}
                 className={cn(
                   'w-full pl-12 pr-4 py-3.5 bg-white/5 border rounded-xl',
-                  'text-white placeholder-gray-600',
-                  'focus:outline-none focus:ring-1 focus:ring-white/20 focus:border-white/20',
+                  'text-white placeholder-gray-500',
+                  'focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50',
                   'transition-all duration-200',
                   'backdrop-blur-sm',
                   errors.email
-                    ? 'border-red-900/50 focus:ring-red-900/50 focus:border-red-900/50'
-                    : 'border-white/10 hover:border-white/15 hover:bg-white/[0.07]'
+                    ? 'border-red-900/50 focus:ring-red-500/50 focus:border-red-500/50'
+                    : 'border-white/10 hover:border-white/20 hover:bg-white/[0.07]'
                 )}
-                placeholder="you@example.com"
+                placeholder="admin@alchamey.eap"
                 autoComplete="email"
                 disabled={isSubmitting || isLoading}
               />
@@ -176,25 +193,39 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
               Password
             </label>
             <div className="relative group">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-600 group-focus-within:text-gray-400 transition-colors" />
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10">
+                <Lock className="h-5 w-5 text-gray-500 group-focus-within:text-purple-400 transition-colors" strokeWidth={2} />
+              </div>
               <input
                 id="password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 {...register('password')}
                 className={cn(
-                  'w-full pl-12 pr-4 py-3.5 bg-white/5 border rounded-xl',
-                  'text-white placeholder-gray-600',
-                  'focus:outline-none focus:ring-1 focus:ring-white/20 focus:border-white/20',
+                  'w-full pl-12 pr-12 py-3.5 bg-white/5 border rounded-xl',
+                  'text-white placeholder-gray-500',
+                  'focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50',
                   'transition-all duration-200',
                   'backdrop-blur-sm',
                   errors.password
-                    ? 'border-red-900/50 focus:ring-red-900/50 focus:border-red-900/50'
-                    : 'border-white/10 hover:border-white/15 hover:bg-white/[0.07]'
+                    ? 'border-red-900/50 focus:ring-red-500/50 focus:border-red-500/50'
+                    : 'border-white/10 hover:border-white/20 hover:bg-white/[0.07]'
                 )}
                 placeholder="Enter your password"
                 autoComplete="current-password"
                 disabled={isSubmitting || isLoading}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-purple-400 transition-colors z-10"
+                tabIndex={-1}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" strokeWidth={2} />
+                ) : (
+                  <Eye className="h-5 w-5" strokeWidth={2} />
+                )}
+              </button>
             </div>
             {errors.password && (
               <p className="text-sm text-red-400 animate-in fade-in slide-in-from-top-1">
@@ -208,13 +239,13 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
             type="submit"
             disabled={isSubmitting || isLoading}
             className={cn(
-              'w-full py-3.5 px-4 rounded-xl font-semibold text-white',
-              'bg-white text-black',
-              'hover:bg-gray-100 active:bg-gray-200',
-              'focus:outline-none focus:ring-2 focus:ring-white/20 focus:ring-offset-2 focus:ring-offset-black',
+              'w-full py-3.5 px-4 rounded-xl font-semibold',
+              'bg-gradient-to-r from-purple-600 to-purple-700 text-white',
+              'hover:from-purple-700 hover:to-purple-800',
+              'focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:ring-offset-2 focus:ring-offset-black',
               'transition-all duration-200',
-              'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white',
-              'shadow-lg shadow-black/50 hover:shadow-xl hover:shadow-black/50',
+              'disabled:opacity-50 disabled:cursor-not-allowed',
+              'shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40',
               'transform hover:scale-[1.02] active:scale-[0.98]'
             )}
           >
@@ -224,15 +255,50 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
                 Signing in...
               </span>
             ) : (
-              'Sign In'
+              'Sign In with Email'
             )}
           </button>
 
+          {/* Divider */}
+          <div className="relative py-4">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-white/10"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-4 bg-black text-gray-500">Or continue with</span>
+            </div>
+          </div>
+
+          {/* Microsoft Sign In */}
+          <button
+            type="button"
+            onClick={handleMicrosoftSignIn}
+            disabled={isSubmitting || isLoading}
+            className={cn(
+              'w-full py-3.5 px-4 rounded-xl font-semibold',
+              'bg-white/5 border border-white/10 text-white',
+              'hover:bg-white/10 hover:border-white/20',
+              'focus:outline-none focus:ring-2 focus:ring-white/20 focus:ring-offset-2 focus:ring-offset-black',
+              'transition-all duration-200',
+              'disabled:opacity-50 disabled:cursor-not-allowed',
+              'transform hover:scale-[1.02] active:scale-[0.98]',
+              'flex items-center justify-center gap-3'
+            )}
+          >
+            <svg className="h-5 w-5" viewBox="0 0 21 21" fill="none">
+              <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
+              <rect x="1" y="11" width="9" height="9" fill="#00A4EF"/>
+              <rect x="11" y="1" width="9" height="9" fill="#7FBA00"/>
+              <rect x="11" y="11" width="9" height="9" fill="#FFB900"/>
+            </svg>
+            Sign in with Microsoft
+          </button>
+
           {/* Footer Links */}
-          <div className="pt-2 text-center">
+          <div className="pt-4 space-y-3 text-center border-t border-white/5">
             <a
               href="#forgot-password"
-              className="text-sm text-gray-500 hover:text-gray-400 transition-colors duration-200"
+              className="block text-sm text-gray-500 hover:text-gray-400 transition-colors duration-200"
               onClick={(e) => {
                 e.preventDefault()
                 // TODO: Implement forgot password flow
@@ -240,6 +306,9 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
             >
               Forgot your password?
             </a>
+            <p className="text-xs text-gray-600">
+              By signing in, you agree to our Terms of Service and Privacy Policy
+            </p>
           </div>
         </form>
       </div>
