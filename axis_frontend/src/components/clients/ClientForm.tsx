@@ -55,7 +55,7 @@ export function ClientForm({ initialData, onSubmit, onCancel, isLoading = false 
     watch,
     trigger,
   } = useForm<ClientFormValues>({
-    resolver: zodResolver(clientFormSchema),
+    resolver: zodResolver(clientFormSchema) as any,
     defaultValues: {
       name: initialData?.name || '',
       email: initialData?.email || '',

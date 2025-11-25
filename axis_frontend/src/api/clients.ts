@@ -9,24 +9,28 @@
 import { apiClient } from './axios-config'
 
 // =========================================
-// Enums
+// Enums (as const objects for erasableSyntaxOnly compatibility)
 // =========================================
 
-export enum BaseStatus {
-  ACTIVE = 'Active',
-  INACTIVE = 'Inactive',
-  PENDING = 'Pending',
-  ARCHIVED = 'Archived',
-  DELETED = 'Deleted',
-}
+export const BaseStatus = {
+  ACTIVE: 'Active',
+  INACTIVE: 'Inactive',
+  PENDING: 'Pending',
+  ARCHIVED: 'Archived',
+  DELETED: 'Deleted',
+} as const
 
-export enum ContactMethod {
-  EMAIL = 'Email',
-  PHONE = 'Phone',
-  SMS = 'SMS',
-  WHATSAPP = 'WhatsApp',
-  OTHER = 'Other',
-}
+export type BaseStatus = (typeof BaseStatus)[keyof typeof BaseStatus]
+
+export const ContactMethod = {
+  EMAIL: 'Email',
+  PHONE: 'Phone',
+  SMS: 'SMS',
+  WHATSAPP: 'WhatsApp',
+  OTHER: 'Other',
+} as const
+
+export type ContactMethod = (typeof ContactMethod)[keyof typeof ContactMethod]
 
 // =========================================
 // Industry Types

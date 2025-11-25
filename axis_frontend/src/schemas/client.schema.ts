@@ -69,8 +69,8 @@ export const clientFormSchema = z
     industry_id: z.string().optional(),
 
     // Enums
-    status: z.nativeEnum(BaseStatus).default(BaseStatus.ACTIVE),
-    preferred_contact_method: z.nativeEnum(ContactMethod).optional(),
+    status: z.enum(Object.values(BaseStatus) as [BaseStatus, ...BaseStatus[]]).default(BaseStatus.ACTIVE),
+    preferred_contact_method: z.enum(Object.values(ContactMethod) as [ContactMethod, ...ContactMethod[]]).optional().nullable(),
 
     // Boolean
     is_verified: z.boolean().default(false),
@@ -100,7 +100,7 @@ export type ClientFormValues = z.infer<typeof clientFormSchema>
 export const clientSearchSchema = z.object({
   name: z.string().optional(),
   email: z.string().optional(),
-  status: z.nativeEnum(BaseStatus).optional(),
+  status: z.enum(Object.values(BaseStatus) as [BaseStatus, ...BaseStatus[]]).optional(),
   industry_id: z.string().optional(),
   is_verified: z.boolean().optional(),
 })

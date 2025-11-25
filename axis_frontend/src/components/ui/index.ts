@@ -7,3 +7,4 @@
 export { ConfirmDialog, type ConfirmDialogVariant } from './ConfirmDialog'
 export { DetailModal, type DetailSection, type DetailItem } from './DetailModal'
 export { StatusBadge, getStatusColor } from './StatusBadge'
+export { SearchInput } from './SearchInput'

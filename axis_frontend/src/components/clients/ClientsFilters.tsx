@@ -7,28 +7,61 @@
  */
 
 import { useState } from 'react'
-import { Search, X, Filter, Plus } from 'lucide-react'
+import { X, Filter, Plus, Download } from 'lucide-react'
 import { BaseStatus, type ClientSearchParams } from '@/api/clients'
 import { useIndustries } from '@/hooks/useClients'
 import { cn } from '@/lib/utils'
+import { SearchInput } from '@/components/ui/SearchInput'
 
 interface ClientsFiltersProps {
   filters: ClientSearchParams
   onFiltersChange: (filters: ClientSearchParams) => void
   onCreate?: () => void
+  onExport?: () => void
+  isExporting?: boolean
 }
 
-export function ClientsFilters({ filters, onFiltersChange, onCreate }: ClientsFiltersProps) {
+export function ClientsFilters({
+  filters,
+  onFiltersChange,
+  onCreate,
+  onExport,
+  isExporting = false,
+}: ClientsFiltersProps) {
   const [isOpen, setIsOpen] = useState(false)
   const { data: industriesData, isLoading: industriesLoading } = useIndustries()
   // Ensure industries is always an array
   const industries = Array.isArray(industriesData) ? industriesData : []
 
   const updateFilter = (key: keyof ClientSearchParams, value: string | boolean | undefined) => {
-    onFiltersChange({
-      ...filters,
-      [key]: value || undefined,
-    })
+    const newFilters = { ...filters }
+
+    if (value === undefined || value === '') {
+      delete newFilters[key]
+    } else {
+      newFilters[key] = value as any
+    }
+
+    onFiltersChange(newFilters)
+  }
+
+  const handleSearchChange = (value: string) => {
+    const trimmedValue = value.trim()
+
+    if (!trimmedValue) {
+      // Clear both name and email when search is empty
+      const newFilters = { ...filters }
+      delete newFilters.name
+      delete newFilters.email
+      onFiltersChange(newFilters)
+    } else {
+      // Update name filter (backend will handle partial matching)
+      updateFilter('name', trimmedValue)
+      // Clear email filter when searching by name
+      const newFilters = { ...filters, name: trimmedValue }
+      delete newFilters.email
+      onFiltersChange(newFilters)
+    }
   }
 
   const clearFilters = () => {
@@ -36,31 +69,19 @@ export function ClientsFilters({ filters, onFiltersChange, onCreate }: ClientsFi
   }
 
   const hasActiveFilters = Object.keys(filters).length > 0
+  const searchValue = filters.name || filters.email || ''
 
   return (
     <div className="bg-white/5 border border-white/10 rounded-lg p-4">
       {/* Search Bar */}
       <div className="flex items-center gap-3 mb-4">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search by name or email..."
-            value={filters.name || filters.email || ''}
-            onChange={(e) => {
-              const value = e.target.value
-              // Search both name and email
-              if (value.includes('@')) {
-                updateFilter('email', value)
-                updateFilter('name', undefined)
-              } else {
-                updateFilter('name', value)
-                updateFilter('email', undefined)
-              }
-            }}
-            className="w-full pl-10 pr-4 py-2 bg-gray-800/50 border border-white/10 rounded-lg text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
-          />
-        </div>
+        <SearchInput
+          value={searchValue}
+          onChange={handleSearchChange}
+          placeholder="Search by name or email..."
+          className="flex-1"
+          debounceMs={300}
+        />
         <button
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
@@ -85,6 +106,21 @@ export function ClientsFilters({ filters, onFiltersChange, onCreate }: ClientsFi
           >
             <X className="h-4 w-4" />
             Clear
+          </button>
+        )}
+        {onExport && (
+          <button
+            onClick={onExport}
+            disabled={isExporting}
+            className={cn(
+              'px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2',
+              isExporting
+                ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                : 'bg-gray-700 text-white hover:bg-gray-600'
+            )}
+          >
+            <Download className="h-4 w-4" />
+            {isExporting ? 'Exporting...' : 'Export CSV'}
           </button>
         )}
         {onCreate && (

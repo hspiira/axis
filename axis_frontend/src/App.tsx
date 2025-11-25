@@ -22,8 +22,8 @@ function App() {
         <AuthProvider>
           <ClientProvider>
             <PageTitleProvider>
-              <RouterProvider router={router} />
-              <Toaster />
+            <RouterProvider router={router} />
+            <Toaster />
             </PageTitleProvider>
           </ClientProvider>
         </AuthProvider>
