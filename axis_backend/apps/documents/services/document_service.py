@@ -38,8 +38,9 @@ class DocumentService(BaseService[Document]):
         self,
         title: str,
         type: str,
-        url: str,
         uploaded_by_id: str,
+        file=None,
+        url: Optional[str] = None,
         description: Optional[str] = None,
         file_size: Optional[int] = None,
         file_type: Optional[str] = None,
@@ -54,7 +55,7 @@ class DocumentService(BaseService[Document]):
         Create new document with validation.
 
         Business Rules:
-        - Title and URL are required
+        - Title and either file or URL are required
         - Document type must be valid
         - File size must be positive if provided
         - Expiry date must be in future if provided
@@ -64,8 +65,9 @@ class DocumentService(BaseService[Document]):
         Args:
             title: Document title
             type: DocumentType choice
-            url: Document file URL (cloud storage)
             uploaded_by_id: User ID who uploaded
+            file: Document file upload (alternative to URL)
+            url: Document file URL (alternative to file upload)
             description: Optional description
             file_size: File size in bytes
             file_type: MIME type
@@ -86,8 +88,8 @@ class DocumentService(BaseService[Document]):
         if not title or not title.strip():
             raise ValidationError({'title': 'Document title is required'})
 
-        if not url or not url.strip():
-            raise ValidationError({'url': 'Document URL is required'})
+        if not file and not url:
+            raise ValidationError({'file': 'Either file upload or URL is required'})
 
         if not type:
             raise ValidationError({'type': 'Document type is required'})
@@ -150,7 +152,8 @@ class DocumentService(BaseService[Document]):
             title=title.strip(),
             description=description.strip() if description else None,
             type=type,
-            url=url.strip(),
+            file=file,
+            url=url.strip() if url else None,
             file_size=file_size,
             file_type=file_type,
             uploaded_by_id=uploaded_by_id,
@@ -278,10 +281,10 @@ class DocumentService(BaseService[Document]):
                 'expiry_date': 'Cannot publish expired document'
             })
 
-        # Validate URL exists
-        if not document.url:
+        # Validate either file or URL exists
+        if not document.file and not document.url:
             raise ValidationError({
-                'url': 'Document must have a valid URL to be published'
+                'file': 'Document must have a valid file or URL to be published'
             })
 
         # Publish document
@@ -340,8 +343,9 @@ class DocumentService(BaseService[Document]):
     def create_new_version(
         self,
         document_id: str,
-        url: str,
         uploaded_by_id: str,
+        file=None,
+        url: Optional[str] = None,
         description: Optional[str] = None
     ) -> Document:
         """
@@ -350,14 +354,15 @@ class DocumentService(BaseService[Document]):
         Business Rules:
         - Original document must exist
         - Original must be latest version
-        - URL must be different from original
+        - Either file or URL must be provided
         - New version starts in DRAFT status
         - Previous version is marked as not latest
 
         Args:
             document_id: Original document ID
-            url: New document file URL
             uploaded_by_id: User creating new version
+            file: New document file (alternative to URL)
+            url: New document file URL (alternative to file)
             description: Optional updated description
 
         Returns:
@@ -378,10 +383,10 @@ class DocumentService(BaseService[Document]):
                 'is_latest': 'Can only create new version from the latest version'
             })
 
-        # Validate URL is different
-        if url == original.url:
+        # Validate either file or URL is provided
+        if not file and not url:
             raise ValidationError({
-                'url': 'New version must have a different URL'
+                'file': 'Either file upload or URL is required for new version'
             })
 
         # Validate uploader exists
@@ -394,7 +399,7 @@ class DocumentService(BaseService[Document]):
             })
 
         # Create new version using model method
-        new_version = original.create_new_version(url=url, uploaded_by=user)
+        new_version = original.create_new_version(file=file, url=url, uploaded_by=user)
 
         # Update description if provided
         if description:

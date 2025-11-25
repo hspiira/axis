@@ -1,6 +1,7 @@
 """Serializers for Client model."""
 from rest_framework import serializers
-from apps.clients.models import Client
+from apps.clients.models import Client, ClientTag
+from apps.clients.serializers.tag_serializer import ClientTagListSerializer
 from axis_backend.serializers.base import (
     BaseListSerializer,
     BaseDetailSerializer,
@@ -27,6 +28,9 @@ class ClientListSerializer(BaseListSerializer, NestedRelationshipMixin):
         allow_null=True
     )
     is_active = serializers.BooleanField(read_only=True)
+    tags = ClientTagListSerializer(many=True, read_only=True)
+    parent_client_name = serializers.CharField(source='parent_client.name', read_only=True, allow_null=True)
+    subsidiaries_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Client
@@ -39,10 +43,18 @@ class ClientListSerializer(BaseListSerializer, NestedRelationshipMixin):
             'status',
             'is_verified',
             'is_active',
+            'tags',
+            'parent_client_name',
+            'subsidiaries_count',
+            'last_contact_date',
             'created_at',
             'updated_at',
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def get_subsidiaries_count(self, obj):
+        """Get count of subsidiary clients."""
+        return obj.subsidiaries.count()
 
 
 class ClientDetailSerializer(BaseDetailSerializer, TimestampMixin, NestedRelationshipMixin):
@@ -58,6 +70,19 @@ class ClientDetailSerializer(BaseDetailSerializer, TimestampMixin, NestedRelatio
     is_active = serializers.BooleanField(read_only=True)
     verified_status = serializers.BooleanField(read_only=True)
     primary_contact = serializers.SerializerMethodField()
+    tags = ClientTagListSerializer(many=True, read_only=True)
+    tag_ids = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=ClientTag.objects.all(),
+        source='tags',
+        write_only=True,
+        required=False
+    )
+    parent_client_name = serializers.CharField(source='parent_client.name', read_only=True, allow_null=True)
+    subsidiaries_count = serializers.SerializerMethodField()
+    contacts_count = serializers.SerializerMethodField()
+    activities_count = serializers.SerializerMethodField()
+    documents_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Client
@@ -83,6 +108,15 @@ class ClientDetailSerializer(BaseDetailSerializer, TimestampMixin, NestedRelatio
             'notes',
             'metadata',
             'primary_contact',
+            'tags',
+            'tag_ids',
+            'parent_client',
+            'parent_client_name',
+            'subsidiaries_count',
+            'last_contact_date',
+            'contacts_count',
+            'activities_count',
+            'documents_count',
             'created_at',
             'updated_at',
         ]
@@ -107,6 +141,22 @@ class ClientDetailSerializer(BaseDetailSerializer, TimestampMixin, NestedRelatio
     def get_primary_contact(self, obj):
         """Get primary contact information."""
         return obj.get_primary_contact()
+
+    def get_subsidiaries_count(self, obj):
+        """Get count of subsidiary clients."""
+        return obj.subsidiaries.count()
+
+    def get_contacts_count(self, obj):
+        """Get count of contacts."""
+        return obj.contacts.count()
+
+    def get_activities_count(self, obj):
+        """Get count of activities."""
+        return obj.activities.count()
+
+    def get_documents_count(self, obj):
+        """Get count of documents."""
+        return obj.documents.count()
 
 
 class ClientCreateSerializer(BaseCreateSerializer):

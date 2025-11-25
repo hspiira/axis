@@ -32,6 +32,47 @@ export const ContactMethod = {
 
 export type ContactMethod = (typeof ContactMethod)[keyof typeof ContactMethod]
 
+export const ContactRole = {
+  PRIMARY: 'Primary',
+  BILLING: 'Billing',
+  TECHNICAL: 'Technical',
+  EXECUTIVE: 'Executive',
+  LEGAL: 'Legal',
+  OTHER: 'Other',
+} as const
+
+export type ContactRole = (typeof ContactRole)[keyof typeof ContactRole]
+
+export const ActivityType = {
+  NOTE: 'Note',
+  CALL: 'Call',
+  EMAIL: 'Email',
+  MEETING: 'Meeting',
+  STATUS_CHANGE: 'StatusChange',
+  CONTRACT_SIGNED: 'ContractSigned',
+  PAYMENT_RECEIVED: 'PaymentReceived',
+  DOCUMENT_UPLOADED: 'DocumentUploaded',
+  VERIFICATION: 'Verification',
+  OTHER: 'Other',
+} as const
+
+export type ActivityType = (typeof ActivityType)[keyof typeof ActivityType]
+
+export const DocumentType = {
+  CONTRACT: 'Contract',
+  AGREEMENT: 'Agreement',
+  INVOICE: 'Invoice',
+  QUOTE: 'Quote',
+  PROPOSAL: 'Proposal',
+  REPORT: 'Report',
+  CERTIFICATE: 'Certificate',
+  LICENSE: 'License',
+  ID_DOCUMENT: 'IDDocument',
+  OTHER: 'Other',
+} as const
+
+export type DocumentType = (typeof DocumentType)[keyof typeof DocumentType]
+
 // =========================================
 // Industry Types
 // =========================================
@@ -49,8 +90,131 @@ export interface Industry {
 }
 
 // =========================================
+// Client Tag Types
+// =========================================
+
+export interface ClientTag {
+  id: string
+  name: string
+  slug: string
+  color: string
+  description: string | null
+  is_system: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface ClientTagList {
+  id: string
+  name: string
+  slug: string
+  color: string
+  client_count?: number
+}
+
+export interface ClientTagFormData {
+  name: string
+  color?: string
+  description?: string | null
+}
+
+// =========================================
+// Client Contact Types
+// =========================================
+
+export interface ClientContact {
+  id: string
+  client: string
+  client_name: string
+  first_name: string
+  last_name: string
+  full_name: string
+  email: string | null
+  phone: string | null
+  mobile: string | null
+  role: ContactRole | null
+  title: string | null
+  department: string | null
+  is_primary: boolean
+  preferred_contact_method: ContactMethod | null
+  is_active: boolean
+  notes: string | null
+  metadata: Record<string, unknown> | null
+  created_at: string
+  updated_at: string
+}
+
+export interface ClientContactList {
+  id: string
+  first_name: string
+  last_name: string
+  full_name: string
+  email: string | null
+  phone: string | null
+  role: ContactRole | null
+  title: string | null
+  is_primary: boolean
+  is_active: boolean
+}
+
+export interface ClientContactFormData {
+  first_name: string
+  last_name: string
+  email?: string | null
+  phone?: string | null
+  mobile?: string | null
+  role?: ContactRole | null
+  title?: string | null
+  department?: string | null
+  is_primary?: boolean
+  preferred_contact_method?: ContactMethod | null
+  is_active?: boolean
+  notes?: string | null
+  metadata?: Record<string, unknown> | null
+}
+
+// =========================================
+// Client Activity Types
+// =========================================
+
+export interface ClientActivity {
+  id: string
+  client: string
+  client_name: string
+  activity_type: ActivityType
+  title: string
+  description: string | null
+  activity_date: string
+  contact: string | null
+  contact_name: string | null
+  metadata: Record<string, unknown> | null
+  created_at: string
+  updated_at: string
+}
+
+export interface ClientActivityList {
+  id: string
+  activity_type: ActivityType
+  title: string
+  activity_date: string
+  contact_name: string | null
+  created_at: string
+}
+
+export interface ClientActivityFormData {
+  activity_type: ActivityType
+  title: string
+  description?: string | null
+  activity_date: string
+  contact?: string | null
+  metadata?: Record<string, unknown> | null
+}
+
+// =========================================
 // Client Types
 // =========================================
+// Note: Client documents are now managed through the unified Document model
+// See /api/documents/ with client filter: /api/documents/?client=<client_id>
 
 export interface ClientList {
   id: string
@@ -61,6 +225,10 @@ export interface ClientList {
   status: BaseStatus
   is_verified: boolean
   is_active: boolean
+  tags: ClientTagList[]
+  parent_client_name: string | null
+  subsidiaries_count: number
+  last_contact_date: string | null
   created_at: string
   updated_at: string
 }
@@ -86,6 +254,10 @@ export interface ClientDetail extends ClientList {
     email?: string
     phone?: string
   } | null
+  parent_client: string | null
+  contacts_count: number
+  activities_count: number
+  documents_count: number
   notes: string | null
   metadata: Record<string, unknown> | null
 }
@@ -113,6 +285,9 @@ export interface ClientFormData {
   status?: BaseStatus
   preferred_contact_method?: ContactMethod | null
   is_verified?: boolean
+  tag_ids?: string[]
+  parent_client?: string | null
+  last_contact_date?: string | null
   notes?: string | null
   metadata?: Record<string, unknown> | null
 }

@@ -97,6 +97,9 @@ class DocumentDetailSerializer(BaseDetailSerializer, TimestampMixin, NestedRelat
     # Computed fields
     is_expired = serializers.BooleanField(read_only=True)
     is_active = serializers.BooleanField(read_only=True)
+    filename = serializers.CharField(read_only=True)
+    file_extension = serializers.CharField(read_only=True)
+    file_url = serializers.CharField(read_only=True)
 
     class Meta:
         model = Document
@@ -106,9 +109,13 @@ class DocumentDetailSerializer(BaseDetailSerializer, TimestampMixin, NestedRelat
             'title',
             'description',
             'type',
+            'file',
             'url',
+            'file_url',
             'file_size',
             'file_type',
+            'filename',
+            'file_extension',
             # Versioning
             'version',
             'is_latest',
@@ -136,6 +143,7 @@ class DocumentDetailSerializer(BaseDetailSerializer, TimestampMixin, NestedRelat
         )
         read_only_fields = (
             'id', 'version', 'is_latest', 'previous_version_id',
+            'file_url', 'filename', 'file_extension',
             'is_expired', 'is_active', 'created_at', 'updated_at', 'deleted_at'
         )
 
@@ -152,8 +160,11 @@ class DocumentCreateSerializer(BaseCreateSerializer):
     # Required fields
     title = serializers.CharField(max_length=255)
     type = serializers.ChoiceField(choices=DocumentType.choices)
-    url = serializers.URLField()
     uploaded_by_id = serializers.CharField(write_only=True)
+
+    # File storage (one is required)
+    file = serializers.FileField(required=False, allow_null=True)
+    url = serializers.URLField(required=False, allow_null=True)
 
     # Optional fields
     description = serializers.CharField(required=False, allow_blank=True, allow_null=True)
@@ -195,6 +206,12 @@ class DocumentCreateSerializer(BaseCreateSerializer):
 
     def validate(self, attrs):
         """Cross-field validation."""
+        # Ensure either file or URL is provided
+        if not attrs.get('file') and not attrs.get('url'):
+            raise serializers.ValidationError(
+                "Either 'file' (upload) or 'url' (cloud storage) must be provided"
+            )
+
         # Validate contract belongs to client if both provided
         if attrs.get('contract_id') and attrs.get('client_id'):
             from apps.contracts.models import Contract
@@ -208,7 +225,7 @@ class DocumentCreateSerializer(BaseCreateSerializer):
                 raise serializers.ValidationError({
                     'contract_id': 'Contract does not belong to specified client'
                 })
-            
+
         return attrs
 
 

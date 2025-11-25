@@ -33,9 +33,20 @@ class Document(BaseModel):
         db_index=True,
         help_text="Document classification"
     )
+
+    # === File Storage (supports both direct upload and URL) ===
+    file = models.FileField(
+        upload_to='documents/%Y/%m/%d/',
+        max_length=500,
+        null=True,
+        blank=True,
+        help_text="Uploaded document file (alternative to URL)"
+    )
     url = models.URLField(
         max_length=500,
-        help_text="Document file location (cloud storage URL)"
+        null=True,
+        blank=True,
+        help_text="Document file location (cloud storage URL, alternative to file upload)"
     )
     file_size = models.IntegerField(
         null=True,
@@ -156,6 +167,57 @@ class Document(BaseModel):
     def __repr__(self):
         return f"<Document: {self.title} v{self.version}>"
 
+    def clean(self):
+        """Validate document data before saving."""
+        super().clean()
+
+        # Ensure either file or URL is provided
+        if not self.file and not self.url:
+            from django.core.exceptions import ValidationError
+            raise ValidationError("Either file upload or URL must be provided")
+
+        # Auto-populate file metadata from uploaded file
+        if self.file:
+            self.file_size = self.file.size
+            # Try to get MIME type
+            try:
+                import mimetypes
+                mime_type, _ = mimetypes.guess_type(self.file.name)
+                if mime_type:
+                    self.file_type = mime_type
+            except:
+                pass
+
+    def save(self, *args, **kwargs):
+        """Override save to auto-populate file metadata."""
+        if self.file and not self.file_size:
+            self.file_size = self.file.size
+
+        super().save(*args, **kwargs)
+
+    @property
+    def filename(self) -> str:
+        """Get original filename from file path or URL."""
+        import os
+        if self.file:
+            return os.path.basename(self.file.name)
+        elif self.url:
+            return os.path.basename(self.url.split('?')[0])
+        return ''
+
+    @property
+    def file_extension(self) -> str:
+        """Get file extension."""
+        import os
+        return os.path.splitext(self.filename)[1].lower() if self.filename else ''
+
+    @property
+    def file_url(self) -> str:
+        """Get accessible URL for the document."""
+        if self.file:
+            return self.file.url
+        return self.url or ''
+
     @property
     def is_expired(self) -> bool:
         """Check if document has passed expiry date."""
@@ -184,12 +246,13 @@ class Document(BaseModel):
         self.status = DocumentStatus.ARCHIVED
         self.save(update_fields=['status', 'updated_at'])
 
-    def create_new_version(self, url: str, uploaded_by=None) -> 'Document':
+    def create_new_version(self, file=None, url=None, uploaded_by=None) -> 'Document':
         """
         Create a new version of this document.
 
         Args:
-            url: New document file URL
+            file: New document file (for file uploads)
+            url: New document file URL (for cloud storage)
             uploaded_by: User creating new version
 
         Returns:
@@ -204,6 +267,7 @@ class Document(BaseModel):
             title=self.title,
             description=self.description,
             type=self.type,
+            file=file,
             url=url,
             version=self.version + 1,
             is_latest=True,

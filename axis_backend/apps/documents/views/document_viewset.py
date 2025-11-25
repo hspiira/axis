@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
@@ -74,6 +75,7 @@ class DocumentViewSet(BaseModelViewSet):
     - Delegates all business logic to DocumentService
     - Uses different serializers per action (Interface Segregation)
     - Custom actions for document workflow operations
+    - Supports file uploads via MultiPartParser and JSONParser for flexibility
     """
 
     # Service and serializer configuration
@@ -85,6 +87,9 @@ class DocumentViewSet(BaseModelViewSet):
 
     # Permissions
     permission_classes = [IsAuthenticated]
+
+    # Parser classes for file upload support
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     # Filtering and search
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -229,16 +234,17 @@ class DocumentViewSet(BaseModelViewSet):
 
     @extend_schema(
         summary="Create new version",
-        description="Create new version of document with new file",
+        description="Create new version of document with new file or URL (one required)",
         request={
-            'application/json': {
+            'multipart/form-data': {
                 'type': 'object',
                 'properties': {
-                    'url': {'type': 'string', 'description': 'New document file URL'},
+                    'file': {'type': 'string', 'format': 'binary', 'description': 'New document file (alternative to URL)'},
+                    'url': {'type': 'string', 'description': 'New document file URL (alternative to file upload)'},
                     'uploaded_by_id': {'type': 'string', 'description': 'User ID creating new version'},
                     'description': {'type': 'string', 'description': 'Optional updated description'}
                 },
-                'required': ['url', 'uploaded_by_id']
+                'required': ['uploaded_by_id']
             }
         },
         responses={201: DocumentDetailSerializer}
@@ -249,21 +255,23 @@ class DocumentViewSet(BaseModelViewSet):
         Create new version of document.
 
         Business logic delegated to DocumentService.
+        Supports both file upload and URL-based storage.
 
         Args:
-            request: HTTP request with version data
+            request: HTTP request with version data (file or url)
             pk: Original document ID
 
         Returns:
             Response with new document version
         """
+        file = request.data.get('file')
         url = request.data.get('url')
         uploaded_by_id = request.data.get('uploaded_by_id')
         description = request.data.get('description')
 
-        if not url:
+        if not file and not url:
             return Response(
-                {'error': 'URL is required'},
+                {'error': 'Either file or URL is required'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -276,6 +284,7 @@ class DocumentViewSet(BaseModelViewSet):
         try:
             new_version = self.service.create_new_version(
                 document_id=pk,
+                file=file,
                 url=url,
                 uploaded_by_id=uploaded_by_id,
                 description=description
