@@ -133,9 +133,18 @@ class PaymentStatus(models.TextChoices):
 # =========================================
 
 class PersonType(models.TextChoices):
-    """Type of person in EAP system"""
-    EMPLOYEE = "Employee", "Employee"
+    """
+    Type of person in EAP system.
+
+    - PLATFORM_STAFF: EAP organization employees
+    - CLIENT_EMPLOYEE: Client company employees (service recipients)
+    - DEPENDENT: Family members of client employees
+    - SERVICE_PROVIDER: External service providers (therapists, counselors)
+    """
+    PLATFORM_STAFF = "PlatformStaff", "Platform Staff"
+    CLIENT_EMPLOYEE = "ClientEmployee", "Client Employee"
     DEPENDENT = "Dependent", "Dependent"
+    SERVICE_PROVIDER = "ServiceProvider", "Service Provider"
 
 
 class StaffRole(models.TextChoices):

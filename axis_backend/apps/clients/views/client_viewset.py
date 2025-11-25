@@ -13,6 +13,11 @@ from apps.clients.serializers import (
     ClientUpdateSerializer,
 )
 from axis_backend.views import BaseModelViewSet
+from axis_backend.permissions import (
+    IsAdminOrManager,
+    IsClientScopedOrAdmin,
+    CanModifyObject
+)
 
 
 @extend_schema_view(
@@ -28,15 +33,40 @@ class ClientViewSet(BaseModelViewSet):
     ViewSet for Client CRUD operations.
 
     Provides client management with status transitions and verification.
+
+    Security:
+    - Object-level permissions enforce client-scoped access
+    - Admins/Managers can manage all clients
+    - Regular users limited to authorized clients only
     """
 
     queryset = Client.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsClientScopedOrAdmin]
     service_class = ClientService
     list_serializer_class = ClientListSerializer
     detail_serializer_class = ClientDetailSerializer
     create_serializer_class = ClientCreateSerializer
     update_serializer_class = ClientUpdateSerializer
+
+    def get_permissions(self):
+        """
+        Return appropriate permissions based on action.
+
+        Permissions:
+        - list, retrieve: IsAuthenticated + IsClientScopedOrAdmin
+        - create: IsAdminOrManager (only admins can create clients)
+        - update, partial_update, destroy: IsAdminOrManager (only admins can modify)
+        - custom actions: IsAuthenticated + IsClientScopedOrAdmin
+        """
+        if self.action == 'create':
+            # Only admins/managers can create new clients
+            return [IsAdminOrManager()]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            # Only admins/managers can modify/delete clients
+            return [IsAdminOrManager()]
+        else:
+            # list, retrieve, custom actions use client-scoped permissions
+            return [IsAuthenticated(), IsClientScopedOrAdmin()]
 
     @extend_schema(
         summary="Get active clients",

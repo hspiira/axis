@@ -13,6 +13,11 @@ from apps.contracts.serializers import (
     ContractUpdateSerializer,
 )
 from axis_backend.views import BaseModelViewSet
+from axis_backend.permissions import (
+    IsAdminOrManager,
+    IsClientScopedOrAdmin,
+    CanModifyObject
+)
 
 
 @extend_schema_view(
@@ -28,15 +33,36 @@ class ContractViewSet(BaseModelViewSet):
     ViewSet for Contract CRUD operations.
 
     Provides contract management with lifecycle and payment tracking.
+
+    Security:
+    - Object-level permissions enforce client-scoped access
+    - Users can only access contracts for authorized clients
+    - Admins/Managers have full access
     """
 
     queryset = Contract.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsClientScopedOrAdmin]
     service_class = ContractService
     list_serializer_class = ContractListSerializer
     detail_serializer_class = ContractDetailSerializer
     create_serializer_class = ContractCreateSerializer
     update_serializer_class = ContractUpdateSerializer
+
+    def get_permissions(self):
+        """
+        Return appropriate permissions based on action.
+
+        Permissions:
+        - list, retrieve: IsAuthenticated + IsClientScopedOrAdmin
+        - create, update, partial_update, destroy: + CanModifyObject
+        - custom actions: IsAuthenticated + IsClientScopedOrAdmin
+        """
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            # Modifications require ownership or manage permissions
+            return [IsAuthenticated(), IsClientScopedOrAdmin(), CanModifyObject()]
+        else:
+            # list, retrieve, custom actions use client-scoped permissions
+            return [IsAuthenticated(), IsClientScopedOrAdmin()]
 
     @extend_schema(
         summary="Get active contracts",

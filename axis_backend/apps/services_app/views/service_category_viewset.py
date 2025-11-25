@@ -13,6 +13,7 @@ from apps.services_app.serializers import (
     ServiceCategoryUpdateSerializer,
 )
 from axis_backend.views import BaseModelViewSet
+from axis_backend.permissions import IsAdminOrManager
 
 
 @extend_schema_view(
@@ -33,6 +34,19 @@ class ServiceCategoryViewSet(BaseModelViewSet):
     detail_serializer_class = ServiceCategoryDetailSerializer
     create_serializer_class = ServiceCategoryCreateSerializer
     update_serializer_class = ServiceCategoryUpdateSerializer
+
+    def get_permissions(self):
+        """
+        Return appropriate permissions based on action.
+
+        Permissions:
+        - list, retrieve: IsAuthenticated (read-only for all)
+        - create, update, partial_update, destroy: IsAdminOrManager
+        """
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [IsAdminOrManager()]
+        else:
+            return [IsAuthenticated()]
 
     @extend_schema(
         summary="Get categories with services",

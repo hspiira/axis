@@ -8,6 +8,7 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import serializers as drf_serializers
 
 from axis_backend.views.base import BaseModelViewSet
+from axis_backend.permissions import IsClientScopedOrAdmin, CanModifyObject
 from apps.kpis.models import KPIAssignment
 from apps.kpis.services import KPIAssignmentService
 from apps.kpis.serializers import (
@@ -37,12 +38,25 @@ class KPIAssignmentViewSet(BaseModelViewSet):
     """
 
     queryset = KPIAssignment.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsClientScopedOrAdmin]
     service_class = KPIAssignmentService
     list_serializer_class = KPIAssignmentListSerializer
     detail_serializer_class = KPIAssignmentDetailSerializer
     create_serializer_class = KPIAssignmentCreateSerializer
     update_serializer_class = KPIAssignmentUpdateSerializer
+
+    def get_permissions(self):
+        """
+        Return appropriate permissions based on action.
+
+        Permissions:
+        - list, retrieve: IsAuthenticated + IsClientScopedOrAdmin
+        - create, update, partial_update, destroy: + CanModifyObject
+        """
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [IsAuthenticated(), IsClientScopedOrAdmin(), CanModifyObject()]
+        else:
+            return [IsAuthenticated(), IsClientScopedOrAdmin()]
 
     def create(self, request, *args, **kwargs):
         """Create new KPI assignment."""

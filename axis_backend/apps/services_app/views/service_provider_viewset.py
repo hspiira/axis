@@ -13,6 +13,7 @@ from apps.services_app.serializers import (
     ServiceProviderUpdateSerializer,
 )
 from axis_backend.views import BaseModelViewSet
+from axis_backend.permissions import IsAdminOrManager
 
 
 @extend_schema_view(
@@ -33,6 +34,19 @@ class ServiceProviderViewSet(BaseModelViewSet):
     detail_serializer_class = ServiceProviderDetailSerializer
     create_serializer_class = ServiceProviderCreateSerializer
     update_serializer_class = ServiceProviderUpdateSerializer
+
+    def get_permissions(self):
+        """
+        Return appropriate permissions based on action.
+
+        Permissions:
+        - list, retrieve: IsAuthenticated (read-only for all)
+        - create, update, partial_update, destroy, verify: IsAdminOrManager
+        """
+        if self.action in ['create', 'update', 'partial_update', 'destroy', 'verify', 'update_rating']:
+            return [IsAdminOrManager()]
+        else:
+            return [IsAuthenticated()]
 
     @extend_schema(
         summary="Get available providers",

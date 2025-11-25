@@ -13,6 +13,7 @@ from apps.services_app.serializers import (
     SessionFeedbackUpdateSerializer,
 )
 from axis_backend.views import BaseModelViewSet
+from axis_backend.permissions import IsClientScopedOrAdmin, CanModifyObject
 
 
 @extend_schema_view(
@@ -27,12 +28,25 @@ class SessionFeedbackViewSet(BaseModelViewSet):
     """ViewSet for SessionFeedback CRUD operations."""
 
     queryset = SessionFeedback.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsClientScopedOrAdmin]
     service_class = SessionFeedbackService
     list_serializer_class = SessionFeedbackListSerializer
     detail_serializer_class = SessionFeedbackDetailSerializer
     create_serializer_class = SessionFeedbackCreateSerializer
     update_serializer_class = SessionFeedbackUpdateSerializer
+
+    def get_permissions(self):
+        """
+        Return appropriate permissions based on action.
+
+        Permissions:
+        - list, retrieve: IsAuthenticated + IsClientScopedOrAdmin
+        - create, update, partial_update, destroy: + CanModifyObject
+        """
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [IsAuthenticated(), IsClientScopedOrAdmin(), CanModifyObject()]
+        else:
+            return [IsAuthenticated(), IsClientScopedOrAdmin()]
 
     @extend_schema(
         summary="Get average rating for provider",

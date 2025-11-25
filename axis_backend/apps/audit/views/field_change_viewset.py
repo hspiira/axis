@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view
 
+from axis_backend.permissions import IsAdminOrManager
 from apps.audit.models import FieldChange
 from apps.audit.services import FieldChangeService
 from apps.audit.serializers import (
@@ -25,7 +26,7 @@ class FieldChangeViewSet(viewsets.ReadOnlyModelViewSet):
     """
 
     queryset = FieldChange.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminOrManager]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

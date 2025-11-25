@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from drf_spectacular.utils import extend_schema, extend_schema_view
 
 from axis_backend.views.base import BaseModelViewSet
+from axis_backend.permissions import IsAdminOrManager
 from apps.kpis.models import KPIType
 from apps.kpis.services import KPITypeService
 from apps.kpis.serializers import (
@@ -39,6 +40,19 @@ class KPITypeViewSet(BaseModelViewSet):
     detail_serializer_class = KPITypeDetailSerializer
     create_serializer_class = KPITypeCreateSerializer
     update_serializer_class = KPITypeUpdateSerializer
+
+    def get_permissions(self):
+        """
+        Return appropriate permissions based on action.
+
+        Permissions:
+        - list, retrieve: IsAuthenticated (read-only for all)
+        - create, update, partial_update, destroy: IsAdminOrManager
+        """
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [IsAdminOrManager()]
+        else:
+            return [IsAuthenticated()]
 
     def create(self, request, *args: Any, **kwargs: Any):
         """Create new KPI type."""

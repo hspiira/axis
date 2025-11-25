@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import extend_schema, extend_schema_view
 
 from axis_backend.utils.query_params import parse_positive_int
+from axis_backend.permissions import IsAdminOrManager
 from apps.audit.models import AuditLog
 from apps.audit.services import AuditLogService
 from apps.audit.serializers import (
@@ -27,7 +28,7 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
     """
 
     queryset = AuditLog.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAdminOrManager]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

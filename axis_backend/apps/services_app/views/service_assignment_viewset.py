@@ -13,6 +13,7 @@ from apps.services_app.serializers import (
     ServiceAssignmentUpdateSerializer,
 )
 from axis_backend.views import BaseModelViewSet
+from axis_backend.permissions import IsClientScopedOrAdmin, CanModifyObject
 
 
 @extend_schema_view(
@@ -27,12 +28,25 @@ class ServiceAssignmentViewSet(BaseModelViewSet):
     """ViewSet for ServiceAssignment CRUD operations."""
 
     queryset = ServiceAssignment.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsClientScopedOrAdmin]
     service_class = ServiceAssignmentService
     list_serializer_class = ServiceAssignmentListSerializer
     detail_serializer_class = ServiceAssignmentDetailSerializer
     create_serializer_class = ServiceAssignmentCreateSerializer
     update_serializer_class = ServiceAssignmentUpdateSerializer
+
+    def get_permissions(self):
+        """
+        Return appropriate permissions based on action.
+
+        Permissions:
+        - list, retrieve: IsAuthenticated + IsClientScopedOrAdmin
+        - create, update, partial_update, destroy: + CanModifyObject
+        """
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [IsAuthenticated(), IsClientScopedOrAdmin(), CanModifyObject()]
+        else:
+            return [IsAuthenticated(), IsClientScopedOrAdmin()]
 
     @extend_schema(
         summary="Get current assignments",

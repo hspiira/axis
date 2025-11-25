@@ -11,7 +11,13 @@ from drf_spectacular.types import OpenApiTypes
 from django.core.exceptions import ValidationError
 
 from axis_backend.views.base import BaseModelViewSet
-from axis_backend.permissions import IsAdminOrManager, CanManageDocuments
+from axis_backend.permissions import (
+    IsAdminOrManager,
+    CanManageDocuments,
+    IsClientScopedOrAdmin,
+    IsConfidentialAllowed,
+    CanModifyObject
+)
 from apps.documents.services.document_service import DocumentService
 from apps.documents.serializers.document_serializer import (
     DocumentListSerializer,
@@ -85,8 +91,8 @@ class DocumentViewSet(BaseModelViewSet):
     create_serializer_class = DocumentCreateSerializer
     update_serializer_class = DocumentUpdateSerializer
 
-    # Permissions
-    permission_classes = [IsAuthenticated]
+    # Permissions (both global and object-level)
+    permission_classes = [IsAuthenticated, IsClientScopedOrAdmin, IsConfidentialAllowed]
 
     # Parser classes for file upload support
     parser_classes = [MultiPartParser, FormParser, JSONParser]
@@ -102,22 +108,33 @@ class DocumentViewSet(BaseModelViewSet):
         """
         Return appropriate permissions based on action.
 
-        Different actions require different permission levels:
-        - list, retrieve: IsAuthenticated (basic access)
-        - create: IsAuthenticated (anyone can upload)
-        - update, partial_update, destroy: CanManageDocuments (elevated)
-        - publish, archive, create_version: CanManageDocuments (elevated)
+        Permissions are layered for defense-in-depth:
+        1. Global permissions (IsAuthenticated)
+        2. Object-level permissions (IsClientScopedOrAdmin, IsConfidentialAllowed)
+        3. Action-specific permissions (CanModifyObject for modifications)
+
+        Permission levels by action:
+        - list, retrieve: IsAuthenticated + IsClientScopedOrAdmin + IsConfidentialAllowed
+        - create: IsAuthenticated + IsClientScopedOrAdmin
+        - update, partial_update, destroy: + CanModifyObject
+        - publish, archive, create_version: + CanManageDocuments
 
         Returns:
             List of permission instances for current action
         """
-        if self.action in ['update', 'partial_update', 'destroy', 'publish', 'archive', 'create_version']:
-            permission_classes = [CanManageDocuments]
-        else:
-            # list, retrieve, create - basic authenticated access
-            permission_classes = [IsAuthenticated]
+        # Base permissions for all actions
+        base_permissions = [IsAuthenticated, IsClientScopedOrAdmin, IsConfidentialAllowed]
 
-        return [permission() for permission in permission_classes]
+        # Add action-specific permissions
+        if self.action in ['update', 'partial_update', 'destroy']:
+            # Modifications require ownership or manage permissions
+            return base_permissions + [CanModifyObject()]
+        elif self.action in ['publish', 'archive', 'create_version']:
+            # Workflow operations require elevated permissions
+            return base_permissions + [CanManageDocuments()]
+        else:
+            # list, retrieve, create use base permissions
+            return base_permissions
 
     def create(self, request, *args, **kwargs):
         """

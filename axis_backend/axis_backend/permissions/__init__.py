@@ -6,11 +6,23 @@ from .base import (
     CanManageDocuments,
     IsReadOnly
 )
+from .object import (
+    IsOwnerOrReadOnly,
+    IsClientScopedOrAdmin,
+    IsConfidentialAllowed,
+    CanModifyObject
+)
 
 __all__ = [
+    # Base permissions
     'IsAdminOrManager',
     'IsOwnerOrAdmin',
     'CanManagePersons',
     'CanManageDocuments',
-    'IsReadOnly'
+    'IsReadOnly',
+    # Object-level permissions
+    'IsOwnerOrReadOnly',
+    'IsClientScopedOrAdmin',
+    'IsConfidentialAllowed',
+    'CanModifyObject',
 ]

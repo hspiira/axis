@@ -45,7 +45,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'audit.middleware.AuditMiddleware',  # TODO: Implement audit middleware
+    'axis_backend.middleware.security.SecurityHeadersMiddleware',  # CSP and security headers
+    'axis_backend.middleware.audit.AuditMiddleware',  # Audit logging for sensitive operations
 ]
 
 ROOT_URLCONF = 'axis_backend.urls'

@@ -13,6 +13,7 @@ from apps.clients.serializers import (
     IndustryUpdateSerializer,
 )
 from axis_backend.views import BaseModelViewSet
+from axis_backend.permissions import IsAdminOrManager
 
 
 @extend_schema_view(
@@ -37,6 +38,19 @@ class IndustryViewSet(BaseModelViewSet):
     detail_serializer_class = IndustryDetailSerializer
     create_serializer_class = IndustryCreateSerializer
     update_serializer_class = IndustryUpdateSerializer
+
+    def get_permissions(self):
+        """
+        Return appropriate permissions based on action.
+
+        Permissions:
+        - list, retrieve: IsAuthenticated (read-only for all)
+        - create, update, partial_update, destroy: IsAdminOrManager
+        """
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [IsAdminOrManager()]
+        else:
+            return [IsAuthenticated()]
 
     @extend_schema(
         summary="Get root industries",

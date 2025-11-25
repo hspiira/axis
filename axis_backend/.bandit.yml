@@ -1,0 +1,19 @@
+# Bandit configuration for security scanning
+# YAML format to avoid linter confusion
+
+exclude_dirs:
+  - '/tests/'
+  - '/migrations/'
+  - '/.venv/'
+  - '/venv/'
+  - '/staticfiles/'
+  - '/node_modules/'
+
+skips:
+  - 'B101'  # assert_used - we use asserts in tests
+
+# Report only MEDIUM and HIGH severity issues
+tests:
+
+# Baseline configuration
+exclude: '*/tests/*,*/migrations/*'

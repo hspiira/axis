@@ -11,7 +11,13 @@ from django.core.exceptions import ValidationError
 
 from axis_backend.views.base import BaseModelViewSet
 from axis_backend.utils.query_params import parse_positive_int
-from axis_backend.permissions import IsAdminOrManager, IsOwnerOrAdmin, CanManagePersons
+from axis_backend.permissions import (
+    IsAdminOrManager,
+    IsOwnerOrAdmin,
+    CanManagePersons,
+    IsClientScopedOrAdmin,
+    CanModifyObject
+)
 from apps.persons.services.person_service import PersonService
 from apps.persons.serializers.person_serializer import (
     PersonListSerializer,
@@ -76,8 +82,8 @@ class PersonViewSet(BaseModelViewSet):
     detail_serializer_class = PersonDetailSerializer
     update_serializer_class = PersonUpdateSerializer
 
-    # Permissions
-    permission_classes = [IsAuthenticated]
+    # Permissions (client-scoped + object-level)
+    permission_classes = [IsAuthenticated, IsClientScopedOrAdmin]
 
     # Filtering and search
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -90,28 +96,39 @@ class PersonViewSet(BaseModelViewSet):
         """
         Return appropriate permissions based on action.
 
-        Different actions require different permission levels:
-        - list, retrieve: IsAuthenticated (basic access)
-        - create_employee, create_dependent: IsAdminOrManager (elevated)
-        - update, partial_update, destroy: CanManagePersons (HR/manager)
-        - activate, deactivate, update_employment_status: CanManagePersons (HR/manager)
-        - eligible, family, by_client: IsAuthenticated (basic access)
+        Layered permissions for sensitive personal data:
+        1. IsAuthenticated - Must be logged in
+        2. IsClientScopedOrAdmin - Can only access authorized clients
+        3. Action-specific permissions for modifications
+
+        Permission levels:
+        - list, retrieve: IsAuthenticated + IsClientScopedOrAdmin
+        - create_employee, create_dependent: + CanManagePersons
+        - update, partial_update, destroy: + CanModifyObject
+        - activate, deactivate, update_employment_status: + CanManagePersons
+        - eligible, family, by_client: IsAuthenticated + IsClientScopedOrAdmin
 
         Returns:
             List of permission instances for current action
         """
-        if self.action in ['create_employee', 'create_dependent']:
-            permission_classes = [IsAdminOrManager]
-        elif self.action in ['update', 'partial_update', 'destroy', 'activate', 'deactivate', 'update_employment_status']:
-            permission_classes = [CanManagePersons]
-        elif self.action in ['retrieve', 'family']:
-            # Users can view their own record or family members
-            permission_classes = [IsOwnerOrAdmin]
-        else:
-            # list, eligible, by_client - basic authenticated access
-            permission_classes = [IsAuthenticated]
+        # Base permissions for all actions
+        base_permissions = [IsAuthenticated, IsClientScopedOrAdmin]
 
-        return [permission() for permission in permission_classes]
+        if self.action in ['create_employee', 'create_dependent']:
+            # Only HR/Managers can create persons
+            return base_permissions + [CanManagePersons()]
+        elif self.action in ['update', 'partial_update', 'destroy']:
+            # Modifications require ownership or manage permissions
+            return base_permissions + [CanModifyObject()]
+        elif self.action in ['activate', 'deactivate', 'update_employment_status']:
+            # Status changes require HR/Manager permissions
+            return base_permissions + [CanManagePersons()]
+        elif self.action in ['retrieve', 'family']:
+            # Users can view their own record or family members (ownership check)
+            return base_permissions + [IsOwnerOrAdmin()]
+        else:
+            # list, eligible, by_client use base client-scoped permissions
+            return base_permissions
 
     # Custom Actions
 

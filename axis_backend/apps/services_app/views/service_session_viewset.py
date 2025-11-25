@@ -13,6 +13,7 @@ from apps.services_app.serializers import (
     ServiceSessionUpdateSerializer,
 )
 from axis_backend.views import BaseModelViewSet
+from axis_backend.permissions import IsClientScopedOrAdmin, CanModifyObject
 
 
 @extend_schema_view(
@@ -27,12 +28,25 @@ class ServiceSessionViewSet(BaseModelViewSet):
     """ViewSet for ServiceSession CRUD operations."""
 
     queryset = ServiceSession.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsClientScopedOrAdmin]
     service_class = ServiceSessionService
     list_serializer_class = ServiceSessionListSerializer
     detail_serializer_class = ServiceSessionDetailSerializer
     create_serializer_class = ServiceSessionCreateSerializer
     update_serializer_class = ServiceSessionUpdateSerializer
+
+    def get_permissions(self):
+        """
+        Return appropriate permissions based on action.
+
+        Permissions:
+        - list, retrieve: IsAuthenticated + IsClientScopedOrAdmin
+        - create, update, partial_update, destroy: + CanModifyObject
+        """
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [IsAuthenticated(), IsClientScopedOrAdmin(), CanModifyObject()]
+        else:
+            return [IsAuthenticated(), IsClientScopedOrAdmin()]
 
     @extend_schema(
         summary="Get upcoming sessions",
