@@ -413,3 +413,116 @@ VITE_APP_ENV=development
 
 **Last Updated**: 2025-01-23
 **Next Review**: After Phase 1 completion
+
+CONTRACTS - Business Logic Analysis
+
+  Current Model Shows:
+  - Contract relationship: Client ← Contract (one client, one
+  contract)
+  - No Service Provider relationship in the model
+  - Focus: Client service agreements and billing
+
+  You're RIGHT to question this! Here are the scenarios:
+
+  Scenario 1: Client Contracts Tab (RECOMMENDED ✅)
+
+  Implementation: Add a "Contracts" tab to the Client detail page
+
+  Why this makes sense:
+  - Contracts belong to clients (1-to-many: one client, multiple
+  contracts)
+  - Users navigate: "View Client → See their contracts"
+  - Natural workflow: "Managing Client ABC → View their active
+  contracts"
+  - All contract actions happen in client context
+
+  User Stories:
+  - "As an admin, when viewing a client, I want to see all their
+  contracts"
+  - "As a finance manager, I want to renew a client's expiring
+  contract"
+  - "As a CSM, I want to see if a client's contract is active before
+  onboarding"
+
+  Scenario 2: Standalone Contracts Page (Current approach ⚠️)
+
+  When it makes sense:
+  - Finance team needs cross-client contract overview
+  - Billing operations across all clients
+  - Contract expiration monitoring (all clients)
+  - Reporting: "Show me all contracts expiring this month"
+
+  User Stories:
+  - "As a finance manager, show me all overdue payments across
+  clients"
+  - "As an admin, show me all contracts expiring in 30 days"
+  - "As a billing specialist, show me all pending renewals"
+
+  RECOMMENDATION:
+
+  Implement BOTH with different purposes:
+
+  1. Client Detail → Contracts Tab (Primary interface)
+    - CRUD operations for that specific client's contracts
+    - Quick view of active/expired contracts
+    - Renewal and payment actions
+  2. Standalone Contracts Page (Management/Reporting)
+    - Filterable list across ALL clients
+    - Bulk operations (mark paid, send renewals)
+    - Financial reporting views
+    - Alert dashboard (overdue, expiring soon)
+
+  ---
+  DOCUMENTS - Business Logic Analysis
+
+  Current Model Shows:
+  client = ForeignKey('clients.Client')      # Optional
+  contract = ForeignKey('contracts.Contract') # Optional
+
+  Documents can be attached to:
+  - Clients (company documents, registration, policies)
+  - Contracts (signed agreements, amendments, invoices)
+  - Or standalone (company-wide policies, templates)
+
+  Scenario 1: Embedded Documents (RECOMMENDED ✅)
+
+  Client Documents Tab:
+  - Company registration
+  - Business licenses
+  - Company policies
+  - Client-specific forms
+
+  Contract Documents Tab:
+  - Signed contract PDF
+  - Amendments
+  - Invoices
+  - Payment receipts
+
+  Scenario 2: Standalone Documents Page
+
+  When it makes sense:
+  - Document library/repository
+  - Company-wide templates
+  - Policy documents (not client-specific)
+  - Search across all documents
+  - Version management across the system
+
+  User Stories:
+  - "As HR, I need to find the latest employee handbook template"
+  - "As compliance, I want to see all confidential documents across
+  clients"
+  - "As admin, I need to find a specific contract document quickly"
+
+  RECOMMENDATION:
+
+  Implement BOTH with different purposes:
+
+  1. Embedded Documents (Primary)
+    - Client detail → Documents tab (client-specific docs)
+    - Contract detail → Documents tab (contract attachments)
+  2. Standalone Documents Page (Library/Search)
+    - Global document search
+    - Template library
+    - Company-wide policies
+    - Document expiration monitoring
+    - Confidential document access control

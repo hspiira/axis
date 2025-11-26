@@ -101,7 +101,7 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
       {/* Backdrop with blur - NO CLICK TO CLOSE */}
       <div
         className={cn(
-          'absolute inset-0 bg-black/90 backdrop-blur-md transition-opacity duration-300',
+          'absolute inset-0 bg-black/90 backdrop-blur-[2px] transition-opacity duration-300',
           isAnimating ? 'opacity-100' : 'opacity-0'
         )}
       />

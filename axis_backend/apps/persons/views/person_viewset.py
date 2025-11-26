@@ -83,7 +83,7 @@ class PersonViewSet(BaseModelViewSet):
     update_serializer_class = PersonUpdateSerializer
 
     # Permissions (client-scoped + object-level)
-    permission_classes = [IsAuthenticated, IsClientScopedOrAdmin]
+    permission_classes = [IsAuthenticated(), IsClientScopedOrAdmin()]
 
     # Filtering and search
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -112,7 +112,7 @@ class PersonViewSet(BaseModelViewSet):
             List of permission instances for current action
         """
         # Base permissions for all actions
-        base_permissions = [IsAuthenticated, IsClientScopedOrAdmin]
+        base_permissions = [IsAuthenticated(), IsClientScopedOrAdmin()]
 
         if self.action in ['create_employee', 'create_dependent']:
             # Only HR/Managers can create persons

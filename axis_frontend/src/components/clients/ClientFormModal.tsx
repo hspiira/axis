@@ -62,7 +62,7 @@ export function ClientFormModal({
       {/* Backdrop */}
       <div
         className={cn(
-          'absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300',
+          'absolute inset-0 bg-black/50 backdrop-blur-[2px] transition-opacity duration-300',
           isAnimating ? 'opacity-100' : 'opacity-0'
         )}
       />
