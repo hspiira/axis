@@ -134,14 +134,18 @@ export function ClientForm({ initialData, onSubmit, onCancel, isLoading = false 
     return result
   }
 
-  const handleNext = async () => {
+  const handleNext = async (e?: React.MouseEvent<HTMLButtonElement>) => {
+    e?.preventDefault()
+    e?.stopPropagation()
     const isValid = await validateStep(currentStep)
     if (isValid && currentStep < STEPS.length) {
       setCurrentStep(currentStep + 1)
     }
   }
 
-  const handlePrevious = () => {
+  const handlePrevious = (e?: React.MouseEvent<HTMLButtonElement>) => {
+    e?.preventDefault()
+    e?.stopPropagation()
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1)
     }
@@ -388,7 +392,11 @@ export function ClientForm({ initialData, onSubmit, onCancel, isLoading = false 
           {currentStep > 1 && (
             <button
               type="button"
-              onClick={handlePrevious}
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                handlePrevious(e)
+              }}
               className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-gray-400 hover:text-white transition-colors"
               disabled={isLoading}
             >
@@ -398,7 +406,11 @@ export function ClientForm({ initialData, onSubmit, onCancel, isLoading = false 
           )}
           <button
             type="button"
-            onClick={onCancel}
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              onCancel()
+            }}
             className="px-5 py-2.5 text-sm font-medium text-gray-400 hover:text-white transition-colors"
             disabled={isLoading}
           >
@@ -409,7 +421,11 @@ export function ClientForm({ initialData, onSubmit, onCancel, isLoading = false 
           {currentStep < STEPS.length ? (
             <button
               type="button"
-              onClick={handleNext}
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                handleNext(e)
+              }}
               className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-lg font-semibold text-sm hover:bg-emerald-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoading}
             >

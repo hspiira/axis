@@ -83,7 +83,7 @@ class PersonViewSet(BaseModelViewSet):
     update_serializer_class = PersonUpdateSerializer
 
     # Permissions (client-scoped + object-level)
-    permission_classes = [IsAuthenticated(), IsClientScopedOrAdmin()]
+    permission_classes = [IsAuthenticated, IsClientScopedOrAdmin]
 
     # Filtering and search
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -112,20 +112,20 @@ class PersonViewSet(BaseModelViewSet):
             List of permission instances for current action
         """
         # Base permissions for all actions
-        base_permissions = [IsAuthenticated(), IsClientScopedOrAdmin()]
+        base_permissions = [IsAuthenticated, IsClientScopedOrAdmin]
 
         if self.action in ['create_employee', 'create_dependent']:
             # Only HR/Managers can create persons
-            return base_permissions + [CanManagePersons()]
+            return [*base_permissions, CanManagePersons]
         elif self.action in ['update', 'partial_update', 'destroy']:
             # Modifications require ownership or manage permissions
-            return base_permissions + [CanModifyObject()]
+            return [*base_permissions, CanModifyObject]
         elif self.action in ['activate', 'deactivate', 'update_employment_status']:
             # Status changes require HR/Manager permissions
-            return base_permissions + [CanManagePersons()]
+            return [*base_permissions, CanManagePersons]
         elif self.action in ['retrieve', 'family']:
             # Users can view their own record or family members (ownership check)
-            return base_permissions + [IsOwnerOrAdmin()]
+            return [*base_permissions, IsOwnerOrAdmin]
         else:
             # list, eligible, by_client use base client-scoped permissions
             return base_permissions
@@ -141,22 +141,66 @@ class PersonViewSet(BaseModelViewSet):
     @action(detail=False, methods=['post'], url_path='create-employee')
     def create_employee(self, request):
         """
-        Create new employee.
+        Create new employee with profile and user account creation.
 
-        Business logic delegated to PersonService.
+        Automatically creates:
+        1. Profile from provided data
+        2. User account (inactive by default, pending admin approval)
+        3. Person record
 
         Args:
-            request: HTTP request with employee data
+            request: HTTP request with employee and profile data
 
         Returns:
             Response with created employee
         """
+        from apps.authentication.models import Profile, User
+        from axis_backend.enums import PersonType
+
         serializer = CreateEmployeeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
+        data = serializer.validated_data
+
         try:
-            employee = self.service.create_employee(**serializer.validated_data)
-            response_serializer = PersonDetailSerializer(employee)
+            # Extract profile fields
+            profile_data = {
+                'full_name': data.pop('full_name'),
+                'email': data.pop('email', None),
+                'phone': data.pop('phone', None),
+                'dob': data.pop('date_of_birth', None),
+                'gender': data.pop('gender', None),
+            }
+
+            # Create profile
+            profile = Profile.objects.create(**profile_data)
+
+            # Create user account (inactive by default)
+            user = None
+            if profile_data.get('email'):
+                user = User.objects.create(
+                    email=profile_data['email'],
+                    username=profile_data['email'],  # Use email as username
+                    is_active=False,  # Inactive pending admin approval
+                    profile=profile
+                )
+
+            # Extract other fields
+            client_id = data.pop('client_id')
+            address = data.pop('address', None)
+            city = data.pop('city', None)
+            country = data.pop('country', None)
+
+            # Create person
+            person = Person.objects.create(
+                person_type=PersonType.CLIENT_EMPLOYEE,
+                profile=profile,
+                user=user,  # Link user account
+                client_id=client_id,
+                **data
+            )
+
+            response_serializer = PersonDetailSerializer(person)
             return Response(
                 response_serializer.data,
                 status=status.HTTP_201_CREATED

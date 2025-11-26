@@ -177,22 +177,77 @@ class CreateEmployeeSerializer(BaseCreateSerializer):
     Single Responsibility: Employee creation validation
     Extends: BaseCreateSerializer for common creation patterns
     Validates: All required fields for employee
+
+    NOTE: Accepts profile data directly and creates profile automatically
     """
 
-    profile_id = serializers.CharField(
-        help_text="Profile ID"
+    # Profile fields (will be used to create Profile)
+    full_name = serializers.CharField(
+        max_length=255,
+        help_text="Employee full name"
     )
-    user_id = serializers.CharField(
-        help_text="User ID for authentication"
+    email = serializers.EmailField(
+        required=False,
+        allow_null=True,
+        help_text="Employee email"
     )
+    phone = serializers.CharField(
+        required=False,
+        allow_null=True,
+        max_length=20,
+        help_text="Employee phone"
+    )
+    date_of_birth = serializers.DateField(
+        required=False,
+        allow_null=True,
+        help_text="Date of birth"
+    )
+    gender = serializers.CharField(
+        required=False,
+        allow_null=True,
+        max_length=50,
+        help_text="Gender"
+    )
+    address = serializers.CharField(
+        required=False,
+        allow_null=True,
+        help_text="Address"
+    )
+    city = serializers.CharField(
+        required=False,
+        allow_null=True,
+        max_length=100,
+        help_text="City"
+    )
+    country = serializers.CharField(
+        required=False,
+        allow_null=True,
+        max_length=100,
+        help_text="Country"
+    )
+
+    # Client and employment fields
     client_id = serializers.CharField(
         help_text="Client (employer) ID"
     )
-    employee_role = serializers.ChoiceField(
-        choices=StaffRole.choices,
-        help_text="Employee role"
+    employee_department = serializers.CharField(
+        required=False,
+        allow_null=True,
+        help_text="Department"
+    )
+    employee_id_number = serializers.CharField(
+        required=False,
+        allow_null=True,
+        help_text="Employee ID number"
+    )
+    job_title = serializers.CharField(
+        required=False,
+        allow_null=True,
+        help_text="Job title"
     )
     employment_start_date = serializers.DateField(
+        required=False,
+        allow_null=True,
         help_text="Employment start date"
     )
     employment_end_date = serializers.DateField(
@@ -200,27 +255,15 @@ class CreateEmployeeSerializer(BaseCreateSerializer):
         allow_null=True,
         help_text="Employment end date (optional)"
     )
-    employment_status = serializers.ChoiceField(
-        choices=WorkStatus.choices,
-        default=WorkStatus.ACTIVE,
-        help_text="Employment status"
-    )
-    qualifications = serializers.ListField(
-        child=serializers.CharField(),
-        required=False,
-        default=list,
-        help_text="List of qualifications/certifications"
-    )
-    specializations = serializers.ListField(
-        child=serializers.CharField(),
-        required=False,
-        default=list,
-        help_text="List of specializations/departments"
-    )
-    preferred_working_hours = serializers.JSONField(
+    employment_status = serializers.CharField(
         required=False,
         allow_null=True,
-        help_text="Work schedule preferences"
+        help_text="Employment status"
+    )
+    manager_id = serializers.CharField(
+        required=False,
+        allow_null=True,
+        help_text="Manager/Supervisor ID"
     )
     emergency_contact_name = serializers.CharField(
         required=False,
