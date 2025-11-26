@@ -125,16 +125,15 @@ class AuditMiddleware:
             }
 
             # Create audit log (use create() to avoid signals/validation overhead)
+            # Note: AuditLog model uses: action, entity_type, entity_id, data (not action_type, model_name, object_id, metadata)
             AuditLog.objects.create(
                 user=request.user,
-                action_type=action_type,
-                model_name=self._extract_model_name(request.path),
-                object_id=self._extract_object_id(request.path),
-                description=f"{request.method} {request.path}",
+                action=action_type,
+                entity_type=self._extract_model_name(request.path),
+                entity_id=self._extract_object_id(request.path),
+                data=metadata,
                 ip_address=self._get_client_ip(request),
                 user_agent=request.headers.get('User-Agent', '')[:500],  # Truncate long UAs
-                metadata=metadata,
-                timestamp=timezone.now(),
             )
 
         except Exception as e:
@@ -153,13 +152,24 @@ class AuditMiddleware:
         """
         try:
             if hasattr(request, 'data'):
-                # DRF parsed data
+                # DRF parsed data (preferred - already parsed)
                 return dict(request.data)
-            elif request.body:
+        except (ValueError, AttributeError):
+            pass
+        
+        # Try to access raw body only if DRF hasn't already read it
+        try:
+            if hasattr(request, 'body') and request.body:
                 # Raw body - try to parse as JSON
                 return json.loads(request.body.decode('utf-8'))
         except (ValueError, AttributeError, UnicodeDecodeError):
+            # Body may have already been read by DRF, which raises RawPostDataException
+            # This is expected and we should just return empty dict
             pass
+        except Exception:
+            # Catch any other exceptions (like RawPostDataException from Django)
+            pass
+        
         return {}
 
     def _sanitize_data(self, data):

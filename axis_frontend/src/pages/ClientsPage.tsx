@@ -6,6 +6,7 @@
 
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import { AppLayout } from '@/components/AppLayout'
 import { usePageTitle } from '@/contexts/PageTitleContext'
 import { useURLSearchParams } from '@/hooks/useURLSearchParams'
@@ -13,7 +14,6 @@ import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut'
 import { ClientsTable } from '@/components/clients/ClientsTable'
 import { ClientsFilters } from '@/components/clients/ClientsFilters'
 import { ClientFormModal } from '@/components/clients/ClientFormModal'
-import { ClientDetailModal } from '@/components/clients/ClientDetailModal'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { BulkActionsToolbar } from '@/components/clients/BulkActionsToolbar'
 import {
@@ -46,11 +46,12 @@ type ConfirmAction =
 export function ClientsPage() {
   const { setPageTitle } = usePageTitle()
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
   const { params: urlParams, updateParams } = useURLSearchParams<ClientSearchParams>()
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [editingClient, setEditingClient] = useState<ClientList | null>(null)
-  const [viewingClient, setViewingClient] = useState<ClientList | null>(null)
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [isProcessingBulk, setIsProcessingBulk] = useState(false)
@@ -64,6 +65,7 @@ export function ClientsPage() {
   const clientsQuery = useSearchClients(filters)
   const allClientsQuery = useClients()
   const { data: clients = [], isLoading } = hasFilters ? clientsQuery : allClientsQuery
+
 
   const deleteClientMutation = useDeleteClient()
   const activateClientMutation = useActivateClient()
@@ -79,18 +81,17 @@ export function ClientsPage() {
   }, [setPageTitle])
 
   const handleView = (client: ClientList) => {
-    setViewingClient(client)
+    // Navigate to dedicated client detail page
+    navigate(`/clients/${client.id}`)
   }
 
   const handleEdit = (client: ClientList) => {
     setEditingClient(client)
-    setViewingClient(null)
     setIsCreateModalOpen(true)
   }
 
-  // Fetch full client data when viewing or editing
-  const { data: clientDetail } = useClient(editingClient?.id || viewingClient?.id || '')
-  const { data: viewClientDetail } = useClient(viewingClient?.id || '')
+  // Fetch full client data when editing
+  const { data: clientDetail } = useClient(editingClient?.id || '')
 
   const handleActivate = async (client: ClientList) => {
     try {
@@ -362,8 +363,6 @@ export function ClientsPage() {
       if (isCreateModalOpen) {
         setIsCreateModalOpen(false)
         setEditingClient(null)
-      } else if (viewingClient) {
-        setViewingClient(null)
       } else if (confirmAction) {
         setConfirmAction(null)
       } else if (selectedIds.size > 0) {
@@ -448,15 +447,6 @@ export function ClientsPage() {
         title={editingClient ? 'Edit Client' : 'Add New Client'}
       />
 
-      {/* Detail Modal */}
-      {viewClientDetail && (
-        <ClientDetailModal
-          client={viewClientDetail}
-          isOpen={!!viewingClient}
-          onClose={() => setViewingClient(null)}
-          onEdit={handleEdit}
-        />
-      )}
 
       {/* Confirm Dialogs */}
       {confirmAction?.type === 'deactivate' && (

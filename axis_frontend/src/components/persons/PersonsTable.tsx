@@ -4,19 +4,26 @@
  * Displays persons (employees, dependents, staff, providers) in a table format
  */
 
-import { useState } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import {
   Users,
+  MoreVertical,
   Eye,
   Edit,
   CheckCircle2,
   XCircle,
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
+  ChevronDown,
+  ChevronsUpDown,
 } from 'lucide-react'
 import { type PersonListItem, PersonType } from '@/api/persons'
 import { cn } from '@/lib/utils'
 import { formatShortDate } from '@/utils/formatters'
+
+type SortField = 'profile.full_name' | 'person_type' | 'client_name' | 'status' | 'created_at'
+type SortDirection = 'asc' | 'desc'
 
 interface PersonsTableProps {
   persons: PersonListItem[]
@@ -54,53 +61,193 @@ export function PersonsTable({
   onEdit,
   pageSize = 10,
 }: PersonsTableProps) {
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null)
+  const [menuPosition, setMenuPosition] = useState<{ top: number; right: number } | null>(null)
+  const [menuPerson, setMenuPerson] = useState<PersonListItem | null>(null)
+  const buttonRefs = useRef<Record<string, HTMLButtonElement>>({})
+  const [sortField, setSortField] = useState<SortField>('created_at')
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
   const [currentPage, setCurrentPage] = useState(1)
 
+  // Calculate menu position when it opens
+  useEffect(() => {
+    if (openMenuId && buttonRefs.current[openMenuId]) {
+      const button = buttonRefs.current[openMenuId]
+      const rect = button.getBoundingClientRect()
+      setMenuPosition({
+        top: rect.bottom + 4,
+        right: window.innerWidth - rect.right,
+      })
+
+      const person = persons.find((p) => p.id === openMenuId)
+      setMenuPerson(person || null)
+    } else {
+      setMenuPosition(null)
+      setMenuPerson(null)
+    }
+  }, [openMenuId, persons])
+
+  // Close menu on scroll
+  useEffect(() => {
+    if (!openMenuId) return
+
+    const handleScroll = () => {
+      setOpenMenuId(null)
+    }
+
+    window.addEventListener('scroll', handleScroll, true)
+    return () => window.removeEventListener('scroll', handleScroll, true)
+  }, [openMenuId])
+
+  // Sorting logic
+  const sortedPersons = useMemo(() => {
+    const sorted = [...persons].sort((a, b) => {
+      let aValue: any
+      let bValue: any
+
+      // Handle nested field access
+      if (sortField === 'profile.full_name') {
+        aValue = a.profile?.full_name
+        bValue = b.profile?.full_name
+      } else if (sortField === 'client_name') {
+        aValue = a.client_name
+        bValue = b.client_name
+      } else {
+        aValue = a[sortField as keyof PersonListItem]
+        bValue = b[sortField as keyof PersonListItem]
+      }
+
+      // Handle null/undefined values
+      if (aValue === null || aValue === undefined) return 1
+      if (bValue === null || bValue === undefined) return -1
+
+      // String comparison
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        return sortDirection === 'asc'
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue)
+      }
+
+      // Number/Date comparison
+      return sortDirection === 'asc' ? aValue - bValue : bValue - aValue
+    })
+
+    return sorted
+  }, [persons, sortField, sortDirection])
+
   // Pagination logic
-  const totalPages = Math.ceil(persons.length / pageSize)
+  const totalPages = Math.ceil(sortedPersons.length / pageSize)
   const startIndex = (currentPage - 1) * pageSize
   const endIndex = startIndex + pageSize
-  const paginatedPersons = persons.slice(startIndex, endIndex)
+  const paginatedPersons = sortedPersons.slice(startIndex, endIndex)
+
+  // Reset to page 1 when persons change
+  useMemo(() => {
+    setCurrentPage(1)
+  }, [persons])
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortField(field)
+      setSortDirection('asc')
+    }
+  }
+
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) {
+      return <ChevronsUpDown className="h-4 w-4 text-gray-500" />
+    }
+    return sortDirection === 'asc' ? (
+      <ChevronUp className="h-4 w-4 text-emerald-400" />
+    ) : (
+      <ChevronDown className="h-4 w-4 text-emerald-400" />
+    )
+  }
 
   if (isLoading) {
     return (
-      <div className="bg-white/5 border border-white/10 rounded-xl p-12 text-center">
-        <div className="animate-pulse">
-          <Users className="h-12 w-12 text-gray-600 mx-auto mb-4" />
-          <p className="text-gray-400">Loading persons...</p>
-        </div>
+      <div className="bg-white/5 border border-white/10 rounded-lg p-12 text-center">
+        <div className="inline-block animate-spin h-8 w-8 border-4 border-emerald-500 border-t-transparent rounded-full mb-4" />
+        <p className="text-gray-400">Loading persons...</p>
       </div>
     )
   }
 
   if (persons.length === 0) {
     return (
-      <div className="bg-white/5 border border-white/10 rounded-xl p-12 text-center">
-        <Users className="h-12 w-12 text-gray-600 mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-white mb-2">No persons found</h3>
-        <p className="text-gray-400">Try adjusting your filters or add a new person</p>
+      <div className="bg-white/5 border border-white/10 rounded-lg p-12 text-center">
+        <Users className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+        <p className="text-gray-400">No persons found</p>
       </div>
     )
   }
 
   return (
     <div className="space-y-4">
-      {/* Table */}
-      <div className="bg-white/5 border border-white/10 rounded-xl overflow-hidden">
+      <div className="bg-white/5 border border-white/10 rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead>
-              <tr className="border-b border-white/10">
-                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-300">Name</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-300">Type</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-300">Client</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-300">Status</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-300">Contact</th>
-                <th className="text-left py-4 px-6 text-sm font-semibold text-gray-300">Sessions</th>
-                <th className="text-right py-4 px-6 text-sm font-semibold text-gray-300">Actions</th>
+            <thead className="bg-white/5 border-b border-white/10">
+              <tr>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  <button
+                    onClick={() => handleSort('profile.full_name')}
+                    className="flex items-center gap-1 hover:text-white transition-colors"
+                  >
+                    Name
+                    {getSortIcon('profile.full_name')}
+                  </button>
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  <button
+                    onClick={() => handleSort('person_type')}
+                    className="flex items-center gap-1 hover:text-white transition-colors"
+                  >
+                    Type
+                    {getSortIcon('person_type')}
+                  </button>
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  <button
+                    onClick={() => handleSort('client_name')}
+                    className="flex items-center gap-1 hover:text-white transition-colors"
+                  >
+                    Client
+                    {getSortIcon('client_name')}
+                  </button>
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  Contact
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  <button
+                    onClick={() => handleSort('status')}
+                    className="flex items-center gap-1 hover:text-white transition-colors"
+                  >
+                    Status
+                    {getSortIcon('status')}
+                  </button>
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  Eligible
+                </th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  <button
+                    onClick={() => handleSort('created_at')}
+                    className="flex items-center gap-1 hover:text-white transition-colors"
+                  >
+                    Created
+                    {getSortIcon('created_at')}
+                  </button>
+                </th>
+                <th className="px-3 py-2 w-20 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-white/10">
               {paginatedPersons.map((person) => (
                 <tr
                   key={person.id}
@@ -108,24 +255,16 @@ export function PersonsTable({
                   onClick={() => onView?.(person)}
                 >
                   {/* Name */}
-                  <td className="py-4 px-6">
-                    <div className="flex items-center gap-3">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center text-white font-semibold">
-                        {person.profile?.full_name?.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || '??'}
-                      </div>
-                      <div>
-                        <div className="font-medium text-white">{person.profile?.full_name || 'Unknown'}</div>
-                        {person.is_eligible && (
-                          <div className="text-xs text-emerald-400">Eligible for services</div>
-                        )}
-                      </div>
+                  <td className="px-3 py-2">
+                    <div className="text-sm font-medium text-white truncate max-w-xs">
+                      {person.profile?.full_name || 'Unknown'}
                     </div>
                   </td>
 
                   {/* Type */}
-                  <td className="py-4 px-6">
+                  <td className="px-3 py-2">
                     <span className={cn(
-                      'inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium border',
+                      'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border',
                       personTypeBadgeColors[person.person_type]
                     )}>
                       {personTypeLabels[person.person_type]}
@@ -133,74 +272,57 @@ export function PersonsTable({
                   </td>
 
                   {/* Client */}
-                  <td className="py-4 px-6">
-                    <span className="text-sm text-gray-300">
-                      {person.client_name || '-'}
-                    </span>
+                  <td className="px-3 py-2">
+                    <div className="text-sm text-gray-300 truncate max-w-xs">
+                      {person.client_name || <span className="text-gray-500">—</span>}
+                    </div>
+                  </td>
+
+                  {/* Contact */}
+                  <td className="px-3 py-2">
+                    <div className="text-sm text-gray-300 truncate max-w-xs">
+                      {person.profile?.email || person.profile?.phone || <span className="text-gray-500">—</span>}
+                    </div>
                   </td>
 
                   {/* Status */}
-                  <td className="py-4 px-6">
+                  <td className="px-3 py-2">
                     <span className={cn(
-                      'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border',
+                      'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border',
                       personStatusColors[person.status] || 'bg-gray-500/10 text-gray-400 border-gray-500/20'
                     )}>
-                      {person.status === 'Active' ? (
-                        <CheckCircle2 className="h-3 w-3" />
-                      ) : (
-                        <XCircle className="h-3 w-3" />
-                      )}
                       {person.status}
                     </span>
                   </td>
 
-                  {/* Contact */}
-                  <td className="py-4 px-6">
-                    <div className="text-sm text-gray-300 space-y-0.5">
-                      {person.profile?.email && (
-                        <div className="truncate max-w-[200px]">{person.profile.email}</div>
-                      )}
-                      {person.profile?.phone && (
-                        <div className="text-gray-400">{person.profile.phone}</div>
-                      )}
-                      {!person.profile?.email && !person.profile?.phone && '-'}
-                    </div>
+                  {/* Eligible */}
+                  <td className="px-3 py-2">
+                    {person.is_eligible ? (
+                      <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                    ) : (
+                      <XCircle className="h-4 w-4 text-gray-500" />
+                    )}
                   </td>
 
-                  {/* Sessions */}
-                  <td className="py-4 px-6">
-                    <div className="text-sm">
-                      <div className="text-gray-300">{person.total_sessions} sessions</div>
-                      {person.last_service_date && (
-                        <div className="text-xs text-gray-400">
-                          Last: {formatShortDate(person.last_service_date)}
-                        </div>
-                      )}
-                    </div>
+                  {/* Created */}
+                  <td className="px-3 py-2 text-sm text-gray-400">
+                    {formatShortDate(person.created_at)}
                   </td>
 
                   {/* Actions */}
-                  <td className="py-4 px-6">
-                    <div className="flex items-center justify-end gap-2">
+                  <td className="px-3 py-2 w-20">
+                    <div className="relative flex justify-end items-center">
                       <button
+                        ref={(el) => {
+                          if (el) buttonRefs.current[person.id] = el
+                        }}
                         onClick={(e) => {
                           e.stopPropagation()
-                          onView?.(person)
+                          setOpenMenuId(openMenuId === person.id ? null : person.id)
                         }}
-                        className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white"
-                        title="View details"
+                        className="text-gray-400 hover:text-white transition-colors p-1 rounded hover:bg-white/10"
                       >
-                        <Eye className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          onEdit?.(person)
-                        }}
-                        className="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white"
-                        title="Edit"
-                      >
-                        <Edit className="h-4 w-4" />
+                        <MoreVertical className="h-4 w-4" />
                       </button>
                     </div>
                   </td>
@@ -211,29 +333,130 @@ export function PersonsTable({
         </div>
       </div>
 
-      {/* Pagination */}
+      {/* Floating Action Menu */}
+      {openMenuId && menuPosition && (
+        <>
+          <div
+            className="fixed inset-0 z-[100]"
+            onClick={(e) => {
+              e.stopPropagation()
+              setOpenMenuId(null)
+            }}
+          />
+          <div
+            className="fixed w-48 bg-gray-900 border border-white/10 rounded-lg shadow-xl z-[101]"
+            style={{
+              top: `${menuPosition.top}px`,
+              right: `${menuPosition.right}px`,
+            }}
+          >
+            <div className="py-1">
+              {menuPerson && (
+                <>
+                  {onView && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onView(menuPerson)
+                        setOpenMenuId(null)
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors flex items-center gap-2"
+                    >
+                      <Eye className="h-4 w-4" />
+                      View Details
+                    </button>
+                  )}
+                  {onEdit && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onEdit(menuPerson)
+                        setOpenMenuId(null)
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-colors flex items-center gap-2"
+                    >
+                      <Edit className="h-4 w-4" />
+                      Edit
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Pagination Controls */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between px-4">
+        <div className="flex items-center justify-between bg-white/5 border border-white/10 rounded-lg px-6 py-4">
           <div className="text-sm text-gray-400">
-            Showing {startIndex + 1} to {Math.min(endIndex, persons.length)} of {persons.length} persons
+            Showing <span className="font-medium text-white">{startIndex + 1}</span> to{' '}
+            <span className="font-medium text-white">{Math.min(endIndex, sortedPersons.length)}</span> of{' '}
+            <span className="font-medium text-white">{sortedPersons.length}</span> results
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
-              className="p-2 hover:bg-white/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className={cn(
+                'p-2 rounded-lg transition-colors',
+                currentPage === 1
+                  ? 'text-gray-600 cursor-not-allowed'
+                  : 'text-gray-400 hover:text-white hover:bg-white/10'
+              )}
+              aria-label="Previous page"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-5 w-5" />
             </button>
-            <span className="text-sm text-gray-300">
-              Page {currentPage} of {totalPages}
-            </span>
+
+            {/* Page Numbers */}
+            <div className="flex items-center gap-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                const showPage =
+                  page === 1 ||
+                  page === totalPages ||
+                  (page >= currentPage - 1 && page <= currentPage + 1)
+
+                if (!showPage) {
+                  if (page === currentPage - 2 || page === currentPage + 2) {
+                    return (
+                      <span key={page} className="px-2 text-gray-600">
+                        ...
+                      </span>
+                    )
+                  }
+                  return null
+                }
+
+                return (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={cn(
+                      'px-3 py-1 rounded-lg text-sm font-medium transition-colors',
+                      currentPage === page
+                        ? 'bg-emerald-600 text-white'
+                        : 'text-gray-400 hover:text-white hover:bg-white/10'
+                    )}
+                  >
+                    {page}
+                  </button>
+                )
+              })}
+            </div>
+
             <button
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
-              className="p-2 hover:bg-white/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className={cn(
+                'p-2 rounded-lg transition-colors',
+                currentPage === totalPages
+                  ? 'text-gray-600 cursor-not-allowed'
+                  : 'text-gray-400 hover:text-white hover:bg-white/10'
+              )}
+              aria-label="Next page"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-5 w-5" />
             </button>
           </div>
         </div>

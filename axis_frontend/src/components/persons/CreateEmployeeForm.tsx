@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react'
 import { X, ChevronLeft, Loader2 } from 'lucide-react'
 import { personsApi, EmploymentStatus, type CreateClientEmployeeRequest } from '@/api/persons'
 import { getActiveClients, type ClientList } from '@/api/clients'
+import { cleanFormData, validateRequiredFields } from '@/utils/formHelpers'
 
 interface CreateEmployeeFormProps {
   onClose: () => void
@@ -60,11 +61,16 @@ export function CreateEmployeeForm({ onClose, onSuccess, onBack }: CreateEmploye
 
     try {
       // Validate required fields
-      if (!formData.client_id || !formData.full_name) {
-        throw new Error('Client and full name are required')
+      const { isValid, missing } = validateRequiredFields(formData, ['client_id', 'full_name'])
+
+      if (!isValid) {
+        throw new Error(`Required fields missing: ${missing.join(', ')}`)
       }
 
-      await personsApi.createEmployee(formData)
+      // Clean up form data - convert empty strings to undefined
+      const cleanedData = cleanFormData(formData)
+
+      await personsApi.createEmployee(cleanedData)
       onSuccess()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create employee')

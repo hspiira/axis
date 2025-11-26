@@ -7,6 +7,7 @@
 import { useState, useEffect } from 'react'
 import { X, ChevronLeft, Loader2, Search } from 'lucide-react'
 import { personsApi, RelationshipType, type CreateDependentRequest, type PersonListItem, PersonType } from '@/api/persons'
+import { cleanFormData, validateRequiredFields } from '@/utils/formHelpers'
 
 interface CreateDependentFormProps {
   onClose: () => void
@@ -62,11 +63,20 @@ export function CreateDependentForm({ onClose, onSuccess, onBack }: CreateDepend
 
     try {
       // Validate required fields
-      if (!formData.primary_employee_id || !formData.full_name || !formData.relationship_type) {
-        throw new Error('Primary employee, full name, and relationship type are required')
+      const { isValid, missing } = validateRequiredFields(formData, [
+        'primary_employee_id',
+        'full_name',
+        'relationship_type'
+      ])
+
+      if (!isValid) {
+        throw new Error(`Required fields missing: ${missing.join(', ')}`)
       }
 
-      await personsApi.createDependent(formData)
+      // Clean up form data - convert empty strings to undefined
+      const cleanedData = cleanFormData(formData)
+
+      await personsApi.createDependent(cleanedData)
       onSuccess()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create dependent')

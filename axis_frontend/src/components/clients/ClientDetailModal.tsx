@@ -1,28 +1,18 @@
 /**
  * Client Detail Modal Component
  *
+ * Full-screen modal with tabbed navigation for client details
+ *
  * SOLID Principles:
  * - Single Responsibility: Display comprehensive client information
- * - Open/Closed: Uses generic DetailModal for extensibility
- * - Dependency Inversion: Depends on reusable UI components
+ * - Open/Closed: Tab system allows easy extension
+ * - Dependency Inversion: Depends on reusable tab components
  */
 
-import {
-  Building2,
-  MapPin,
-  User,
-  Briefcase,
-  FileText,
-  Calendar,
-  CheckCircle,
-  Globe,
-  Mail,
-  Phone,
-} from 'lucide-react'
+import { X, Edit2, Building2 } from 'lucide-react'
 import { type ClientDetail } from '@/api/clients'
-import { DetailModal, type DetailSection } from '@/components/ui/DetailModal'
+import { ClientDetailTabs } from './ClientDetailTabs'
 import { StatusBadge } from '@/components/ui/StatusBadge'
-import { formatDate } from '@/utils/formatters'
 
 interface ClientDetailModalProps {
   client: ClientDetail
@@ -32,97 +22,51 @@ interface ClientDetailModalProps {
 }
 
 export function ClientDetailModal({ client, isOpen, onClose, onEdit }: ClientDetailModalProps) {
-  const sections: DetailSection[] = [
-    {
-      title: 'Basic Information',
-      icon: <Building2 className="h-5 w-5 text-emerald-400" />,
-      items: [
-        { label: 'Client Name', value: client.name },
-        { label: 'Status', value: client.status },
-        { label: 'Industry', value: client.industry?.name || client.industry_name },
-        { label: 'Verified', value: client.is_verified ? 'Yes' : 'No' },
-      ],
-    },
-    {
-      title: 'Contact Information',
-      icon: <User className="h-5 w-5 text-emerald-400" />,
-      items: [
-        { label: 'Email', value: client.email, icon: <Mail className="h-4 w-4" /> },
-        { label: 'Phone', value: client.phone, icon: <Phone className="h-4 w-4" /> },
-        { label: 'Contact Person', value: client.contact_person },
-        {
-          label: 'Contact Email',
-          value: client.contact_email,
-          icon: <Mail className="h-4 w-4" />,
-        },
-        {
-          label: 'Contact Phone',
-          value: client.contact_phone,
-          icon: <Phone className="h-4 w-4" />,
-        },
-        {
-          label: 'Website',
-          value: client.website,
-          icon: <Globe className="h-4 w-4" />,
-          link: true,
-        },
-        { label: 'Preferred Contact', value: client.preferred_contact_method },
-      ],
-    },
-    {
-      title: 'Location Information',
-      icon: <MapPin className="h-5 w-5 text-emerald-400" />,
-      items: [
-        { label: 'Address', value: client.address, className: 'md:col-span-2' },
-        { label: 'Billing Address', value: client.billing_address, className: 'md:col-span-2' },
-        { label: 'Timezone', value: client.timezone },
-      ],
-    },
-    {
-      title: 'Business Information',
-      icon: <Briefcase className="h-5 w-5 text-emerald-400" />,
-      items: [
-        { label: 'Tax ID', value: client.tax_id },
-        { label: 'Industry Code', value: client.industry?.code },
-      ],
-    },
-    {
-      title: 'Additional Information',
-      icon: <FileText className="h-5 w-5 text-emerald-400" />,
-      columns: 1,
-      items: [{ label: 'Notes', value: client.notes, className: 'md:col-span-2' }],
-    },
-    {
-      title: 'Metadata',
-      icon: <Calendar className="h-5 w-5 text-emerald-400" />,
-      items: [
-        { label: 'Created At', value: formatDate(client.created_at) },
-        { label: 'Updated At', value: formatDate(client.updated_at) },
-      ],
-    },
-  ]
-
-  const subtitle = (
-    <>
-      <StatusBadge status={client.status} />
-      {client.is_verified && <CheckCircle className="h-5 w-5 text-emerald-400" />}
-      {client.industry_name && (
-        <span className="text-sm text-gray-400">
-          <Briefcase className="inline h-4 w-4 mr-1" />
-          {client.industry_name}
-        </span>
-      )}
-    </>
-  )
+  if (!isOpen) return null
 
   return (
-    <DetailModal
-      isOpen={isOpen}
-      onClose={onClose}
-      onEdit={onEdit ? () => onEdit(client) : undefined}
-      title={client.name}
-      subtitle={subtitle}
-      sections={sections}
-    />
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-[2px] z-50 flex flex-col">
+      {/* Header */}
+      <div className="bg-gray-950 border-b border-white/10 px-6 py-4 flex items-center justify-between flex-shrink-0">
+        <div className="flex items-center gap-4">
+          {/* Icon */}
+          <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 border-2 border-emerald-500/30 flex items-center justify-center">
+            <Building2 className="h-6 w-6 text-emerald-400" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-white">{client.name}</h2>
+            <div className="flex items-center gap-2 mt-1">
+              <StatusBadge status={client.status} size="sm" />
+              {client.industry_name && (
+                <span className="text-sm text-gray-400">• {client.industry_name}</span>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {onEdit && (
+            <button
+              onClick={() => onEdit(client)}
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+              aria-label="Edit client"
+            >
+              <Edit2 className="h-5 w-5 text-gray-400" />
+            </button>
+          )}
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            aria-label="Close modal"
+          >
+            <X className="h-5 w-5 text-gray-400" />
+          </button>
+        </div>
+      </div>
+
+      {/* Tabbed Content */}
+      <div className="flex-1 overflow-hidden bg-gray-900/50">
+        <ClientDetailTabs client={client} onEdit={onEdit ? () => onEdit(client) : undefined} />
+      </div>
+    </div>
   )
 }

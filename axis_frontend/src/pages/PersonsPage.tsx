@@ -16,7 +16,8 @@
 
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Users, Plus } from 'lucide-react'
 import { AppLayout } from '@/components/AppLayout'
 import { usePageTitle } from '@/contexts/PageTitleContext'
@@ -29,11 +30,18 @@ import { ErrorAlert } from '@/components/ui/ErrorAlert'
 
 export function PersonsPage() {
   const { setPageTitle } = usePageTitle()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [persons, setPersons] = useState<PersonListItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
   const [showCreateModal, setShowCreateModal] = useState(false)
-  const [selectedPerson, setSelectedPerson] = useState<PersonListItem | null>(null)
+
+  // Sync selected person with URL
+  const viewPersonId = searchParams.get('view')
+  const selectedPerson = useMemo(() => {
+    if (!viewPersonId) return null
+    return persons.find((p) => p.id === viewPersonId) || null
+  }, [viewPersonId, persons])
 
   // Filter state
   const [filters, setFilters] = useState<PersonsFilterState>({
@@ -88,12 +96,21 @@ export function PersonsPage() {
 
   // Handle person view
   const handleViewPerson = (person: PersonListItem) => {
-    setSelectedPerson(person)
+    // Update URL to show person detail
+    setSearchParams({ view: person.id })
+  }
+
+  // Handle person detail close
+  const handleCloseView = () => {
+    // Remove view param from URL
+    searchParams.delete('view')
+    setSearchParams(searchParams)
   }
 
   // Handle person edit
   const handleEditPerson = (person: PersonListItem) => {
-    setSelectedPerson(person)
+    // Update URL to show person detail (edit functionality is within the modal)
+    setSearchParams({ view: person.id })
   }
 
   // Handle person created
@@ -143,7 +160,7 @@ export function PersonsPage() {
       {selectedPerson && (
         <PersonDetailModal
           personId={selectedPerson.id}
-          onClose={() => setSelectedPerson(null)}
+          onClose={handleCloseView}
           onUpdate={fetchPersons}
         />
       )}
