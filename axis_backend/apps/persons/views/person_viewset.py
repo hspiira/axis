@@ -541,8 +541,8 @@ class PersonViewSet(BaseModelViewSet):
             )
 
     @extend_schema(
-        summary="Get employees by client",
-        description="Get all employees for a specific client",
+        summary="Get persons by client",
+        description="Get all employees and dependents for a specific client",
         responses={200: PersonListSerializer(many=True)},
         parameters=[
             OpenApiParameter('status', OpenApiTypes.STR, description='Filter by employment status'),
@@ -553,14 +553,14 @@ class PersonViewSet(BaseModelViewSet):
     @action(detail=False, methods=['get'], url_path='by-client/(?P<client_id>[^/.]+)')
     def by_client(self, request, client_id=None):
         """
-        Get employees for a specific client.
+        Get employees and dependents for a specific client.
 
         Args:
             request: HTTP request
             client_id: Client ID
 
         Returns:
-            Response with employees
+            Response with employees and dependents
         """
         employment_status = request.query_params.get('status')
         page = int(request.query_params.get('page', 1))

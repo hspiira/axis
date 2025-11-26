@@ -1,50 +1,73 @@
 /**
- * Client Detail Page
+ * Person Detail Page
  *
- * Full-page view for client details with tabbed navigation
- * URL structure: /clients/:id?tab=:tabId
+ * Full-page view for person details with tabbed navigation
+ * URL structure: /persons/:id?tab=:tabId
  */
 
-import { useEffect, useCallback } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { Edit2, Download, Copy, Trash2 } from 'lucide-react'
 import { AppLayout } from '@/components/AppLayout'
 import { useBreadcrumbs } from '@/contexts/BreadcrumbContext'
-import { useClient } from '@/hooks/useClients'
-import { ClientDetailTabs } from '@/components/clients/ClientDetailTabs'
+import { personsApi, type PersonDetail } from '@/api/persons'
+import { PersonDetailTabs } from '@/components/persons/PersonDetailTabs'
 
-export function ClientDetailPage() {
+export function PersonDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const { setBreadcrumbs, setMenuActions } = useBreadcrumbs()
 
-  // Fetch client data
-  const { data: client, isLoading, error } = useClient(id || '')
+  const [person, setPerson] = useState<PersonDetail | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<Error | null>(null)
+
+  // Fetch person data
+  useEffect(() => {
+    if (!id) return
+
+    const fetchPerson = async () => {
+      setIsLoading(true)
+      setError(null)
+      try {
+        const data = await personsApi.get(id)
+        setPerson(data)
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to load person'))
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchPerson()
+  }, [id])
 
   // Get active tab from URL
   const activeTab = searchParams.get('tab') || 'overview'
 
-  // Handle navigation back to clients list
+  // Handle navigation back to persons list
   const handleBack = () => {
-    navigate('/clients')
+    navigate('/persons')
   }
 
-  // Handle edit navigation
+  // Handle edit navigation (placeholder - implement when edit functionality is ready)
   const handleEdit = useCallback(() => {
-    navigate('/clients', { state: { editClientId: id } })
-  }, [navigate, id])
+    // TODO: Implement edit navigation when person edit modal is ready
+    console.log('Edit person:', id)
+  }, [id])
 
   // Set breadcrumbs and menu actions
   useEffect(() => {
-    if (client) {
+    if (person) {
+      const personName = person.profile?.full_name || 'Unknown Person'
       setBreadcrumbs([
-        { label: 'Clients', to: '/clients' },
-        { label: client.name },
+        { label: 'Persons', to: '/persons' },
+        { label: personName },
       ])
       setMenuActions([
         {
-          label: 'Edit Client',
+          label: 'Edit Person',
           icon: <Edit2 className="h-4 w-4" />,
           onClick: handleEdit,
         },
@@ -53,23 +76,23 @@ export function ClientDetailPage() {
           icon: <Download className="h-4 w-4" />,
           onClick: () => {
             // TODO: Implement export functionality
-            console.log('Export client data:', client.id)
+            console.log('Export person data:', person.id)
           },
         },
         {
           label: 'Copy ID',
           icon: <Copy className="h-4 w-4" />,
           onClick: () => {
-            navigator.clipboard.writeText(client.id)
+            navigator.clipboard.writeText(person.id)
             // TODO: Show toast notification
           },
         },
         {
-          label: 'Delete Client',
+          label: 'Delete Person',
           icon: <Trash2 className="h-4 w-4" />,
           onClick: () => {
             // TODO: Implement delete with confirmation
-            console.log('Delete client:', client.id)
+            console.log('Delete person:', person.id)
           },
           variant: 'danger',
         },
@@ -79,29 +102,29 @@ export function ClientDetailPage() {
       setBreadcrumbs([])
       setMenuActions([])
     }
-  }, [client, setBreadcrumbs, setMenuActions, handleEdit])
+  }, [person, setBreadcrumbs, setMenuActions, handleEdit])
 
   if (isLoading) {
     return (
       <AppLayout>
         <div className="flex items-center justify-center h-96">
-          <div className="text-gray-400">Loading client details...</div>
+          <div className="text-gray-400">Loading person details...</div>
         </div>
       </AppLayout>
     )
   }
 
-  if (error || !client) {
+  if (error || !person) {
     return (
       <AppLayout>
         <div className="max-w-7xl mx-auto px-4 lg:px-6 py-6">
           <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-6 text-center">
-            <p className="text-red-400 mb-4">Failed to load client details</p>
+            <p className="text-red-400 mb-4">Failed to load person details</p>
             <button
               onClick={handleBack}
               className="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors"
             >
-              Back to Clients
+              Back to Persons
             </button>
           </div>
         </div>
@@ -115,7 +138,7 @@ export function ClientDetailPage() {
         {/* Tabbed Content */}
         <div className="flex-1 overflow-hidden bg-gray-900/50">
           <div className="max-w-7xl mx-auto h-full">
-            <ClientDetailTabs client={client} activeTab={activeTab} onEdit={handleEdit} />
+            <PersonDetailTabs person={person} activeTab={activeTab} onEdit={handleEdit} />
           </div>
         </div>
       </div>

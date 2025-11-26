@@ -14,16 +14,22 @@ interface CreateEmployeeFormProps {
   onClose: () => void
   onSuccess: () => void
   onBack: () => void
+  initialClientId?: string
 }
 
-export function CreateEmployeeForm({ onClose, onSuccess, onBack }: CreateEmployeeFormProps) {
+export function CreateEmployeeForm({
+  onClose,
+  onSuccess,
+  onBack,
+  initialClientId,
+}: CreateEmployeeFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [clients, setClients] = useState<ClientList[]>([])
   const [loadingClients, setLoadingClients] = useState(true)
 
   const [formData, setFormData] = useState<CreateClientEmployeeRequest>({
-    client_id: '',
+    client_id: initialClientId || '',
     full_name: '',
     email: '',
     phone: '',

@@ -96,6 +96,16 @@ export const queryKeys = {
     details: () => [...queryKeys.services.all, 'detail'] as const,
     detail: (id: string) => [...queryKeys.services.details(), id] as const,
   },
+
+  // Persons
+  persons: {
+    all: ['persons'] as const,
+    lists: () => [...queryKeys.persons.all, 'list'] as const,
+    list: (filters?: string) => [...queryKeys.persons.lists(), filters] as const,
+    details: () => [...queryKeys.persons.all, 'detail'] as const,
+    detail: (id: string) => [...queryKeys.persons.details(), id] as const,
+    byClient: (clientId: string, filters?: string) => [...queryKeys.persons.all, 'by-client', clientId, filters] as const,
+  },
 }
 
 /**

@@ -12,6 +12,7 @@ import { Toaster } from './components/Toaster'
 import { AuthProvider } from './contexts/AuthContext'
 import { ClientProvider } from './contexts/ClientContext'
 import { PageTitleProvider } from './contexts/PageTitleContext'
+import { BreadcrumbProvider } from './contexts/BreadcrumbContext'
 import { QueryClientProvider, queryClient } from './lib/react-query'
 import { router } from './router'
 
@@ -22,8 +23,10 @@ function App() {
         <AuthProvider>
           <ClientProvider>
             <PageTitleProvider>
-            <RouterProvider router={router} />
-            <Toaster />
+              <BreadcrumbProvider>
+                <RouterProvider router={router} />
+                <Toaster />
+              </BreadcrumbProvider>
             </PageTitleProvider>
           </ClientProvider>
         </AuthProvider>

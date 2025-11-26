@@ -7,7 +7,7 @@
  * - Interface Segregation: Each tab is a separate component
  */
 
-import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import {
   User,
   Briefcase,
@@ -29,6 +29,7 @@ import { PersonActivityTab } from './tabs/PersonActivityTab'
 
 interface PersonDetailTabsProps {
   person: PersonDetail
+  activeTab?: string
   onEdit?: () => void
 }
 
@@ -49,8 +50,23 @@ interface Tab {
   show?: (person: PersonDetail) => boolean
 }
 
-export function PersonDetailTabs({ person, onEdit }: PersonDetailTabsProps) {
-  const [activeTab, setActiveTab] = useState<TabId>('overview')
+export function PersonDetailTabs({ person, activeTab: propActiveTab, onEdit }: PersonDetailTabsProps) {
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  // Read activeTab directly from URL searchParams to ensure it updates when URL changes
+  const activeTab = (searchParams.get('tab') || 'overview') as TabId
+
+  // Handle tab change - update URL
+  const handleTabChange = (tabId: TabId) => {
+    const newParams = new URLSearchParams(searchParams)
+    if (tabId === 'overview') {
+      // Remove tab param for default tab
+      newParams.delete('tab')
+    } else {
+      newParams.set('tab', tabId)
+    }
+    setSearchParams(newParams)
+  }
 
   const tabs: Tab[] = [
     {
@@ -112,7 +128,7 @@ export function PersonDetailTabs({ person, onEdit }: PersonDetailTabsProps) {
           {visibleTabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => handleTabChange(tab.id)}
               className={cn(
                 'flex items-center gap-2 px-4 py-3 text-sm font-medium transition-all duration-200',
                 'border-b-2 whitespace-nowrap',

@@ -7,7 +7,7 @@
  * - Interface Segregation: Each tab is a separate component
  */
 
-import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import {
   Building2,
   FileText,
@@ -25,6 +25,7 @@ import { ClientActivityTab } from './tabs/ClientActivityTab'
 
 interface ClientDetailTabsProps {
   client: ClientDetail
+  activeTab?: string
   onEdit?: () => void
 }
 
@@ -38,8 +39,23 @@ interface Tab {
   badge?: number
 }
 
-export function ClientDetailTabs({ client, onEdit }: ClientDetailTabsProps) {
-  const [activeTab, setActiveTab] = useState<TabId>('overview')
+export function ClientDetailTabs({ client, activeTab: propActiveTab, onEdit }: ClientDetailTabsProps) {
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  // Read activeTab directly from URL searchParams to ensure it updates when URL changes
+  const activeTab = (searchParams.get('tab') || 'overview') as TabId
+
+  // Handle tab change - update URL
+  const handleTabChange = (tabId: TabId) => {
+    const newParams = new URLSearchParams(searchParams)
+    if (tabId === 'overview') {
+      // Remove tab param for default tab
+      newParams.delete('tab')
+    } else {
+      newParams.set('tab', tabId)
+    }
+    setSearchParams(newParams)
+  }
 
   const tabs: Tab[] = [
     {
@@ -86,7 +102,7 @@ export function ClientDetailTabs({ client, onEdit }: ClientDetailTabsProps) {
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => handleTabChange(tab.id)}
               className={cn(
                 'flex items-center gap-2 px-4 py-3 text-sm font-medium transition-all duration-200',
                 'border-b-2 whitespace-nowrap',

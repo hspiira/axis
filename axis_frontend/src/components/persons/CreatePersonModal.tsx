@@ -13,6 +13,7 @@ import { CreateDependentForm } from './CreateDependentForm'
 interface CreatePersonModalProps {
   onClose: () => void
   onSuccess: () => void
+  initialClientId?: string
 }
 
 type PersonTypeSelection = PersonType | null
@@ -44,7 +45,7 @@ const personTypeOptions = [
   },
 ]
 
-export function CreatePersonModal({ onClose, onSuccess }: CreatePersonModalProps) {
+export function CreatePersonModal({ onClose, onSuccess, initialClientId }: CreatePersonModalProps) {
   const [selectedType, setSelectedType] = useState<PersonTypeSelection>(null)
 
   // Handle back to type selection
@@ -101,7 +102,12 @@ export function CreatePersonModal({ onClose, onSuccess }: CreatePersonModalProps
     <div className="fixed inset-0 bg-black/50 backdrop-blur-[2px] flex items-center justify-center z-50 p-4">
       <div className="bg-gray-950 border border-white/10 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {selectedType === PersonType.CLIENT_EMPLOYEE && (
-          <CreateEmployeeForm onClose={onClose} onSuccess={onSuccess} onBack={handleBack} />
+          <CreateEmployeeForm
+            onClose={onClose}
+            onSuccess={onSuccess}
+            onBack={handleBack}
+            initialClientId={initialClientId}
+          />
         )}
         {selectedType === PersonType.DEPENDENT && (
           <CreateDependentForm onClose={onClose} onSuccess={onSuccess} onBack={handleBack} />

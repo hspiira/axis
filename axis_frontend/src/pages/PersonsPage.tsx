@@ -16,8 +16,8 @@
 
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Users, Plus } from 'lucide-react'
 import { AppLayout } from '@/components/AppLayout'
 import { usePageTitle } from '@/contexts/PageTitleContext'
@@ -25,23 +25,15 @@ import { personsApi, type PersonListItem, type PersonFilters as ApiPersonFilters
 import { PersonsTable } from '@/components/persons/PersonsTable'
 import { PersonsFilters, type PersonsFilterState } from '@/components/persons/PersonsFilters'
 import { CreatePersonModal } from '@/components/persons/CreatePersonModal'
-import { PersonDetailModal } from '@/components/persons/PersonDetailModal'
 import { ErrorAlert } from '@/components/ui/ErrorAlert'
 
 export function PersonsPage() {
   const { setPageTitle } = usePageTitle()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const navigate = useNavigate()
   const [persons, setPersons] = useState<PersonListItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
   const [showCreateModal, setShowCreateModal] = useState(false)
-
-  // Sync selected person with URL
-  const viewPersonId = searchParams.get('view')
-  const selectedPerson = useMemo(() => {
-    if (!viewPersonId) return null
-    return persons.find((p) => p.id === viewPersonId) || null
-  }, [viewPersonId, persons])
 
   // Filter state
   const [filters, setFilters] = useState<PersonsFilterState>({
@@ -96,21 +88,14 @@ export function PersonsPage() {
 
   // Handle person view
   const handleViewPerson = (person: PersonListItem) => {
-    // Update URL to show person detail
-    setSearchParams({ view: person.id })
-  }
-
-  // Handle person detail close
-  const handleCloseView = () => {
-    // Remove view param from URL
-    searchParams.delete('view')
-    setSearchParams(searchParams)
+    // Navigate to dedicated person detail page
+    navigate(`/persons/${person.id}`)
   }
 
   // Handle person edit
   const handleEditPerson = (person: PersonListItem) => {
-    // Update URL to show person detail (edit functionality is within the modal)
-    setSearchParams({ view: person.id })
+    // Navigate to dedicated person detail page (edit functionality is within the page)
+    navigate(`/persons/${person.id}`)
   }
 
   // Handle person created
@@ -153,15 +138,6 @@ export function PersonsPage() {
         <CreatePersonModal
           onClose={() => setShowCreateModal(false)}
           onSuccess={handlePersonCreated}
-        />
-      )}
-
-      {/* Person Detail Modal */}
-      {selectedPerson && (
-        <PersonDetailModal
-          personId={selectedPerson.id}
-          onClose={handleCloseView}
-          onUpdate={fetchPersons}
         />
       )}
     </AppLayout>

@@ -327,7 +327,11 @@ class PersonService(BaseService[Person]):
         page_size: int = 10
     ) -> Dict[str, Any]:
         """
-        Get employees for a specific client.
+        Get employees and dependents for a specific client.
+
+        Returns:
+        - All employees directly linked to the client
+        - All dependents whose primary_employee belongs to the client
 
         Args:
             client_id: Client ID
@@ -336,16 +340,31 @@ class PersonService(BaseService[Person]):
             page_size: Items per page
 
         Returns:
-            Dictionary with employees and pagination
+            Dictionary with employees, dependents, and pagination
         """
-        employees = self.repository.get_employees(
-            client_id=client_id,
-            employment_status=status
-        )
+        from django.db.models import Q
+        from axis_backend.enums import PersonType
+        
+        # Build query to get both employees and dependents for this client
+        # Employees: directly linked via client_id
+        # Dependents: linked via primary_employee.client_id
+        base_qs = self.repository.get_queryset()
+        
+        # Filter: employees with this client_id OR dependents whose primary_employee has this client_id
+        query = Q(client_id=client_id) | Q(primary_employee__client_id=client_id)
+        
+        # Apply employment status filter if provided (only affects employees, not dependents)
+        if status:
+            # For employees: filter by employment_status
+            # For dependents: include all (employment_status doesn't apply)
+            query &= (Q(person_type=PersonType.CLIENT_EMPLOYEE, employment_status=status) | 
+                     Q(person_type=PersonType.DEPENDENT))
+        
+        all_persons = base_qs.filter(query).order_by('-created_at')
 
         # Paginate
         from django.core.paginator import Paginator
-        paginator = Paginator(employees, page_size)
+        paginator = Paginator(all_persons, page_size)
         page_obj = paginator.get_page(page)
 
         return {
