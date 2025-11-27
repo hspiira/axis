@@ -10,7 +10,7 @@
  */
 
 import { useState, useRef, useEffect } from 'react'
-import { Menu, Info, ChevronRight, Settings, Edit2, Trash2, Download, Copy, MoreVertical } from 'lucide-react'
+import { Menu, Info, ChevronRight, Settings, MoreVertical, Loader2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { usePageTitle } from '@/contexts/PageTitleContext'
@@ -63,35 +63,92 @@ export function AppLayout({ children }: AppLayoutProps) {
             
             {/* Breadcrumbs (for detail pages) */}
             {breadcrumbs.length > 0 ? (
-              <div className="flex items-center gap-2 text-sm min-w-0 flex-1">
-                {breadcrumbs.map((crumb, index) => {
-                  const isLast = index === breadcrumbs.length - 1
-                  return (
-                    <div key={index} className="flex items-center gap-2">
-                      {index > 0 && <ChevronRight className="h-4 w-4 text-gray-600 flex-shrink-0" />}
-                      {isLast ? (
-                        // Last item (current page) - not clickable
-                        <span className="text-white font-medium truncate">{crumb.label}</span>
-                      ) : crumb.to ? (
+              <div className="flex items-center gap-2 text-sm min-w-0 flex-1 overflow-hidden">
+                {breadcrumbs.length > 3 ? (
+                  // Show ellipsis for long breadcrumbs
+                  <>
+                    {/* First breadcrumb */}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {breadcrumbs[0].to ? (
                         <Link
-                          to={crumb.to}
-                          className="text-gray-400 hover:text-white transition-colors truncate"
+                          to={breadcrumbs[0].to}
+                          className="text-gray-400 hover:text-white transition-colors"
                         >
-                          {crumb.label}
+                          {breadcrumbs[0].label}
                         </Link>
-                      ) : crumb.onClick ? (
-                        <button
-                          onClick={crumb.onClick}
-                          className="text-gray-400 hover:text-white transition-colors truncate"
-                        >
-                          {crumb.label}
-                        </button>
                       ) : (
-                        <span className="text-white font-medium truncate">{crumb.label}</span>
+                        <span className="text-gray-400">{breadcrumbs[0].label}</span>
                       )}
                     </div>
-                  )
-                })}
+                    <ChevronRight className="h-4 w-4 text-gray-600 flex-shrink-0" />
+                    {/* Ellipsis */}
+                    <span className="text-gray-500 px-1">...</span>
+                    <ChevronRight className="h-4 w-4 text-gray-600 flex-shrink-0" />
+                    {/* Last two breadcrumbs */}
+                    {breadcrumbs.slice(-2).map((crumb, idx) => {
+                      const actualIndex = breadcrumbs.length - 2 + idx
+                      const isLast = actualIndex === breadcrumbs.length - 1
+                      return (
+                        <div key={actualIndex} className="flex items-center gap-2 flex-shrink-0">
+                          {idx > 0 && <ChevronRight className="h-4 w-4 text-gray-600 flex-shrink-0" />}
+                          {isLast ? (
+                            <span className="text-white font-medium truncate max-w-[200px]" title={crumb.label}>
+                              {crumb.label}
+                            </span>
+                          ) : crumb.to ? (
+                            <Link
+                              to={crumb.to}
+                              className="text-gray-400 hover:text-white transition-colors truncate max-w-[200px]"
+                              title={crumb.label}
+                            >
+                              {crumb.label}
+                            </Link>
+                          ) : (
+                            <span className="text-gray-400 truncate max-w-[200px]" title={crumb.label}>
+                              {crumb.label}
+                            </span>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </>
+                ) : (
+                  // Show all breadcrumbs when 3 or fewer
+                  breadcrumbs.map((crumb, index) => {
+                    const isLast = index === breadcrumbs.length - 1
+                    return (
+                      <div key={index} className="flex items-center gap-2 flex-shrink-0">
+                        {index > 0 && <ChevronRight className="h-4 w-4 text-gray-600 flex-shrink-0" />}
+                        {isLast ? (
+                          // Last item (current page) - not clickable
+                          <span className="text-white font-medium truncate max-w-[200px]" title={crumb.label}>
+                            {crumb.label}
+                          </span>
+                        ) : crumb.to ? (
+                          <Link
+                            to={crumb.to}
+                            className="text-gray-400 hover:text-white transition-colors truncate max-w-[200px]"
+                            title={crumb.label}
+                          >
+                            {crumb.label}
+                          </Link>
+                        ) : crumb.onClick ? (
+                          <button
+                            onClick={crumb.onClick}
+                            className="text-gray-400 hover:text-white transition-colors truncate max-w-[200px]"
+                            title={crumb.label}
+                          >
+                            {crumb.label}
+                          </button>
+                        ) : (
+                          <span className="text-gray-400 truncate max-w-[200px]" title={crumb.label}>
+                            {crumb.label}
+                          </span>
+                        )}
+                      </div>
+                    )
+                  })
+                )}
               </div>
             ) : (
               /* Page Title (for main pages) */
@@ -134,18 +191,27 @@ export function AppLayout({ children }: AppLayoutProps) {
                     {menuActions.map((action, index) => (
                       <button
                         key={index}
-                        onClick={() => {
-                          action.onClick()
+                        onClick={async () => {
+                          if (action.disabled || action.loading) return
+                          await action.onClick()
                           setMenuOpen(false)
                         }}
+                        disabled={action.disabled || action.loading}
+                        title={action.tooltip}
                         className={cn(
                           'w-full text-left px-4 py-2 text-sm transition-colors flex items-center gap-2',
-                          action.variant === 'danger'
+                          action.disabled || action.loading
+                            ? 'opacity-50 cursor-not-allowed'
+                            : action.variant === 'danger'
                             ? 'text-red-400 hover:bg-red-500/10 hover:text-red-300'
                             : 'text-gray-300 hover:bg-white/10 hover:text-white'
                         )}
                       >
-                        {action.icon || <MoreVertical className="h-4 w-4" />}
+                        {action.loading ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          action.icon || <MoreVertical className="h-4 w-4" />
+                        )}
                         {action.label}
                       </button>
                     ))}

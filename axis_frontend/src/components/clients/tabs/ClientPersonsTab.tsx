@@ -186,7 +186,8 @@ export function ClientPersonsTab({ client }: ClientPersonsTabProps) {
 
   // Handlers
   const handleViewPerson = (person: PersonListItem) => {
-    navigate(`/persons?view=${person.id}`)
+    // Navigate to person detail within client context
+    navigate(`/clients/${client.id}/persons/${person.id}`)
   }
 
   const handleEditPerson = (person: PersonListItem) => {

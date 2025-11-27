@@ -17,12 +17,12 @@ import {
   XCircle,
   AlertCircle,
 } from 'lucide-react'
-import { type PersonDetail } from '@/api/persons'
+import { type Person } from '@/api/persons'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { formatDate } from '@/utils/formatters'
 
 interface PersonOverviewTabProps {
-  person: PersonDetail
+  person: Person
 }
 
 interface InfoCardProps {

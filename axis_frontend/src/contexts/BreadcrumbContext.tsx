@@ -17,13 +17,19 @@ export interface BreadcrumbItem {
 export interface MenuAction {
   label: string
   icon?: React.ReactNode
-  onClick: () => void
+  onClick: () => void | Promise<void>
   variant?: 'default' | 'danger'
+  disabled?: boolean
+  loading?: boolean
+  tooltip?: string
 }
 
 interface BreadcrumbContextValue {
   breadcrumbs: BreadcrumbItem[]
   setBreadcrumbs: (breadcrumbs: BreadcrumbItem[]) => void
+  pushBreadcrumb: (crumb: BreadcrumbItem) => void
+  popBreadcrumb: () => void
+  clearBreadcrumbs: () => void
   menuActions: MenuAction[]
   setMenuActions: (actions: MenuAction[]) => void
 }
@@ -38,8 +44,30 @@ export function BreadcrumbProvider({ children }: BreadcrumbProviderProps) {
   const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>([])
   const [menuActions, setMenuActions] = useState<MenuAction[]>([])
 
+  const pushBreadcrumb = (crumb: BreadcrumbItem) => {
+    setBreadcrumbs((prev) => [...prev, crumb])
+  }
+
+  const popBreadcrumb = () => {
+    setBreadcrumbs((prev) => prev.slice(0, -1))
+  }
+
+  const clearBreadcrumbs = () => {
+    setBreadcrumbs([])
+  }
+
   return (
-    <BreadcrumbContext.Provider value={{ breadcrumbs, setBreadcrumbs, menuActions, setMenuActions }}>
+    <BreadcrumbContext.Provider
+      value={{
+        breadcrumbs,
+        setBreadcrumbs,
+        pushBreadcrumb,
+        popBreadcrumb,
+        clearBreadcrumbs,
+        menuActions,
+        setMenuActions,
+      }}
+    >
       {children}
     </BreadcrumbContext.Provider>
   )

@@ -8,10 +8,20 @@
 import { useEffect, useCallback } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { Edit2, Download, Copy, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 import { AppLayout } from '@/components/AppLayout'
-import { useBreadcrumbs } from '@/contexts/BreadcrumbContext'
+import { useBreadcrumbs, type BreadcrumbItem } from '@/contexts/BreadcrumbContext'
 import { useClient } from '@/hooks/useClients'
 import { ClientDetailTabs } from '@/components/clients/ClientDetailTabs'
+
+// Tab labels mapping
+const TAB_LABELS: Record<string, string> = {
+  overview: 'Overview',
+  contracts: 'Contracts',
+  documents: 'Documents',
+  persons: 'Persons',
+  activity: 'Activity',
+}
 
 export function ClientDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -38,10 +48,29 @@ export function ClientDetailPage() {
   // Set breadcrumbs and menu actions
   useEffect(() => {
     if (client) {
-      setBreadcrumbs([
-        { label: 'Clients', to: '/clients' },
-        { label: client.name },
-      ])
+      // Only set breadcrumbs if we're at the client detail level (not nested)
+      // Check if we're in a nested route by checking the current path
+      const currentPath = window.location.pathname
+      const isNestedRoute = currentPath.includes(`/clients/${id}/persons/`)
+
+      if (!isNestedRoute) {
+        // Build breadcrumbs with tab awareness
+        const breadcrumbsArray: BreadcrumbItem[] = [
+          { label: 'Clients', to: '/clients' },
+          { label: client.name, to: `/clients/${id}` },
+        ]
+
+        // Add current tab if not overview
+        if (activeTab !== 'overview') {
+          breadcrumbsArray.push({
+            label: TAB_LABELS[activeTab] || activeTab,
+          })
+        }
+
+        setBreadcrumbs(breadcrumbsArray)
+      } else {
+        // If nested, don't set breadcrumbs - PersonDetailPage will handle it
+      }
       setMenuActions([
         {
           label: 'Edit Client',
@@ -53,33 +82,43 @@ export function ClientDetailPage() {
           icon: <Download className="h-4 w-4" />,
           onClick: () => {
             // TODO: Implement export functionality
-            console.log('Export client data:', client.id)
+            toast.info('Export functionality coming soon')
           },
+          tooltip: 'Export client data to CSV/Excel',
         },
         {
           label: 'Copy ID',
           icon: <Copy className="h-4 w-4" />,
-          onClick: () => {
-            navigator.clipboard.writeText(client.id)
-            // TODO: Show toast notification
+          onClick: async () => {
+            await navigator.clipboard.writeText(client.id)
+            toast.success('Client ID copied to clipboard')
           },
+          tooltip: 'Copy client ID to clipboard',
         },
         {
           label: 'Delete Client',
           icon: <Trash2 className="h-4 w-4" />,
           onClick: () => {
             // TODO: Implement delete with confirmation
-            console.log('Delete client:', client.id)
+            toast.error('Delete functionality requires confirmation modal')
           },
           variant: 'danger',
+          tooltip: 'Permanently delete this client',
         },
       ])
     }
     return () => {
-      setBreadcrumbs([])
+      // Only clear breadcrumbs if we're actually leaving the client detail page
+      // Don't clear if we're navigating to a nested person page
+      const currentPath = window.location.pathname
+      const isNavigatingToPerson = currentPath.includes(`/clients/${id}/persons/`)
+
+      if (!isNavigatingToPerson) {
+        setBreadcrumbs([])
+      }
       setMenuActions([])
     }
-  }, [client, setBreadcrumbs, setMenuActions, handleEdit])
+  }, [client, id, activeTab, setBreadcrumbs, setMenuActions, handleEdit])
 
   if (isLoading) {
     return (

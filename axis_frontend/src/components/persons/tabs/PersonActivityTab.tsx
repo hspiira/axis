@@ -4,12 +4,12 @@
  * Audit trail and activity history
  */
 
-import { type PersonDetail } from '@/api/persons'
+import { type Person } from '@/api/persons'
 import { Activity, Calendar } from 'lucide-react'
 import { formatDate } from '@/utils/formatters'
 
 interface PersonActivityTabProps {
-  person: PersonDetail
+  person: Person
 }
 
 export function PersonActivityTab({ person }: PersonActivityTabProps) {

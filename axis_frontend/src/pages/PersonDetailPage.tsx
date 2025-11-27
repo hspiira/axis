@@ -8,20 +8,36 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { Edit2, Download, Copy, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 import { AppLayout } from '@/components/AppLayout'
-import { useBreadcrumbs } from '@/contexts/BreadcrumbContext'
-import { personsApi, type PersonDetail } from '@/api/persons'
+import { useBreadcrumbs, type BreadcrumbItem } from '@/contexts/BreadcrumbContext'
+import { useClient } from '@/hooks/useClients'
+import { personsApi, type Person } from '@/api/persons'
 import { PersonDetailTabs } from '@/components/persons/PersonDetailTabs'
 
+// Tab labels mapping
+const TAB_LABELS: Record<string, string> = {
+  overview: 'Overview',
+  personal: 'Personal Info',
+  employment: 'Employment',
+  services: 'Services',
+  documents: 'Documents',
+  notes: 'Notes',
+  activity: 'Activity',
+}
+
 export function PersonDetailPage() {
-  const { id } = useParams<{ id: string }>()
+  const { id, clientId } = useParams<{ id: string; clientId?: string }>()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const { setBreadcrumbs, setMenuActions } = useBreadcrumbs()
 
-  const [person, setPerson] = useState<PersonDetail | null>(null)
+  const [person, setPerson] = useState<Person | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
+
+  // Fetch client data if accessed from client context
+  const { data: client } = clientId ? useClient(clientId) : { data: null }
 
   // Fetch person data
   useEffect(() => {
@@ -46,9 +62,13 @@ export function PersonDetailPage() {
   // Get active tab from URL
   const activeTab = searchParams.get('tab') || 'overview'
 
-  // Handle navigation back to persons list
+  // Handle navigation back - go to client detail if accessed from client context, otherwise persons list
   const handleBack = () => {
-    navigate('/persons')
+    if (clientId) {
+      navigate(`/clients/${clientId}`)
+    } else {
+      navigate('/persons')
+    }
   }
 
   // Handle edit navigation (placeholder - implement when edit functionality is ready)
@@ -61,10 +81,34 @@ export function PersonDetailPage() {
   useEffect(() => {
     if (person) {
       const personName = person.profile?.full_name || 'Unknown Person'
-      setBreadcrumbs([
-        { label: 'Persons', to: '/persons' },
-        { label: personName },
-      ])
+
+      // Build breadcrumbs with tab awareness
+      let breadcrumbsArray: BreadcrumbItem[] = []
+
+      if (clientId && client) {
+        // Nested route: set full breadcrumb path including client
+        breadcrumbsArray = [
+          { label: 'Clients', to: '/clients' },
+          { label: client.name, to: `/clients/${clientId}?tab=persons` },
+          { label: personName, to: `/clients/${clientId}/persons/${id}` },
+        ]
+      } else {
+        // Standalone route: set full breadcrumb path
+        breadcrumbsArray = [
+          { label: 'Persons', to: '/persons' },
+          { label: personName, to: `/persons/${id}` },
+        ]
+      }
+
+      // Add current tab if not overview
+      if (activeTab !== 'overview') {
+        breadcrumbsArray.push({
+          label: TAB_LABELS[activeTab] || activeTab,
+        })
+      }
+
+      setBreadcrumbs(breadcrumbsArray)
+
       setMenuActions([
         {
           label: 'Edit Person',
@@ -76,25 +120,28 @@ export function PersonDetailPage() {
           icon: <Download className="h-4 w-4" />,
           onClick: () => {
             // TODO: Implement export functionality
-            console.log('Export person data:', person.id)
+            toast.info('Export functionality coming soon')
           },
+          tooltip: 'Export person data to CSV/Excel',
         },
         {
           label: 'Copy ID',
           icon: <Copy className="h-4 w-4" />,
-          onClick: () => {
-            navigator.clipboard.writeText(person.id)
-            // TODO: Show toast notification
+          onClick: async () => {
+            await navigator.clipboard.writeText(person.id)
+            toast.success('Person ID copied to clipboard')
           },
+          tooltip: 'Copy person ID to clipboard',
         },
         {
           label: 'Delete Person',
           icon: <Trash2 className="h-4 w-4" />,
           onClick: () => {
             // TODO: Implement delete with confirmation
-            console.log('Delete person:', person.id)
+            toast.error('Delete functionality requires confirmation modal')
           },
           variant: 'danger',
+          tooltip: 'Permanently delete this person',
         },
       ])
     }
@@ -102,7 +149,7 @@ export function PersonDetailPage() {
       setBreadcrumbs([])
       setMenuActions([])
     }
-  }, [person, setBreadcrumbs, setMenuActions, handleEdit])
+  }, [person, clientId, client, activeTab, setBreadcrumbs, setMenuActions, handleEdit, id])
 
   if (isLoading) {
     return (

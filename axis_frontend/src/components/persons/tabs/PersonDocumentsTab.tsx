@@ -4,11 +4,11 @@
  * Document management for persons
  */
 
-import { type PersonDetail } from '@/api/persons'
+import { type Person } from '@/api/persons'
 import { FileText } from 'lucide-react'
 
 interface PersonDocumentsTabProps {
-  person: PersonDetail
+  person: Person
 }
 
 export function PersonDocumentsTab({ person }: PersonDocumentsTabProps) {

@@ -4,12 +4,12 @@
  * Employment details for employees, relationship details for dependents
  */
 
-import { type PersonDetail } from '@/api/persons'
+import { type Person } from '@/api/persons'
 import { Briefcase, Calendar, Building2, Users, User } from 'lucide-react'
 import { formatDate } from '@/utils/formatters'
 
 interface PersonEmploymentTabProps {
-  person: PersonDetail
+  person: Person
 }
 
 export function PersonEmploymentTab({ person }: PersonEmploymentTabProps) {

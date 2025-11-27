@@ -6,7 +6,7 @@
 
 import { useState, useEffect } from 'react'
 import { X, Edit2, Loader2 } from 'lucide-react'
-import { personsApi, type PersonDetail } from '@/api/persons'
+import { personsApi, type Person } from '@/api/persons'
 import { PersonDetailTabs } from './PersonDetailTabs'
 
 interface PersonDetailModalProps {
@@ -17,7 +17,7 @@ interface PersonDetailModalProps {
 }
 
 export function PersonDetailModal({ personId, isOpen, onClose, onEdit }: PersonDetailModalProps) {
-  const [person, setPerson] = useState<PersonDetail | null>(null)
+  const [person, setPerson] = useState<Person | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 

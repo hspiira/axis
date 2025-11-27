@@ -4,12 +4,12 @@
  * Detailed personal information
  */
 
-import { type PersonDetail } from '@/api/persons'
+import { type Person } from '@/api/persons'
 import { User, Mail, Phone, MapPin, Calendar, Heart } from 'lucide-react'
 import { formatDate } from '@/utils/formatters'
 
 interface PersonPersonalInfoTabProps {
-  person: PersonDetail
+  person: Person
 }
 
 export function PersonPersonalInfoTab({ person }: PersonPersonalInfoTabProps) {

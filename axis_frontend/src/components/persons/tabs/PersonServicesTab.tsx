@@ -4,12 +4,12 @@
  * Service history and eligibility
  */
 
-import { type PersonDetail } from '@/api/persons'
+import { type Person } from '@/api/persons'
 import { Heart, Calendar } from 'lucide-react'
 import { formatDate } from '@/utils/formatters'
 
 interface PersonServicesTabProps {
-  person: PersonDetail
+  person: Person
 }
 
 export function PersonServicesTab({ person }: PersonServicesTabProps) {

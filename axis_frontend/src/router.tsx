@@ -67,6 +67,14 @@ export const router = createBrowserRouter([
     ),
   },
   {
+    path: '/clients/:clientId/persons/:id',
+    element: (
+      <ProtectedRoute>
+        <PersonDetailPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: '/contracts',
     element: (
       <ProtectedRoute>

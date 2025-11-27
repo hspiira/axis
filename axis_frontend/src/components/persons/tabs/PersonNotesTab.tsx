@@ -4,11 +4,11 @@
  * Internal notes and observations
  */
 
-import { type PersonDetail } from '@/api/persons'
+import { type Person } from '@/api/persons'
 import { ClipboardList } from 'lucide-react'
 
 interface PersonNotesTabProps {
-  person: PersonDetail
+  person: Person
 }
 
 export function PersonNotesTab({ person }: PersonNotesTabProps) {

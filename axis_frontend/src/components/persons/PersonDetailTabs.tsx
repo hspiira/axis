@@ -17,7 +17,7 @@ import {
   Activity,
   Users,
 } from 'lucide-react'
-import { type PersonDetail } from '@/api/persons'
+import { type Person } from '@/api/persons'
 import { cn } from '@/lib/utils'
 import { PersonOverviewTab } from './tabs/PersonOverviewTab'
 import { PersonPersonalInfoTab } from './tabs/PersonPersonalInfoTab'
@@ -28,7 +28,7 @@ import { PersonNotesTab } from './tabs/PersonNotesTab'
 import { PersonActivityTab } from './tabs/PersonActivityTab'
 
 interface PersonDetailTabsProps {
-  person: PersonDetail
+  person: Person
   activeTab?: string
   onEdit?: () => void
 }
@@ -46,8 +46,8 @@ interface Tab {
   id: TabId
   label: string
   icon: React.ReactNode
-  component: React.ComponentType<{ person: PersonDetail }>
-  show?: (person: PersonDetail) => boolean
+  component: React.ComponentType<{ person: Person }>
+  show?: (person: Person) => boolean
 }
 
 export function PersonDetailTabs({ person, activeTab: propActiveTab, onEdit }: PersonDetailTabsProps) {
