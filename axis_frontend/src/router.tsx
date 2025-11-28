@@ -14,6 +14,7 @@ import { CasesPage } from '@/pages/CasesPage'
 import { ClientsPage } from '@/pages/ClientsPage'
 import { ClientDetailPage } from '@/pages/ClientDetailPage'
 import { ContractsPage } from '@/pages/ContractsPage'
+import { ContractDetailPage } from '@/pages/ContractDetailPage'
 import { PersonsPage } from '@/pages/PersonsPage'
 import { PersonDetailPage } from '@/pages/PersonDetailPage'
 import { ServicesPage } from '@/pages/ServicesPage'
@@ -79,6 +80,14 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <ContractsPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/contracts/:id',
+    element: (
+      <ProtectedRoute>
+        <ContractDetailPage />
       </ProtectedRoute>
     ),
   },

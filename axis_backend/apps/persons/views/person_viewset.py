@@ -189,7 +189,7 @@ class PersonViewSet(BaseModelViewSet):
                 address = data.pop('address', None)
                 city = data.pop('city', None)
                 country = data.pop('country', None)
-                
+
                 # Build full address string if any address components exist
                 if address or city or country:
                     address_parts = []
@@ -200,7 +200,7 @@ class PersonViewSet(BaseModelViewSet):
                     if country:
                         address_parts.append(country)
                     profile_data['address'] = ', '.join(address_parts) if address_parts else None
-                    
+
                     # Store city and country in metadata for structured access
                     if city or country:
                         profile_data['metadata'] = {}
@@ -219,7 +219,7 @@ class PersonViewSet(BaseModelViewSet):
                     client_id = data.get('client_id', 'unknown')
                     name_slug = profile_data['full_name'].lower().replace(' ', '.').replace("'", "")
                     email = f"{name_slug}.{client_id[:8]}@placeholder.local"
-                
+
                 # Check if user with this email already exists
                 user = None
                 profile = None
@@ -261,9 +261,10 @@ class PersonViewSet(BaseModelViewSet):
                     )
                     # Create new profile
                     profile = Profile.objects.create(**profile_data)
-                    # Link profile to user (profile has FK to user, not vice versa)
-                    profile.user = user
-                    profile.save()
+
+                # Link profile to user (profile has FK to user, not vice versa)
+                profile.user = user
+                profile.save()
 
                 # Extract other fields
                 client_id = data.pop('client_id')

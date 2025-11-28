@@ -57,3 +57,23 @@ export function formatRelativeTime(dateString: string | null | undefined): strin
 
   return formatShortDate(dateString)
 }
+
+export function formatCurrency(
+  amount: number,
+  currency: string = 'UGX',
+  options?: Intl.NumberFormatOptions
+): string {
+  const defaultOptions: Intl.NumberFormatOptions = {
+    style: 'currency',
+    currency: currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }
+
+  try {
+    return new Intl.NumberFormat('en-US', options || defaultOptions).format(amount)
+  } catch (error) {
+    // Fallback if currency code is invalid
+    return `${currency} ${amount.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`
+  }
+}

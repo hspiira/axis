@@ -260,6 +260,8 @@ export interface ClientDetail extends ClientList {
   documents_count: number
   notes: string | null
   metadata: Record<string, unknown> | null
+  total_employees?: number
+  active_contracts_count?: number
 }
 
 // For backward compatibility

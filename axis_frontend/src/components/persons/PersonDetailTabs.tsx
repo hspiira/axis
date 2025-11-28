@@ -10,22 +10,20 @@
 import { useSearchParams } from 'react-router-dom'
 import {
   User,
-  Briefcase,
   Heart,
   FileText,
   ClipboardList,
   Activity,
   Users,
 } from 'lucide-react'
-import { type Person } from '@/api/persons'
+import { type Person, PersonType } from '@/api/persons'
 import { cn } from '@/lib/utils'
 import { PersonOverviewTab } from './tabs/PersonOverviewTab'
-import { PersonPersonalInfoTab } from './tabs/PersonPersonalInfoTab'
-import { PersonEmploymentTab } from './tabs/PersonEmploymentTab'
 import { PersonServicesTab } from './tabs/PersonServicesTab'
 import { PersonDocumentsTab } from './tabs/PersonDocumentsTab'
 import { PersonNotesTab } from './tabs/PersonNotesTab'
 import { PersonActivityTab } from './tabs/PersonActivityTab'
+import { PersonFamilyTab } from './tabs/PersonFamilyTab'
 
 interface PersonDetailTabsProps {
   person: Person
@@ -33,14 +31,7 @@ interface PersonDetailTabsProps {
   onEdit?: () => void
 }
 
-type TabId =
-  | 'overview'
-  | 'personal'
-  | 'employment'
-  | 'services'
-  | 'documents'
-  | 'notes'
-  | 'activity'
+type TabId = 'overview' | 'family' | 'services' | 'documents' | 'notes' | 'activity'
 
 interface Tab {
   id: TabId
@@ -76,20 +67,12 @@ export function PersonDetailTabs({ person, activeTab: propActiveTab, onEdit }: P
       component: PersonOverviewTab,
     },
     {
-      id: 'personal',
-      label: 'Personal Info',
-      icon: <User className="h-4 w-4" />,
-      component: PersonPersonalInfoTab,
-    },
-    {
-      id: 'employment',
-      label: person.is_employee ? 'Employment' : 'Relationship',
-      icon: person.is_employee ? (
-        <Briefcase className="h-4 w-4" />
-      ) : (
-        <Users className="h-4 w-4" />
-      ),
-      component: PersonEmploymentTab,
+      id: 'family',
+      label: 'Family',
+      icon: <Users className="h-4 w-4" />,
+      component: PersonFamilyTab,
+      show: (person) =>
+        person.person_type === PersonType.CLIENT_EMPLOYEE || person.person_type === PersonType.DEPENDENT,
     },
     {
       id: 'services',
@@ -124,29 +107,33 @@ export function PersonDetailTabs({ person, activeTab: propActiveTab, onEdit }: P
     <div className="flex flex-col h-full">
       {/* Tab Navigation */}
       <div className="border-b border-white/10 bg-gray-950/50 sticky top-0 z-10">
-        <div className="flex gap-1 px-6 overflow-x-auto scrollbar-thin">
-          {visibleTabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => handleTabChange(tab.id)}
-              className={cn(
-                'flex items-center gap-2 px-4 py-3 text-sm font-medium transition-all duration-200',
-                'border-b-2 whitespace-nowrap',
-                activeTab === tab.id
-                  ? 'border-emerald-500 text-emerald-400'
-                  : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-white/20'
-              )}
-            >
-              {tab.icon}
-              {tab.label}
-            </button>
-          ))}
+        <div className="max-w-7xl mx-auto">
+          <div className="flex gap-1 px-6 overflow-x-auto scrollbar-thin">
+            {visibleTabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => handleTabChange(tab.id)}
+                className={cn(
+                  'flex items-center gap-2 px-4 py-3 text-sm font-medium transition-all duration-200',
+                  'border-b-2 whitespace-nowrap',
+                  activeTab === tab.id
+                    ? 'border-emerald-500 text-emerald-400'
+                    : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-white/20'
+                )}
+              >
+                {tab.icon}
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Tab Content */}
-      <div className="flex-1 overflow-y-auto p-6">
-        {ActiveComponent && <ActiveComponent person={person} />}
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-7xl mx-auto p-6">
+          {ActiveComponent && <ActiveComponent person={person} />}
+        </div>
       </div>
     </div>
   )

@@ -6,11 +6,10 @@
  * - Open/Closed: Extensible with custom status types and colors
  */
 
-import { BaseStatus } from '@/api/clients'
 import { cn } from '@/lib/utils'
 
 interface StatusBadgeProps {
-  status: BaseStatus
+  status: string
   className?: string
 }
 
@@ -28,19 +27,31 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
   )
 }
 
-export function getStatusColor(status: BaseStatus): string {
-  switch (status) {
-    case BaseStatus.ACTIVE:
-      return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
-    case BaseStatus.INACTIVE:
-      return 'bg-gray-500/20 text-gray-400 border-gray-500/30'
-    case BaseStatus.PENDING:
-      return 'bg-amber-500/20 text-amber-400 border-amber-500/30'
-    case BaseStatus.ARCHIVED:
-      return 'bg-slate-500/20 text-slate-400 border-slate-500/30'
-    case BaseStatus.DELETED:
-      return 'bg-red-500/20 text-red-400 border-red-500/30'
-    default:
-      return 'bg-gray-500/20 text-gray-400 border-gray-500/30'
+export function getStatusColor(status: string): string {
+  // Normalize status to check (case-insensitive)
+  const normalizedStatus = status.toLowerCase()
+
+  // Check common statuses
+  if (normalizedStatus === 'active') {
+    return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+  } else if (normalizedStatus === 'inactive') {
+    return 'bg-gray-500/20 text-gray-400 border-gray-500/30'
+  } else if (normalizedStatus === 'pending') {
+    return 'bg-amber-500/20 text-amber-400 border-amber-500/30'
+  } else if (normalizedStatus === 'archived') {
+    return 'bg-slate-500/20 text-slate-400 border-slate-500/30'
+  } else if (normalizedStatus === 'deleted') {
+    return 'bg-red-500/20 text-red-400 border-red-500/30'
+  } else if (normalizedStatus === 'expired') {
+    return 'bg-red-500/20 text-red-400 border-red-500/30'
+  } else if (normalizedStatus === 'renewed') {
+    return 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+  } else if (normalizedStatus === 'terminated') {
+    return 'bg-red-500/20 text-red-400 border-red-500/30'
+  } else if (normalizedStatus === 'suspended') {
+    return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
   }
+
+  // Default
+  return 'bg-gray-500/20 text-gray-400 border-gray-500/30'
 }

@@ -18,8 +18,7 @@ import { PersonDetailTabs } from '@/components/persons/PersonDetailTabs'
 // Tab labels mapping
 const TAB_LABELS: Record<string, string> = {
   overview: 'Overview',
-  personal: 'Personal Info',
-  employment: 'Employment',
+  family: 'Family',
   services: 'Services',
   documents: 'Documents',
   notes: 'Notes',

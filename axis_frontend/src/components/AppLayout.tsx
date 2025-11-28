@@ -44,14 +44,14 @@ export function AppLayout({ children }: AppLayoutProps) {
   }, [menuOpen])
 
   return (
-    <div className="flex h-screen w-full bg-gradient-to-b from-black via-gray-950 to-black">
+    <div className="flex h-screen w-full bg-linear-to-b from-black via-gray-950 to-black">
       {/* Sidebar */}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top Header Bar */}
-        <header className="h-16 border-b border-white/10 bg-black/50 backdrop-blur-sm flex items-center justify-between px-4 lg:px-6 gap-4 flex-shrink-0 z-10">
+        <header className="h-16 border-b border-white/10 bg-black/50 backdrop-blur-sm flex items-center justify-between px-4 lg:px-6 gap-4 shrink-0 z-10">
           <div className="flex items-center gap-4 flex-1 min-w-0">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -68,7 +68,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                   // Show ellipsis for long breadcrumbs
                   <>
                     {/* First breadcrumb */}
-                    <div className="flex items-center gap-2 flex-shrink-0">
+                    <div className="flex items-center gap-2 shrink-0">
                       {breadcrumbs[0].to ? (
                         <Link
                           to={breadcrumbs[0].to}
@@ -80,17 +80,17 @@ export function AppLayout({ children }: AppLayoutProps) {
                         <span className="text-gray-400">{breadcrumbs[0].label}</span>
                       )}
                     </div>
-                    <ChevronRight className="h-4 w-4 text-gray-600 flex-shrink-0" />
+                    <ChevronRight className="h-4 w-4 text-gray-600 shrink-0" />
                     {/* Ellipsis */}
                     <span className="text-gray-500 px-1">...</span>
-                    <ChevronRight className="h-4 w-4 text-gray-600 flex-shrink-0" />
+                    <ChevronRight className="h-4 w-4 text-gray-600 shrink-0" />
                     {/* Last two breadcrumbs */}
                     {breadcrumbs.slice(-2).map((crumb, idx) => {
                       const actualIndex = breadcrumbs.length - 2 + idx
                       const isLast = actualIndex === breadcrumbs.length - 1
                       return (
-                        <div key={actualIndex} className="flex items-center gap-2 flex-shrink-0">
-                          {idx > 0 && <ChevronRight className="h-4 w-4 text-gray-600 flex-shrink-0" />}
+                        <div key={actualIndex} className="flex items-center gap-2 shrink-0">
+                          {idx > 0 && <ChevronRight className="h-4 w-4 text-gray-600 shrink-0" />}
                           {isLast ? (
                             <span className="text-white font-medium truncate max-w-[200px]" title={crumb.label}>
                               {crumb.label}
@@ -117,8 +117,8 @@ export function AppLayout({ children }: AppLayoutProps) {
                   breadcrumbs.map((crumb, index) => {
                     const isLast = index === breadcrumbs.length - 1
                     return (
-                      <div key={index} className="flex items-center gap-2 flex-shrink-0">
-                        {index > 0 && <ChevronRight className="h-4 w-4 text-gray-600 flex-shrink-0" />}
+                      <div key={index} className="flex items-center gap-2 shrink-0">
+                        {index > 0 && <ChevronRight className="h-4 w-4 text-gray-600 shrink-0" />}
                         {isLast ? (
                           // Last item (current page) - not clickable
                           <span className="text-white font-medium truncate max-w-[200px]" title={crumb.label}>
@@ -157,7 +157,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                   <div className="flex items-center gap-2">
                     <h1 className="text-lg font-semibold text-white">{title}</h1>
                     {description && (
-                      <Info className="h-4 w-4 text-gray-500 group-hover:text-gray-400 transition-colors cursor-help flex-shrink-0" />
+                      <Info className="h-4 w-4 text-gray-500 group-hover:text-gray-400 transition-colors cursor-help shrink-0" />
                     )}
                   </div>
                   {/* Tooltip - appears on hover of the entire title area */}
@@ -178,7 +178,7 @@ export function AppLayout({ children }: AppLayoutProps) {
             <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="p-2 hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2 text-gray-400 hover:text-white flex-shrink-0"
+                className="p-2 hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2 text-gray-400 hover:text-white shrink-0"
                 aria-label="Actions menu"
               >
                 <Settings className="h-5 w-5" />
@@ -223,7 +223,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         </header>
 
       {/* Main Content */}
-        <main className="flex-1 overflow-y-auto bg-gradient-to-b from-black via-gray-950 to-black relative">
+        <main className="flex-1 overflow-y-auto bg-linear-to-b from-black via-gray-950 to-black relative">
           {children}
         </main>
       </div>

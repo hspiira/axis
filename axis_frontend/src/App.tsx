@@ -24,8 +24,8 @@ function App() {
           <ClientProvider>
             <PageTitleProvider>
               <BreadcrumbProvider>
-                <RouterProvider router={router} />
-                <Toaster />
+            <RouterProvider router={router} />
+            <Toaster />
               </BreadcrumbProvider>
             </PageTitleProvider>
           </ClientProvider>

@@ -1,50 +1,48 @@
 /**
- * Client Detail Tabs Component
+ * Contract Detail Tabs Component
  *
  * SOLID Principles:
- * - Single Responsibility: Manages tabbed navigation for client details
+ * - Single Responsibility: Manages tabbed navigation for contract details
  * - Open/Closed: Easy to add new tabs without modifying existing code
  * - Interface Segregation: Each tab is a separate component
  */
 
 import { useSearchParams } from 'react-router-dom'
 import {
-  Building2,
   FileText,
-  Users,
+  CreditCard,
   Activity,
-  Briefcase,
+  StickyNote,
+  File,
 } from 'lucide-react'
-import { type ClientDetail } from '@/api/clients'
+import { type ContractDetail } from '@/api/contracts'
 import { cn } from '@/lib/utils'
-import { ClientOverviewTab } from './tabs/ClientOverviewTab'
-import { ClientContractsTab } from './tabs/ClientContractsTab'
-import { ClientDocumentsTab } from './tabs/ClientDocumentsTab'
-import { ClientPersonsTab } from './tabs/ClientPersonsTab'
-import { ClientActivityTab } from './tabs/ClientActivityTab'
+import { ContractOverviewTab } from './tabs/ContractOverviewTab'
+import { ContractBillingTab } from './tabs/ContractBillingTab'
+import { ContractDocumentsTab } from './tabs/ContractDocumentsTab'
+import { ContractNotesTab } from './tabs/ContractNotesTab'
+import { ContractActivityTab } from './tabs/ContractActivityTab'
 
-interface ClientDetailTabsProps {
-  client: ClientDetail
+interface ContractDetailTabsProps {
+  contract: ContractDetail
   activeTab?: string
   onEdit?: () => void
 }
 
-type TabId = 'overview' | 'contracts' | 'documents' | 'persons' | 'activity'
+type TabId = 'overview' | 'billing' | 'documents' | 'notes' | 'activity'
 
 interface Tab {
   id: TabId
   label: string
   icon: React.ReactNode
-  component: React.ComponentType<{ client: ClientDetail }>
-  badge?: number
+  component: React.ComponentType<{ contract: ContractDetail }>
 }
 
-export function ClientDetailTabs({ client, activeTab: propActiveTab, onEdit }: ClientDetailTabsProps) {
+export function ContractDetailTabs({ contract }: ContractDetailTabsProps) {
   const [searchParams, setSearchParams] = useSearchParams()
 
   // Read activeTab directly from URL searchParams to ensure it updates when URL changes
-  const urlActiveTab = (searchParams.get('tab') || 'overview') as TabId
-  const activeTab = (propActiveTab as TabId | undefined) ?? urlActiveTab
+  const activeTab = (searchParams.get('tab') || 'overview') as TabId
 
   // Handle tab change - update URL
   const handleTabChange = (tabId: TabId) => {
@@ -62,34 +60,32 @@ export function ClientDetailTabs({ client, activeTab: propActiveTab, onEdit }: C
     {
       id: 'overview',
       label: 'Overview',
-      icon: <Building2 className="h-4 w-4" />,
-      component: ClientOverviewTab,
+      icon: <FileText className="h-4 w-4" />,
+      component: ContractOverviewTab,
     },
     {
-      id: 'contracts',
-      label: 'Contracts',
-      icon: <Briefcase className="h-4 w-4" />,
-      component: ClientContractsTab,
-      badge: client.active_contracts_count,
+      id: 'billing',
+      label: 'Billing',
+      icon: <CreditCard className="h-4 w-4" />,
+      component: ContractBillingTab,
     },
     {
       id: 'documents',
       label: 'Documents',
-      icon: <FileText className="h-4 w-4" />,
-      component: ClientDocumentsTab,
+      icon: <File className="h-4 w-4" />,
+      component: ContractDocumentsTab,
     },
     {
-      id: 'persons',
-      label: 'Persons',
-      icon: <Users className="h-4 w-4" />,
-      component: ClientPersonsTab,
-      badge: client.total_employees,
+      id: 'notes',
+      label: 'Notes',
+      icon: <StickyNote className="h-4 w-4" />,
+      component: ContractNotesTab,
     },
     {
       id: 'activity',
       label: 'Activity',
       icon: <Activity className="h-4 w-4" />,
-      component: ClientActivityTab,
+      component: ContractActivityTab,
     },
   ]
 
@@ -99,7 +95,7 @@ export function ClientDetailTabs({ client, activeTab: propActiveTab, onEdit }: C
     <div className="flex flex-col h-full">
       {/* Tab Navigation */}
       <div className="border-b border-white/10 bg-gray-950/50 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+        <div className="max-w-7xl mx-auto">
           <div className="flex gap-1 px-6 overflow-x-auto scrollbar-thin">
             {tabs.map((tab) => (
               <button
@@ -115,31 +111,16 @@ export function ClientDetailTabs({ client, activeTab: propActiveTab, onEdit }: C
               >
                 {tab.icon}
                 {tab.label}
-                {tab.badge !== undefined && tab.badge > 0 && (
-                  <span className="ml-1 px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs rounded-full">
-                    {tab.badge}
-                  </span>
-                )}
               </button>
             ))}
           </div>
-          {onEdit && (
-            <div className="px-6 pb-3 lg:pb-0">
-              <button
-                onClick={onEdit}
-                className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-gray-200 hover:text-white hover:bg-white/10 transition-colors"
-              >
-                Edit Client
-              </button>
-            </div>
-          )}
         </div>
       </div>
 
       {/* Tab Content */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-7xl mx-auto p-6">
-          {ActiveComponent && <ActiveComponent client={client} />}
+          {ActiveComponent && <ActiveComponent contract={contract} />}
         </div>
       </div>
     </div>

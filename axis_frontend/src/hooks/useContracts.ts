@@ -8,12 +8,9 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  getContracts,
-  getContractById,
-  createContract,
-  updateContract,
-  deleteContract,
-  type Contract,
+  contractsApi,
+  type ContractCreateInput,
+  type ContractUpdateInput,
 } from '@/api/contracts'
 import { queryKeys } from '@/lib/react-query'
 
@@ -28,7 +25,7 @@ import { queryKeys } from '@/lib/react-query'
 export function useContracts(filters?: string) {
   return useQuery({
     queryKey: queryKeys.contracts.list(filters),
-    queryFn: () => getContracts(),
+    queryFn: () => contractsApi.list(),
     staleTime: 1000 * 60 * 10, // 10 minutes (contracts don't change often)
   })
 }
@@ -43,7 +40,7 @@ export function useContracts(filters?: string) {
 export function useContract(id: string) {
   return useQuery({
     queryKey: queryKeys.contracts.detail(id),
-    queryFn: () => getContractById(id),
+    queryFn: () => contractsApi.get(id),
     enabled: !!id, // Only fetch if ID exists
     staleTime: 1000 * 60 * 10, // 10 minutes
   })
@@ -61,7 +58,7 @@ export function useCreateContract() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (data: Partial<Contract>) => createContract(data),
+    mutationFn: (data: ContractCreateInput) => contractsApi.create(data),
     onSuccess: () => {
       // Invalidate and refetch contracts list
       queryClient.invalidateQueries({ queryKey: queryKeys.contracts.all })
@@ -81,8 +78,8 @@ export function useUpdateContract() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<Contract> }) =>
-      updateContract(id, data),
+    mutationFn: ({ id, data }: { id: string; data: ContractUpdateInput }) =>
+      contractsApi.update(id, data),
     onSuccess: (_, variables) => {
       // Invalidate specific contract and list
       queryClient.invalidateQueries({ queryKey: queryKeys.contracts.detail(variables.id) })
@@ -103,7 +100,7 @@ export function useDeleteContract() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (id: string) => deleteContract(id),
+    mutationFn: (id: string) => contractsApi.delete(id),
     onSuccess: () => {
       // Invalidate contracts list
       queryClient.invalidateQueries({ queryKey: queryKeys.contracts.all })

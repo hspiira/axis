@@ -37,13 +37,13 @@ interface StatCardProps {
 
 function StatCard({ label, value, icon, iconColor }: StatCardProps) {
   return (
-    <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-      <div className="flex items-center gap-2 mb-2">
+        <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
         <div className={cn('h-5 w-5', iconColor)}>{icon}</div>
         <span className="text-sm text-gray-400">{label}</span>
-      </div>
+          </div>
       <p className="text-2xl font-bold text-white">{value}</p>
-    </div>
+        </div>
   )
 }
 
@@ -69,7 +69,7 @@ function SearchInput({ value, onChange, placeholder = 'Search persons...' }: Sea
         placeholder={placeholder}
         className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
       />
-    </div>
+          </div>
   )
 }
 
@@ -100,7 +100,7 @@ function FilterSelect({ label, value, onChange, options }: FilterSelectProps) {
           </option>
         ))}
       </select>
-    </div>
+        </div>
   )
 }
 
@@ -130,7 +130,7 @@ export function ClientPersonsTab({ client }: ClientPersonsTabProps) {
   const totalPages = Math.ceil(totalCount / pageSize)
 
   // Debug logging (remove in production)
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env.DEV) {
     console.log('ClientPersonsTab Debug:', {
       clientId: client.id,
       personsData,
@@ -208,7 +208,7 @@ export function ClientPersonsTab({ client }: ClientPersonsTabProps) {
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
-      </div>
+          </div>
     )
   }
 
@@ -217,11 +217,10 @@ export function ClientPersonsTab({ client }: ClientPersonsTabProps) {
     return (
       <div className="max-w-2xl">
         <ErrorAlert
-          title="Failed to load persons"
-          message={error instanceof Error ? error.message : 'An error occurred while loading persons'}
+          error={error instanceof Error ? error : 'An error occurred while loading persons'}
           onRetry={() => refetch()}
         />
-      </div>
+        </div>
     )
   }
 
@@ -260,7 +259,7 @@ export function ClientPersonsTab({ client }: ClientPersonsTabProps) {
         {/* Header with Actions */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold text-white">Employees & Dependents</h3>
+          <h3 className="text-lg font-semibold text-white">Employees & Dependents</h3>
             <p className="text-sm text-gray-400 mt-1">
               {totalCount} {totalCount === 1 ? 'person' : 'persons'} for {client.name}
             </p>
@@ -370,7 +369,7 @@ export function ClientPersonsTab({ client }: ClientPersonsTabProps) {
             )}
           </>
         ) : (
-          <div className="text-center py-12">
+        <div className="text-center py-12">
             {searchQuery || statusFilter !== 'all' ? (
               <>
                 <AlertCircle className="h-12 w-12 text-gray-600 mx-auto mb-3" />
@@ -387,11 +386,11 @@ export function ClientPersonsTab({ client }: ClientPersonsTabProps) {
               </>
             ) : (
               <>
-                <Users className="h-12 w-12 text-gray-600 mx-auto mb-3" />
+          <Users className="h-12 w-12 text-gray-600 mx-auto mb-3" />
                 <p className="text-gray-400">No persons found for this client</p>
-                <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500 mt-1">
                   Add employees to get started with {client.name}
-                </p>
+          </p>
                 <button
                   onClick={handleCreateEmployee}
                   className="mt-4 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2 mx-auto"
@@ -401,7 +400,7 @@ export function ClientPersonsTab({ client }: ClientPersonsTabProps) {
                 </button>
               </>
             )}
-          </div>
+        </div>
         )}
       </div>
 
