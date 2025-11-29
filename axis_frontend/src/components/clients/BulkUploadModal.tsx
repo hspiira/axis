@@ -244,11 +244,11 @@ export function BulkUploadModal({ isOpen, onClose, onSuccess }: BulkUploadModalP
           {step === 'upload' && (
             <div className="space-y-6">
               {/* Instructions */}
-              <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+              <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-4">
                 <div className="flex items-start gap-3">
-                  <AlertCircle className="h-5 w-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                  <AlertCircle className="h-5 w-5 text-emerald-400 flex-shrink-0 mt-0.5" />
                   <div className="flex-1">
-                    <h3 className="text-sm font-semibold text-blue-400 mb-2">Upload Instructions</h3>
+                    <h3 className="text-sm font-semibold text-emerald-400 mb-2">Upload Instructions</h3>
                     <ul className="text-sm text-gray-300 space-y-1 list-disc list-inside">
                       <li>Download the template file to see the required format</li>
                       <li>Fill in client information (name is required)</li>

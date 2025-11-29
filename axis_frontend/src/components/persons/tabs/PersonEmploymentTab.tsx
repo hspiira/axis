@@ -106,7 +106,7 @@ export function PersonEmploymentTab({ person }: PersonEmploymentTabProps) {
                   {person.specializations.map((s, i) => (
                     <span
                       key={i}
-                      className="px-3 py-1 bg-blue-500/10 border border-blue-500/20 rounded-full text-sm text-blue-400"
+                      className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-sm text-emerald-400"
                     >
                       {s}
                     </span>

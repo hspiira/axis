@@ -61,16 +61,16 @@ export function PersonsFilters({ filters, onChange, onCreate }: PersonsFiltersPr
         <button
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
-            'flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium transition-colors',
+            'px-2.5 py-1.5 rounded-lg transition-colors relative flex items-center gap-1.5 text-xs font-medium',
             hasActiveFilters
               ? 'bg-emerald-600 text-white hover:bg-emerald-700'
               : 'bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10'
           )}
         >
-          <Filter className="h-4 w-4" />
+          <Filter className="h-3.5 w-3.5" />
           Filters
           {hasActiveFilters && (
-            <span className="bg-white/20 text-xs px-1.5 py-0.5 rounded">
+            <span className="ml-0.5 px-1 py-0.5 bg-white/20 text-xs rounded">
               {Object.values(filters).filter(v => v !== 'all' && v !== '').length}
             </span>
           )}
@@ -79,9 +79,9 @@ export function PersonsFilters({ filters, onChange, onCreate }: PersonsFiltersPr
         {onCreate && (
           <button
             onClick={onCreate}
-            className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors"
+            className="px-2.5 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-1.5 text-xs font-medium"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-3.5 w-3.5" />
             Add Person
           </button>
         )}
@@ -164,10 +164,10 @@ export function PersonsFilters({ filters, onChange, onCreate }: PersonsFiltersPr
             <div className="mt-4 flex justify-end">
               <button
                 onClick={clearFilters}
-                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors"
+                className="px-2 py-1 text-xs text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/10 flex items-center gap-1"
               >
-                <X className="h-4 w-4" />
-                Clear all filters
+                <X className="h-3.5 w-3.5" />
+                Clear
               </button>
             </div>
           )}

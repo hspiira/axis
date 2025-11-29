@@ -30,7 +30,7 @@ export function PersonActivityTab({ person }: PersonActivityTabProps) {
             </div>
           </div>
           <div className="flex items-start gap-3">
-            <div className="flex-shrink-0 w-2 h-2 mt-2 bg-blue-500 rounded-full"></div>
+            <div className="flex-shrink-0 w-2 h-2 mt-2 bg-emerald-500 rounded-full"></div>
             <div>
               <p className="text-sm text-white">Last updated</p>
               <p className="text-xs text-gray-400">{formatDate(person.updated_at)}</p>

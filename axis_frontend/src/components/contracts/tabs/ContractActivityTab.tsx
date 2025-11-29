@@ -109,7 +109,7 @@ export function ContractActivityTab({ contract }: ContractActivityTabProps) {
       case 'terminated':
         return 'text-red-400 bg-red-500/10 border-red-500/20'
       case 'payment':
-        return 'text-blue-400 bg-blue-500/10 border-blue-500/20'
+        return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
       default:
         return 'text-gray-400 bg-white/5 border-white/10'
     }

@@ -45,7 +45,7 @@ export function getStatusColor(status: string): string {
   } else if (normalizedStatus === 'expired') {
     return 'bg-red-500/20 text-red-400 border-red-500/30'
   } else if (normalizedStatus === 'renewed') {
-    return 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+    return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
   } else if (normalizedStatus === 'terminated') {
     return 'bg-red-500/20 text-red-400 border-red-500/30'
   } else if (normalizedStatus === 'suspended') {

@@ -283,7 +283,7 @@ export function PersonOverviewTab({ person }: PersonOverviewTabProps) {
             {person.specializations?.map((spec, i) => (
               <span
                 key={i}
-                className="px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full text-sm text-blue-400"
+                className="px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-sm text-emerald-400"
               >
                 {spec}
               </span>

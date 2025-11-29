@@ -23,17 +23,6 @@ export function ContractsPage() {
   return (
     <AppLayout>
       <div className="p-6 space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-white">Contracts</h1>
-            <p className="text-gray-400 mt-1">Manage contracts across all clients</p>
-          </div>
-          <button className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            New Contract
-          </button>
-        </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -46,7 +35,7 @@ export function ContractsPage() {
           </div>
           <div className="bg-white/5 border border-white/10 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Calendar className="h-5 w-5 text-blue-400" />
+              <Calendar className="h-5 w-5 text-emerald-400" />
               <span className="text-sm text-gray-400">Active</span>
             </div>
             <p className="text-2xl font-bold text-white">0</p>
@@ -68,24 +57,28 @@ export function ContractsPage() {
         </div>
 
         {/* Search and Filters */}
-        <div className="flex items-center gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex-1 relative min-w-[300px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search contracts by title, client, or ID..."
-              className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+              placeholder="Search contracts..."
+              className="w-full pl-9 pr-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
             />
           </div>
-          <button className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-gray-300 hover:bg-white/10 transition-colors flex items-center gap-2">
-            <Filter className="h-4 w-4" />
+          <button className="px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-lg text-gray-300 hover:bg-white/10 transition-colors flex items-center gap-1.5 text-xs font-medium">
+            <Filter className="h-3.5 w-3.5" />
             Filters
           </button>
-          <button className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-gray-300 hover:bg-white/10 transition-colors flex items-center gap-2">
-            <Download className="h-4 w-4" />
+          <button className="px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-lg text-gray-300 hover:bg-white/10 transition-colors flex items-center gap-1.5 text-xs font-medium">
+            <Download className="h-3.5 w-3.5" />
             Export
+          </button>
+          <button className="px-2.5 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-1.5 text-xs font-medium">
+            <Plus className="h-3.5 w-3.5" />
+            New Contract
           </button>
         </div>
 
@@ -95,8 +88,8 @@ export function ContractsPage() {
             <Briefcase className="h-16 w-16 text-gray-600 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-white mb-2">No contracts found</h3>
             <p className="text-gray-400 mb-6">Get started by creating your first contract</p>
-            <button className="px-6 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors inline-flex items-center gap-2">
-              <Plus className="h-5 w-5" />
+            <button className="px-2.5 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors inline-flex items-center gap-1.5 text-xs font-medium">
+              <Plus className="h-3.5 w-3.5" />
               Create Contract
             </button>
           </div>

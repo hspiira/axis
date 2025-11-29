@@ -7,7 +7,7 @@
 import { useEffect } from 'react'
 import { AppLayout } from '@/components/AppLayout'
 import { usePageTitle } from '@/contexts/PageTitleContext'
-import { Stethoscope } from 'lucide-react'
+import { Stethoscope, Plus } from 'lucide-react'
 
 export function ServicesPage() {
   const { setPageTitle } = usePageTitle()
@@ -24,12 +24,9 @@ export function ServicesPage() {
           <div className="text-emerald-400 mb-4 inline-block">
             <Stethoscope className="h-16 w-16" />
           </div>
-          <h2 className="text-2xl font-bold text-white mb-2">Services Management</h2>
-          <p className="text-gray-400 mb-6">
-            Manage EAP services, sessions, and service providers
-          </p>
-          <button className="px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-all">
-            Create New Service
+          <button className="px-2.5 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-all inline-flex items-center gap-1.5 text-xs font-medium">
+            <Plus className="h-3.5 w-3.5" />
+            Create Service
           </button>
         </div>
       </div>

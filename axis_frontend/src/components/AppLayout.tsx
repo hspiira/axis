@@ -44,7 +44,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   }, [menuOpen])
 
   return (
-    <div className="flex h-screen w-full bg-linear-to-b from-black via-gray-950 to-black">
+    <div className="flex h-screen w-full bg-[#100f0a]">
       {/* Sidebar */}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
@@ -223,7 +223,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         </header>
 
       {/* Main Content */}
-        <main className="flex-1 overflow-y-auto bg-linear-to-b from-black via-gray-950 to-black relative">
+        <main className="flex-1 overflow-y-auto bg-[#100f0a] relative">
           {children}
         </main>
       </div>

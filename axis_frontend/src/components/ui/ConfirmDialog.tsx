@@ -98,9 +98,9 @@ export function ConfirmDialog({
         }
       default:
         return {
-          icon: <Info className="h-12 w-12 text-blue-400" />,
-          iconBg: 'bg-blue-500/20',
-          borderColor: 'border-blue-500/30',
+          icon: <Info className="h-12 w-12 text-gray-400" />,
+          iconBg: 'bg-gray-500/20',
+          borderColor: 'border-gray-500/30',
         }
     }
   }

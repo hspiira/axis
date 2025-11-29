@@ -41,7 +41,7 @@ const personTypeLabels: Record<PersonType, string> = {
 }
 
 const personTypeBadgeColors: Record<PersonType, string> = {
-  [PersonType.CLIENT_EMPLOYEE]: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+  [PersonType.CLIENT_EMPLOYEE]: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
   [PersonType.DEPENDENT]: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
   [PersonType.PLATFORM_STAFF]: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
   [PersonType.SERVICE_PROVIDER]: 'bg-amber-500/10 text-amber-400 border-amber-500/20',

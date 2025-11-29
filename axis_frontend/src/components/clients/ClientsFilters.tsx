@@ -85,16 +85,16 @@ export function ClientsFilters({
         <button
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
-            'px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2',
+            'px-2.5 py-1.5 rounded-lg transition-all relative flex items-center gap-1.5 text-xs font-medium',
             isOpen || hasActiveFilters
               ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
               : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10 hover:text-white'
           )}
         >
-          <Filter className="h-4 w-4" />
+          <Filter className="h-3.5 w-3.5" />
           Filters
           {hasActiveFilters && (
-            <span className="ml-1 px-1.5 py-0.5 bg-emerald-500/30 rounded text-xs">
+            <span className="ml-0.5 px-1 py-0.5 bg-emerald-500/30 rounded text-xs">
               {Object.keys(filters).length}
             </span>
           )}
@@ -102,9 +102,9 @@ export function ClientsFilters({
         {hasActiveFilters && (
           <button
             onClick={clearFilters}
-            className="px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-white/10 transition-all flex items-center gap-2"
+            className="px-2 py-1 text-xs text-gray-400 hover:text-white rounded-lg hover:bg-white/10 transition-all flex items-center gap-1"
           >
-            <X className="h-4 w-4" />
+            <X className="h-3.5 w-3.5" />
             Clear
           </button>
         )}
@@ -113,22 +113,22 @@ export function ClientsFilters({
             onClick={onExport}
             disabled={isExporting}
             className={cn(
-              'px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2',
+              'px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-xs font-medium',
               isExporting
                 ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
                 : 'bg-gray-700 text-white hover:bg-gray-600'
             )}
           >
-            <Download className="h-4 w-4" />
-            {isExporting ? 'Exporting...' : 'Export CSV'}
+            <Download className="h-3.5 w-3.5" />
+            {isExporting ? 'Exporting...' : 'Export'}
           </button>
         )}
         {onCreate && (
           <button
             onClick={onCreate}
-            className="px-4 py-2 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-all flex items-center gap-2"
+            className="px-2.5 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-all flex items-center gap-1.5 text-xs font-medium"
           >
-            <Plus className="h-4 w-4" />
+            <Plus className="h-3.5 w-3.5" />
             Add Client
           </button>
         )}

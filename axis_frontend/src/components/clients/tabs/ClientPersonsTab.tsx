@@ -238,7 +238,7 @@ export function ClientPersonsTab({ client }: ClientPersonsTabProps) {
           label="Active Employees"
           value={stats.activeEmployees}
           icon={<Users className="h-5 w-5" />}
-          iconColor="text-blue-400"
+          iconColor="text-emerald-400"
         />
         <StatCard
           label="Dependents"

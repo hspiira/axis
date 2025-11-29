@@ -76,7 +76,7 @@ export function LandingPage() {
   }, [])
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-black via-gray-950 to-black">
+    <div className="min-h-screen flex flex-col bg-[#100f0a]">
       <LandingHeader />
       {/* Hero Section */}
       <section className="relative overflow-hidden min-h-screen flex items-center" id="home">
@@ -280,7 +280,7 @@ export function LandingPage() {
       </section>
 
       {/* Wellness Showcase Section */}
-      <section className="relative py-32 bg-gradient-to-b from-black via-gray-950 to-black border-t border-white/5 overflow-hidden">
+      <section className="relative py-32 bg-[#100f0a] border-t border-white/5 overflow-hidden">
         {/* Subtle background pattern */}
         <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]"></div>
         <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse"></div>
@@ -380,7 +380,7 @@ export function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="relative py-32 bg-gradient-to-b from-gray-950 via-black to-gray-950 overflow-hidden">
+      <section id="features" className="relative py-32 bg-[#100f0a] overflow-hidden">
         {/* Background effects */}
         <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]"></div>
         <div className="absolute top-1/4 left-0 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse"></div>
@@ -498,7 +498,7 @@ export function LandingPage() {
       </section>
 
       {/* Services Showcase */}
-      <section id="services" className="relative py-32 bg-gradient-to-b from-black via-gray-950 to-black border-t border-white/5 overflow-hidden">
+      <section id="services" className="relative py-32 bg-[#100f0a] border-t border-white/5 overflow-hidden">
         {/* Background effects */}
         <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]"></div>
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse"></div>
@@ -584,7 +584,7 @@ export function LandingPage() {
       {/* CTA Section */}
       <section 
         ref={ctaRef}
-        className="relative py-40 bg-gradient-to-b from-black via-gray-950 to-black border-t border-white/5 overflow-hidden"
+        className="relative py-40 bg-[#100f0a] border-t border-white/5 overflow-hidden"
       >
         {/* Background effects */}
         <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]"></div>
