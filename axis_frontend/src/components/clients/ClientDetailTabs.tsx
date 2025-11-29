@@ -39,7 +39,7 @@ interface Tab {
   badge?: number
 }
 
-export function ClientDetailTabs({ client, activeTab: propActiveTab, onEdit }: ClientDetailTabsProps) {
+export function ClientDetailTabs({ client, activeTab: propActiveTab }: ClientDetailTabsProps) {
   const [searchParams, setSearchParams] = useSearchParams()
 
   // Read activeTab directly from URL searchParams to ensure it updates when URL changes
@@ -100,46 +100,36 @@ export function ClientDetailTabs({ client, activeTab: propActiveTab, onEdit }: C
       {/* Tab Navigation */}
       <div className="border-b border-white/10 bg-gray-950/50 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex gap-1 px-6 overflow-x-auto scrollbar-thin">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => handleTabChange(tab.id)}
-                className={cn(
-                  'flex items-center gap-2 px-4 py-3 text-sm font-medium transition-all duration-200',
-                  'border-b-2 whitespace-nowrap',
-                  activeTab === tab.id
-                    ? 'border-emerald-500 text-emerald-400'
-                    : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-white/20'
-                )}
-              >
-                {tab.icon}
-                {tab.label}
-                {tab.badge !== undefined && tab.badge > 0 && (
-                  <span className="ml-1 px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs rounded-full">
-                    {tab.badge}
-                  </span>
-                )}
-              </button>
-            ))}
+        <div className="flex gap-1 px-6 overflow-x-auto scrollbar-thin">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => handleTabChange(tab.id)}
+              className={cn(
+                'flex items-center gap-2 px-4 py-3 text-sm font-medium transition-all duration-200',
+                'border-b-2 whitespace-nowrap',
+                activeTab === tab.id
+                  ? 'border-emerald-500 text-emerald-400'
+                  : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-white/20'
+              )}
+            >
+              {tab.icon}
+              {tab.label}
+              {tab.badge !== undefined && tab.badge > 0 && (
+                <span className="ml-1 px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs rounded-full">
+                  {tab.badge}
+                </span>
+              )}
+            </button>
+          ))}
           </div>
-          {onEdit && (
-            <div className="px-6 pb-3 lg:pb-0">
-              <button
-                onClick={onEdit}
-                className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-gray-200 hover:text-white hover:bg-white/10 transition-colors"
-              >
-                Edit Client
-              </button>
-            </div>
-          )}
         </div>
       </div>
 
       {/* Tab Content */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-7xl mx-auto p-6">
-          {ActiveComponent && <ActiveComponent client={client} />}
+        {ActiveComponent && <ActiveComponent client={client} />}
         </div>
       </div>
     </div>

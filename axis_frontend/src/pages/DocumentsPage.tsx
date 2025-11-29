@@ -23,6 +23,18 @@ export function DocumentsPage() {
   return (
     <AppLayout>
       <div className="p-6 space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white">Documents</h1>
+            <p className="text-gray-400 mt-1">Manage your document library across all clients</p>
+          </div>
+          <button className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2">
+            <Upload className="h-4 w-4" />
+            Upload Document
+          </button>
+        </div>
+
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-white/5 border border-white/10 rounded-lg p-4">
