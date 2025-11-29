@@ -109,7 +109,7 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
       {/* Modal */}
       <div
         className={cn(
-          'relative w-full max-w-md bg-black border border-white/10 shadow-2xl overflow-hidden',
+          'relative w-full max-w-md bg-gray-900 border border-white/10 shadow-2xl overflow-hidden',
           'rounded-2xl transition-all duration-300',
           isAnimating 
             ? 'opacity-100 scale-100 translate-y-0' 

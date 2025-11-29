@@ -70,7 +70,7 @@ export function ClientFormModal({
       {/* Modal */}
       <div
         className={cn(
-          'relative w-full max-w-4xl bg-gray-950 border border-white/10 shadow-2xl overflow-hidden',
+          'relative w-full max-w-4xl bg-gray-900 border border-white/10 shadow-2xl overflow-hidden',
           'rounded-xl transition-all duration-300',
           isAnimating
             ? 'opacity-100 scale-100 translate-y-0'
@@ -80,7 +80,7 @@ export function ClientFormModal({
         style={{ maxHeight: '90vh', overflowY: 'auto' }}
       >
         {/* Header */}
-        <div className="relative p-6 border-b border-white/10 bg-gray-950/50">
+        <div className="relative p-6 border-b border-white/10 bg-gray-900/95 backdrop-blur-sm">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-white">{title}</h2>
             <button

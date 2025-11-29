@@ -98,9 +98,9 @@ export function ConfirmDialog({
         }
       default:
         return {
-          icon: <Info className="h-12 w-12 text-gray-400" />,
-          iconBg: 'bg-gray-500/20',
-          borderColor: 'border-gray-500/30',
+          icon: <Info className="h-12 w-12 text-emerald-400" />,
+          iconBg: 'bg-emerald-500/20',
+          borderColor: 'border-emerald-500/30',
         }
     }
   }
@@ -115,13 +115,12 @@ export function ConfirmDialog({
           'absolute inset-0 bg-black/50 backdrop-blur-[2px] transition-opacity duration-300',
           isAnimating ? 'opacity-100' : 'opacity-0'
         )}
-        onClick={handleClose}
       />
 
       {/* Dialog */}
       <div
         className={cn(
-          'relative w-full max-w-md bg-gray-950 border border-white/10 shadow-2xl overflow-hidden',
+          'relative w-full max-w-md bg-gray-900 border border-white/10 shadow-2xl overflow-hidden',
           'rounded-xl transition-all duration-300',
           isAnimating
             ? 'opacity-100 scale-100 translate-y-0'

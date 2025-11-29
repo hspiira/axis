@@ -44,7 +44,7 @@ export function PersonDetailModal({ personId, isOpen, onClose, onEdit }: PersonD
   if (isLoading) {
     return (
       <div className="fixed inset-0 bg-black/90 backdrop-blur-[2px] flex items-center justify-center z-50">
-        <div className="bg-gray-950 rounded-xl p-12 border border-white/10">
+        <div className="bg-gray-900 rounded-xl p-12 border border-white/10">
           <Loader2 className="h-12 w-12 text-emerald-400 animate-spin mx-auto" />
           <p className="text-gray-400 mt-4">Loading person details...</p>
         </div>
@@ -55,7 +55,7 @@ export function PersonDetailModal({ personId, isOpen, onClose, onEdit }: PersonD
   if (error || !person) {
     return (
       <div className="fixed inset-0 bg-black/90 backdrop-blur-[2px] flex items-center justify-center z-50 p-4">
-        <div className="bg-gray-950 rounded-xl max-w-md w-full p-6 border border-white/10">
+        <div className="bg-gray-900 rounded-xl max-w-md w-full p-6 border border-white/10">
           <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-red-400 mb-4">
             {error || 'Person not found'}
           </div>
@@ -73,7 +73,7 @@ export function PersonDetailModal({ personId, isOpen, onClose, onEdit }: PersonD
   return (
     <div className="fixed inset-0 bg-black/90 backdrop-blur-[2px] z-50 flex flex-col">
       {/* Header */}
-      <div className="bg-gray-950 border-b border-white/10 px-6 py-4 flex items-center justify-between flex-shrink-0">
+      <div className="bg-gray-900 border-b border-white/10 px-6 py-4 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-4">
           {/* Avatar */}
           {person.profile?.image ? (

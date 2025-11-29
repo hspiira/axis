@@ -193,13 +193,12 @@ export function DocumentUploadModal({
           'absolute inset-0 bg-black/50 backdrop-blur-[2px] transition-opacity duration-300',
           isAnimating ? 'opacity-100' : 'opacity-0'
         )}
-        onClick={handleClose}
       />
 
       {/* Modal */}
       <div
         className={cn(
-          'relative w-full max-w-2xl bg-gray-950 border border-white/10 shadow-2xl overflow-hidden',
+          'relative w-full max-w-2xl bg-gray-900 border border-white/10 shadow-2xl overflow-hidden',
           'rounded-xl transition-all duration-300',
           isAnimating
             ? 'opacity-100 scale-100 translate-y-0'
@@ -209,7 +208,7 @@ export function DocumentUploadModal({
         style={{ maxHeight: '90vh', overflowY: 'auto' }}
       >
         {/* Header */}
-        <div className="sticky top-0 z-10 p-6 border-b border-white/10 bg-gray-950/95 backdrop-blur-sm">
+        <div className="sticky top-0 z-10 p-6 border-b border-white/10 bg-gray-900/95 backdrop-blur-sm">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-white">Upload Document</h2>
             <button
@@ -323,13 +322,11 @@ export function DocumentUploadModal({
             onChange={(e) => setFormData((prev) => ({ ...prev, type: e.target.value as DocumentType }))}
             disabled={isLoading}
             required
-          >
-            {DOCUMENT_TYPES.map((type) => (
-              <option key={type.value} value={type.value}>
-                {type.label}
-              </option>
-            ))}
-          </FormSelect>
+            options={DOCUMENT_TYPES.map((type) => ({
+              value: type.value,
+              label: type.label,
+            }))}
+          />
 
           {/* Description */}
           <FormTextarea

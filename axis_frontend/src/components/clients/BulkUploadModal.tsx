@@ -213,16 +213,15 @@ export function BulkUploadModal({ isOpen, onClose, onSuccess }: BulkUploadModalP
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"
-        onClick={handleClose}
       />
 
       {/* Modal */}
       <div
-        className="relative w-full max-w-4xl bg-gray-950 border border-white/10 rounded-xl shadow-2xl overflow-hidden"
+        className="relative w-full max-w-4xl bg-gray-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden"
         style={{ maxHeight: '90vh' }}
       >
         {/* Header */}
-        <div className="p-6 border-b border-white/10 bg-gray-950/50 flex items-center justify-between">
+        <div className="p-6 border-b border-white/10 bg-gray-900/95 backdrop-blur-sm flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-white">Bulk Upload Clients</h2>
             <p className="text-sm text-gray-400 mt-1">
@@ -271,9 +270,9 @@ export function BulkUploadModal({ isOpen, onClose, onSuccess }: BulkUploadModalP
                 </div>
                 <button
                   onClick={handleDownloadTemplate}
-                  className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2"
+                  className="px-2.5 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-1.5 text-xs font-medium"
                 >
-                  <Download className="h-4 w-4" />
+                  <Download className="h-3.5 w-3.5" />
                   Download
                 </button>
               </div>

@@ -27,7 +27,7 @@ export function ClientDetailModal({ client, isOpen, onClose, onEdit }: ClientDet
   return (
     <div className="fixed inset-0 bg-black/90 backdrop-blur-[2px] z-50 flex flex-col">
       {/* Header */}
-      <div className="bg-gray-950 border-b border-white/10 px-6 py-4 flex items-center justify-between flex-shrink-0">
+      <div className="bg-gray-900 border-b border-white/10 px-6 py-4 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-4">
           {/* Icon */}
           <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 border-2 border-emerald-500/30 flex items-center justify-center">
