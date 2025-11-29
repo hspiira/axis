@@ -2,11 +2,11 @@
  * CSV Parser Utilities
  *
  * SOLID Principles:
- * - Single Responsibility: Parse and validate CSV/Excel files
+ * - Single Responsibility: Parse and validate CSV files
  * - Open/Closed: Extensible with additional file formats
  */
 
-import * as XLSX from 'xlsx'
+// import * as XLSX from 'xlsx'
 
 export interface ClientBulkRow {
   name: string
@@ -45,10 +45,15 @@ export interface EmployeeBulkRow {
 }
 
 /**
- * Parse CSV or Excel file
+ * Parse CSV file
  */
 export async function parseCSV(file: File): Promise<ClientBulkRow[] | EmployeeBulkRow[]> {
   return new Promise((resolve, reject) => {
+    if (!file.name.endsWith('.csv')) {
+      reject(new Error('Invalid file type. Please upload a .csv file.'))
+      return
+    }
+
     const reader = new FileReader()
 
     reader.onload = (e) => {
@@ -79,13 +84,14 @@ export async function parseCSV(file: File): Promise<ClientBulkRow[] | EmployeeBu
             })
             return row
           })
-        } else {
-          // Parse Excel
-          const workbook = XLSX.read(data, { type: 'binary' })
-          const sheetName = workbook.SheetNames[0]
-          const worksheet = workbook.Sheets[sheetName]
-          rows = XLSX.utils.sheet_to_json(worksheet, { raw: false })
         }
+        // else {
+        //   // Parse Excel
+        //   const workbook = XLSX.read(data, { type: 'binary' })
+        //   const sheetName = workbook.SheetNames[0]
+        //   const worksheet = workbook.Sheets[sheetName]
+        //   rows = XLSX.utils.sheet_to_json(worksheet, { raw: false })
+        // }
 
         // Filter out empty rows
         rows = rows.filter((row) => {
@@ -105,7 +111,7 @@ export async function parseCSV(file: File): Promise<ClientBulkRow[] | EmployeeBu
     if (file.name.endsWith('.csv')) {
       reader.readAsText(file)
     } else {
-      reader.readAsBinaryString(file)
+      reject(new Error('Unsupported file type. Only .csv files are supported.'))
     }
   })
 }

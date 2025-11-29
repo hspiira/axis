@@ -124,6 +124,11 @@ export function DocumentsPage() {
       const detail = await documentsApi.get(document.id)
       const url = detail.file_url || detail.url
       if (url) {
+        // Validate URL to prevent javascript: pseudo-protocol XSS
+        if (!url.toLowerCase().startsWith('http://') && !url.toLowerCase().startsWith('https://')) {
+          alert('Invalid or malicious URL detected.')
+          return
+        }
         window.open(url, '_blank')
       } else {
         alert('No file URL available for this document')

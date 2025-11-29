@@ -15,7 +15,6 @@ import {
   Trash2,
   History,
   Lock,
-  ExternalLink,
   ChevronUp,
   ChevronDown,
   ChevronsUpDown,
@@ -275,7 +274,7 @@ export function DocumentsTable({
                       )}
                     </div>
                     {document.is_confidential && (
-                      <Lock className="h-3 w-3 text-yellow-400" title="Confidential" />
+                      <Lock className="h-3 w-3 text-yellow-400"/>
                     )}
                   </div>
                 </td>
@@ -369,7 +368,7 @@ export function DocumentsTable({
       {/* Action Menu */}
       {openMenuId && menuDocument && menuPosition && (
         <div
-          className="fixed z-50 bg-gray-900 border border-white/10 rounded-lg shadow-xl py-1 min-w-[160px]"
+          className="fixed z-50 bg-gray-900 border border-white/10 rounded-lg shadow-xl py-1 min-w-40"
           style={{
             top: `${menuPosition.top}px`,
             right: `${menuPosition.right}px`,

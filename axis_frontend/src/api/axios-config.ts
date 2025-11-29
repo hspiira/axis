@@ -23,6 +23,7 @@ export const apiClient: AxiosInstance = axios.create({
     'Content-Type': 'application/json',
   },
   timeout: 30000, // 30 seconds
+  withCredentials: true, // Send cookies with cross-origin requests
 })
 
 // Token refresh state
@@ -105,28 +106,28 @@ apiClient.interceptors.response.use(
     isRefreshing = true
 
     try {
-      const refreshToken = localStorage.getItem('auth_refresh_token')
-
-      if (!refreshToken) {
-        throw new Error('No refresh token available')
-      }
+      // The refresh token is now in an HTTP-only cookie,
+      // so we don't need to retrieve it from localStorage.
 
       // Attempt to refresh the access token
       const response = await axios.post<AuthTokens>(
         `${API_BASE_URL}/api/auth/token/refresh/`,
-        { refresh: refreshToken },
+        {}, // Body is empty; refresh token is in the cookie
         {
+          withCredentials: true, // Ensure cookies are sent
           headers: {
             'Content-Type': 'application/json',
           },
         }
       )
 
-      const { access, refresh } = response.data
+      const { access } = response.data
 
-      // Update tokens in localStorage
+      // Update access token in localStorage
       localStorage.setItem('auth_access_token', access)
-      localStorage.setItem('auth_refresh_token', refresh)
+
+      // The new refresh token (if rotated) is handled by the backend
+      // via the Set-Cookie header, so no need to set it in localStorage.
 
       // Update the authorization header for the original request
       originalRequest.headers.Authorization = `Bearer ${access}`
@@ -142,7 +143,7 @@ apiClient.interceptors.response.use(
 
       // Clear tokens
       localStorage.removeItem('auth_access_token')
-      localStorage.removeItem('auth_refresh_token')
+      // No need to remove refresh token from localStorage
       localStorage.removeItem('current_client_id')
 
       // Redirect to landing page

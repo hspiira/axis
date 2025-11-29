@@ -198,7 +198,7 @@ export function DocumentUploadModal({
       {/* Modal */}
       <div
         className={cn(
-          'relative w-full max-w-2xl bg-gray-900 border border-white/10 shadow-2xl overflow-hidden',
+          'relative w-full max-w-2xl bg-[#100f0a] border border-white/10 shadow-2xl overflow-hidden',
           'rounded-xl transition-all duration-300',
           isAnimating
             ? 'opacity-100 scale-100 translate-y-0'
@@ -208,12 +208,12 @@ export function DocumentUploadModal({
         style={{ maxHeight: '90vh', overflowY: 'auto' }}
       >
         {/* Header */}
-        <div className="sticky top-0 z-10 p-6 border-b border-white/10 bg-gray-900/95 backdrop-blur-sm">
+        <div className="sticky top-0 z-10 p-6 border-b border-white/10 bg-[#100f0a]/95 backdrop-blur-sm">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-white">Upload Document</h2>
             <button
               onClick={handleClose}
-              className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+              className="p-2 text-white hover:text-white hover:bg-white/10 rounded-lg transition-all"
               aria-label="Close modal"
               disabled={isLoading}
             >
@@ -233,7 +233,7 @@ export function DocumentUploadModal({
                 'flex-1 p-4 border rounded-lg transition-all',
                 uploadMethod === 'file'
                   ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400'
-                  : 'border-white/10 bg-white/5 text-gray-400 hover:bg-white/10'
+                  : 'border-white/10 bg-white/5 text-white hover:bg-white/10'
               )}
             >
               <Upload className="h-5 w-5 mx-auto mb-2" />
@@ -355,15 +355,15 @@ export function DocumentUploadModal({
                 type="text"
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
-                onKeyPress={(e) => {
+                onKeyDown={(e) => {
                   if (e.key === 'Enter') {
-                    e.preventDefault()
-                    handleAddTag()
+                    e.preventDefault();
+                    handleAddTag();
                   }
                 }}
                 placeholder="Add a tag and press Enter"
                 disabled={isLoading}
-                className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                className="flex-1 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
               />
               <FormButton
                 type="button"

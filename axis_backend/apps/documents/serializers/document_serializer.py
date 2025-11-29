@@ -1,5 +1,7 @@
 """Serializers for Document model."""
 from rest_framework import serializers
+from django.conf import settings
+import os
 from apps.documents.models import Document
 from axis_backend.serializers.base import (
     BaseListSerializer,
@@ -10,6 +12,22 @@ from axis_backend.serializers.base import (
     NestedRelationshipMixin
 )
 from axis_backend.enums import DocumentType, DocumentStatus
+
+# File validation constants
+MAX_UPLOAD_SIZE = getattr(settings, 'MAX_UPLOAD_SIZE', 10 * 1024 * 1024)  # 10 MB default
+ALLOWED_CONTENT_TYPES = getattr(settings, 'ALLOWED_CONTENT_TYPES', [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'image/jpeg',
+    'image/png',
+    'text/csv',
+])
+ALLOWED_EXTENSIONS = getattr(settings, 'ALLOWED_EXTENSIONS', [
+    '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.jpg', '.jpeg', '.png', '.csv'
+])
 
 
 class DocumentListSerializer(TimestampMixin, BaseListSerializer, NestedRelationshipMixin):
@@ -204,6 +222,33 @@ class DocumentCreateSerializer(BaseCreateSerializer):
                 raise serializers.ValidationError("Expiry date must be in the future")
         return value
 
+    def validate_file(self, file):
+        """Validate uploaded file against size, type, and extension."""
+        if file.size > MAX_UPLOAD_SIZE:
+            raise serializers.ValidationError(
+                f"File size cannot exceed {MAX_UPLOAD_SIZE // 1024 // 1024} MB."
+            )
+
+        if file.content_type not in ALLOWED_CONTENT_TYPES:
+            raise serializers.ValidationError(
+                f"Unsupported file type: {file.content_type}."
+            )
+
+        ext = os.path.splitext(file.name)[1].lower()
+        if ext not in ALLOWED_EXTENSIONS:
+            raise serializers.ValidationError(
+                f"Unsupported file extension: {ext}."
+            )
+        return file
+
+    def validate_url(self, url):
+        """Validate URL uses a safe protocol."""
+        if not url.lower().startswith(('http://', 'https://')):
+            raise serializers.ValidationError(
+                "Unsupported URL protocol. Only http and https are allowed."
+            )
+        return url
+
     def validate(self, attrs):
         """Cross-field validation."""
         # Ensure either file or URL is provided
@@ -211,6 +256,14 @@ class DocumentCreateSerializer(BaseCreateSerializer):
             raise serializers.ValidationError(
                 "Either 'file' (upload) or 'url' (cloud storage) must be provided"
             )
+
+        # Validate file if present
+        if attrs.get('file'):
+            self.validate_file(attrs['file'])
+
+        # Validate URL if present
+        if attrs.get('url'):
+            self.validate_url(attrs['url'])
 
         # Validate contract belongs to client if both provided
         if attrs.get('contract_id') and attrs.get('client_id'):

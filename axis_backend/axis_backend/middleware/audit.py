@@ -1,14 +1,9 @@
-"""
-Audit middleware for tracking sensitive operations.
-
-Automatically logs all state-changing operations (POST, PUT, PATCH, DELETE)
-to the audit log for compliance and security monitoring.
-"""
-import json
-import time
+from django.urls import resolve, Resolver404
 from django.utils import timezone
 from apps.audit.models import AuditLog
 from axis_backend.enums import ActionType
+import json
+import time
 
 
 class AuditMiddleware:
@@ -123,14 +118,16 @@ class AuditMiddleware:
                 'duration_ms': duration_ms,
                 'request_data': request_data,
             }
+            
+            # Extract entity info using URL resolver
+            entity_type, entity_id = self._get_entity_info(request)
 
-            # Create audit log (use create() to avoid signals/validation overhead)
-            # Note: AuditLog model uses: action, entity_type, entity_id, data (not action_type, model_name, object_id, metadata)
+            # Create audit log
             AuditLog.objects.create(
                 user=request.user,
                 action=action_type,
-                entity_type=self._extract_model_name(request.path),
-                entity_id=self._extract_object_id(request.path),
+                entity_type=entity_type,
+                entity_id=entity_id,
                 data=metadata,
                 ip_address=self._get_client_ip(request),
                 user_agent=request.headers.get('User-Agent', '')[:500],  # Truncate long UAs
@@ -142,6 +139,44 @@ class AuditMiddleware:
             import logging
             logger = logging.getLogger('axis_backend.audit')
             logger.error(f"Failed to create audit log: {e}", exc_info=True)
+
+    def _get_entity_info(self, request):
+        """
+        Extract model name and object ID from the request using URL resolver.
+        """
+        entity_type = None
+        entity_id = None
+        try:
+            resolver_match = resolve(request.path_info)
+            view = resolver_match.func
+            
+            # For class-based views (like ViewSets)
+            if hasattr(view, 'cls'):
+                view_class = view.cls
+                # Get model from queryset
+                if hasattr(view_class, 'queryset') and view_class.queryset is not None:
+                    entity_type = view_class.queryset.model.__name__
+                # Fallback for views with get_queryset
+                elif hasattr(view_class, 'get_queryset'):
+                    entity_type = view_class().get_queryset().model.__name__
+
+            # Extract primary key from URL kwargs
+            pk_field = getattr(view, 'lookup_field', 'pk')
+            if pk_field in resolver_match.kwargs:
+                entity_id = resolver_match.kwargs[pk_field]
+            elif 'pk' in resolver_match.kwargs:
+                 entity_id = resolver_match.kwargs['pk']
+            elif 'id' in resolver_match.kwargs:
+                 entity_id = resolver_match.kwargs['id']
+
+        except Resolver404:
+            # Path doesn't match any URL pattern
+            pass
+        except Exception:
+            # Catch other potential errors to avoid breaking the request
+            pass
+
+        return entity_type, entity_id
 
     def _get_request_body(self, request):
         """
@@ -220,40 +255,3 @@ class AuditMiddleware:
         else:
             ip = request.META.get('REMOTE_ADDR', '')
         return ip[:45]  # IPv6 max length
-
-    def _extract_model_name(self, path):
-        """
-        Extract model name from API path.
-
-        Example: /api/documents/123/ -> Document
-
-        Returns:
-            str: Model name or None
-        """
-        try:
-            parts = path.strip('/').split('/')
-            if len(parts) >= 2 and parts[0] == 'api':
-                # Capitalize first letter and singularize (remove trailing 's')
-                model = parts[1].rstrip('s')
-                return model.capitalize()
-        except (IndexError, AttributeError):
-            pass
-        return None
-
-    def _extract_object_id(self, path):
-        """
-        Extract object ID from API path.
-
-        Example: /api/documents/abc123/ -> abc123
-
-        Returns:
-            str: Object ID or None
-        """
-        try:
-            parts = path.strip('/').split('/')
-            # Check if last part looks like an ID (alphanumeric, no slashes)
-            if len(parts) >= 3 and parts[-1].replace('-', '').replace('_', '').isalnum():
-                return parts[-1]
-        except (IndexError, AttributeError):
-            pass
-        return None

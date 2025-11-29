@@ -141,6 +141,7 @@ class DocumentViewSet(BaseModelViewSet):
         Create new document.
 
         Delegates business logic to DocumentService.
+        The `uploaded_by_id` is automatically set to the authenticated user.
 
         Args:
             request: HTTP request with document data
@@ -148,7 +149,11 @@ class DocumentViewSet(BaseModelViewSet):
         Returns:
             Response with created document
         """
-        serializer = self.create_serializer_class(data=request.data)
+        # Ensure uploaded_by is the authenticated user
+        data = request.data.copy()
+        data['uploaded_by_id'] = request.user.id
+        
+        serializer = self.create_serializer_class(data=data)
         serializer.is_valid(raise_exception=True)
 
         try:
@@ -258,10 +263,8 @@ class DocumentViewSet(BaseModelViewSet):
                 'properties': {
                     'file': {'type': 'string', 'format': 'binary', 'description': 'New document file (alternative to URL)'},
                     'url': {'type': 'string', 'description': 'New document file URL (alternative to file upload)'},
-                    'uploaded_by_id': {'type': 'string', 'description': 'User ID creating new version'},
                     'description': {'type': 'string', 'description': 'Optional updated description'}
                 },
-                'required': ['uploaded_by_id']
             }
         },
         responses={201: DocumentDetailSerializer}
@@ -273,6 +276,7 @@ class DocumentViewSet(BaseModelViewSet):
 
         Business logic delegated to DocumentService.
         Supports both file upload and URL-based storage.
+        The `uploaded_by_id` is automatically set to the authenticated user.
 
         Args:
             request: HTTP request with version data (file or url)
@@ -283,7 +287,6 @@ class DocumentViewSet(BaseModelViewSet):
         """
         file = request.data.get('file')
         url = request.data.get('url')
-        uploaded_by_id = request.data.get('uploaded_by_id')
         description = request.data.get('description')
 
         if not file and not url:
@@ -292,18 +295,12 @@ class DocumentViewSet(BaseModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        if not uploaded_by_id:
-            return Response(
-                {'error': 'uploaded_by_id is required'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
         try:
             new_version = self.service.create_new_version(
                 document_id=pk,
                 file=file,
                 url=url,
-                uploaded_by_id=uploaded_by_id,
+                uploaded_by_id=request.user.id,
                 description=description
             )
             serializer = self.detail_serializer_class(new_version)

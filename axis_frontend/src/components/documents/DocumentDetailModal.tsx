@@ -6,8 +6,7 @@
  * - Open/Closed: Extensible with additional document features
  */
 
-import { useState, useEffect } from 'react'
-import { X, Download, History, FileText, Lock, ExternalLink, Calendar, User, Building2 } from 'lucide-react'
+import { FileText, Lock, ExternalLink, Calendar, Building2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { DetailModal, type DetailSection } from '@/components/ui/DetailModal'
 import type { DocumentDetail } from '@/api/documents'
@@ -42,8 +41,6 @@ export function DocumentDetailModal({
   isOpen,
   onClose,
   document,
-  onDownload,
-  onViewVersions,
 }: DocumentDetailModalProps) {
   if (!document) return null
 

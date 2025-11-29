@@ -2,7 +2,7 @@
  * Bulk Upload Modal Component
  *
  * SOLID Principles:
- * - Single Responsibility: Handle bulk client upload via CSV/Excel
+ * - Single Responsibility: Handle bulk client upload via CSV
  * - Open/Closed: Extensible with additional file formats
  * - Dependency Inversion: Depends on API abstraction
  */
@@ -44,19 +44,15 @@ export function BulkUploadModal({ isOpen, onClose, onSuccess }: BulkUploadModalP
     if (!selectedFile) return
 
     // Validate file type
-    const validTypes = [
-      'text/csv',
-      'application/vnd.ms-excel',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    ]
-    const validExtensions = ['.csv', '.xlsx', '.xls']
+    const validTypes = ['text/csv']
+    const validExtensions = ['.csv']
 
     const fileExtension = selectedFile.name.toLowerCase().slice(selectedFile.name.lastIndexOf('.'))
     const isValidType =
       validTypes.includes(selectedFile.type) || validExtensions.includes(fileExtension)
 
     if (!isValidType) {
-      alert('Please upload a CSV or Excel file (.csv, .xlsx, .xls)')
+      alert('Please upload a CSV file (.csv)')
       return
     }
 
@@ -225,7 +221,7 @@ export function BulkUploadModal({ isOpen, onClose, onSuccess }: BulkUploadModalP
           <div>
             <h2 className="text-2xl font-bold text-white">Bulk Upload Clients</h2>
             <p className="text-sm text-gray-400 mt-1">
-              Upload multiple clients via CSV or Excel file
+              Upload multiple clients via CSV file
             </p>
           </div>
           <button
@@ -251,7 +247,7 @@ export function BulkUploadModal({ isOpen, onClose, onSuccess }: BulkUploadModalP
                     <ul className="text-sm text-gray-300 space-y-1 list-disc list-inside">
                       <li>Download the template file to see the required format</li>
                       <li>Fill in client information (name is required)</li>
-                      <li>Upload CSV or Excel file (.csv, .xlsx, .xls)</li>
+                      <li>Upload CSV file (.csv)</li>
                       <li>Maximum file size: 10MB</li>
                       <li>Review and validate data before submitting</li>
                     </ul>
@@ -291,7 +287,7 @@ export function BulkUploadModal({ isOpen, onClose, onSuccess }: BulkUploadModalP
                 <input
                   id="bulk-upload-file-input"
                   type="file"
-                  accept=".csv,.xlsx,.xls"
+                  accept=".csv"
                   className="hidden"
                   onChange={(e) => {
                     const selectedFile = e.target.files?.[0]
@@ -305,7 +301,7 @@ export function BulkUploadModal({ isOpen, onClose, onSuccess }: BulkUploadModalP
                   Drop your file here or click to browse
                 </p>
                 <p className="text-sm text-gray-400">
-                  Supports CSV and Excel files (.csv, .xlsx, .xls)
+                  Supports CSV files (.csv)
                 </p>
                 {file && (
                   <div className="mt-4 flex items-center justify-center gap-2 text-sm text-emerald-400">
