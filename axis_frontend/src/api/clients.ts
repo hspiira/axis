@@ -89,6 +89,15 @@ export interface Industry {
   updated_at: string
 }
 
+export interface IndustryFormData {
+  name: string
+  code?: string
+  description?: string
+  parent_id?: string
+  external_id?: string
+  metadata?: Record<string, unknown>
+}
+
 // =========================================
 // Client Tag Types
 // =========================================
@@ -480,4 +489,27 @@ export async function getIndustries(): Promise<Industry[]> {
 export async function getIndustryById(id: string): Promise<Industry> {
   const response = await apiClient.get<Industry>(`/industries/${id}/`)
   return response.data
+}
+
+/**
+ * Create a new industry
+ */
+export async function createIndustry(data: IndustryFormData): Promise<Industry> {
+  const response = await apiClient.post<Industry>('/industries/', data)
+  return response.data
+}
+
+/**
+ * Update an existing industry
+ */
+export async function updateIndustry(id: string, data: IndustryFormData): Promise<Industry> {
+  const response = await apiClient.put<Industry>(`/industries/${id}/`, data)
+  return response.data
+}
+
+/**
+ * Delete an industry
+ */
+export async function deleteIndustry(id: string): Promise<void> {
+  await apiClient.delete(`/industries/${id}/`)
 }

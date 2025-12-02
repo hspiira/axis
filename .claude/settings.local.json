@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(python manage.py test:*)",
-      "SlashCommand(/sc:implement Complete 3-tier architecture implementation for services_app - Create all service files (6), serializer files (24 total: 4 per model), ViewSet files (6), and URL routing following exact patterns from contracts and clients apps. Use established patterns for all implementations.)"
+      "SlashCommand(/sc:implement Complete 3-tier architecture implementation for services_app - Create all service files (6), serializer files (24 total: 4 per model), ViewSet files (6), and URL routing following exact patterns from contracts and clients apps. Use established patterns for all implementations.)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

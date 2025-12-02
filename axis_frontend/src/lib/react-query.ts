@@ -97,6 +97,51 @@ export const queryKeys = {
     detail: (id: string) => [...queryKeys.services.details(), id] as const,
   },
 
+  // Service Categories
+  serviceCategories: {
+    all: ['service-categories'] as const,
+    lists: () => [...queryKeys.serviceCategories.all, 'list'] as const,
+    list: (filters?: string) => [...queryKeys.serviceCategories.lists(), filters] as const,
+    details: () => [...queryKeys.serviceCategories.all, 'detail'] as const,
+    detail: (id: string) => [...queryKeys.serviceCategories.details(), id] as const,
+  },
+
+  // Service Providers
+  serviceProviders: {
+    all: ['service-providers'] as const,
+    lists: () => [...queryKeys.serviceProviders.all, 'list'] as const,
+    list: (filters?: string) => [...queryKeys.serviceProviders.lists(), filters] as const,
+    details: () => [...queryKeys.serviceProviders.all, 'detail'] as const,
+    detail: (id: string) => [...queryKeys.serviceProviders.details(), id] as const,
+  },
+
+  // Service Assignments
+  serviceAssignments: {
+    all: ['service-assignments'] as const,
+    lists: () => [...queryKeys.serviceAssignments.all, 'list'] as const,
+    list: (filters?: string) => [...queryKeys.serviceAssignments.lists(), filters] as const,
+    details: () => [...queryKeys.serviceAssignments.all, 'detail'] as const,
+    detail: (id: string) => [...queryKeys.serviceAssignments.details(), id] as const,
+  },
+
+  // Service Sessions
+  serviceSessions: {
+    all: ['service-sessions'] as const,
+    lists: () => [...queryKeys.serviceSessions.all, 'list'] as const,
+    list: (filters?: string) => [...queryKeys.serviceSessions.lists(), filters] as const,
+    details: () => [...queryKeys.serviceSessions.all, 'detail'] as const,
+    detail: (id: string) => [...queryKeys.serviceSessions.details(), id] as const,
+  },
+
+  // Session Feedback
+  sessionFeedbacks: {
+    all: ['session-feedbacks'] as const,
+    lists: () => [...queryKeys.sessionFeedbacks.all, 'list'] as const,
+    list: (filters?: string) => [...queryKeys.sessionFeedbacks.lists(), filters] as const,
+    details: () => [...queryKeys.sessionFeedbacks.all, 'detail'] as const,
+    detail: (id: string) => [...queryKeys.sessionFeedbacks.details(), id] as const,
+  },
+
   // Persons
   persons: {
     all: ['persons'] as const,

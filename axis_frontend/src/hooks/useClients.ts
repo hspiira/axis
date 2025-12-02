@@ -25,8 +25,12 @@ import {
   verifyClient,
   getIndustries,
   getIndustryById,
+  createIndustry,
+  updateIndustry,
+  deleteIndustry,
   type ClientFormData,
   type ClientSearchParams,
+  type IndustryFormData,
 } from '@/api/clients'
 import { queryKeys } from '@/lib/react-query'
 import { toast } from '@/lib/toast'
@@ -293,5 +297,63 @@ export function useIndustry(id: string) {
     queryFn: () => getIndustryById(id),
     enabled: !!id,
     staleTime: 1000 * 60 * 10,
+  })
+}
+
+// =========================================
+// Industry Mutations
+// =========================================
+
+/**
+ * Create a new industry
+ */
+export function useCreateIndustry() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: IndustryFormData) => createIndustry(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['industries'] })
+      toast.success('Industry created successfully')
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to create industry')
+    },
+  })
+}
+
+/**
+ * Update an existing industry
+ */
+export function useUpdateIndustry() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: IndustryFormData }) => updateIndustry(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['industries'] })
+      toast.success('Industry updated successfully')
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to update industry')
+    },
+  })
+}
+
+/**
+ * Delete an industry
+ */
+export function useDeleteIndustry() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (id: string) => deleteIndustry(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['industries'] })
+      toast.success('Industry deleted successfully')
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to delete industry')
+    },
   })
 }

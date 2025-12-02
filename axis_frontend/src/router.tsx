@@ -18,8 +18,11 @@ import { ContractDetailPage } from '@/pages/ContractDetailPage'
 import { PersonsPage } from '@/pages/PersonsPage'
 import { PersonDetailPage } from '@/pages/PersonDetailPage'
 import { ServicesPage } from '@/pages/ServicesPage'
+import { ServiceProvidersPage } from '@/pages/ServiceProvidersPage'
 import { DocumentsPage } from '@/pages/DocumentsPage'
 import { SettingsPage } from '@/pages/SettingsPage'
+import { IndustriesSettingsPage } from '@/pages/settings/IndustriesSettingsPage'
+import { ServiceCategoriesSettingsPage } from '@/pages/settings/ServiceCategoriesSettingsPage'
 import { ProfilePage } from '@/pages/ProfilePage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 
@@ -116,6 +119,14 @@ export const router = createBrowserRouter([
     ),
   },
   {
+    path: '/settings/service-providers',
+    element: (
+      <ProtectedRoute>
+        <ServiceProvidersPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: '/documents',
     element: (
       <ProtectedRoute>
@@ -128,6 +139,22 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <SettingsPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/settings/industries',
+    element: (
+      <ProtectedRoute>
+        <IndustriesSettingsPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/settings/service-categories',
+    element: (
+      <ProtectedRoute>
+        <ServiceCategoriesSettingsPage />
       </ProtectedRoute>
     ),
   },
