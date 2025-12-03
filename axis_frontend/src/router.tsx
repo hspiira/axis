@@ -10,7 +10,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { LandingPage } from '@/pages/LandingPage'
 import { DashboardPage } from '@/pages/DashboardPage'
-import { CasesPage } from '@/pages/CasesPage'
+import { SessionsPage } from '@/pages/SessionsPage'
 import { ClientsPage } from '@/pages/ClientsPage'
 import { ClientDetailPage } from '@/pages/ClientDetailPage'
 import { ContractsPage } from '@/pages/ContractsPage'
@@ -47,10 +47,10 @@ export const router = createBrowserRouter([
     ),
   },
   {
-    path: '/cases',
+    path: '/sessions',
     element: (
       <ProtectedRoute>
-        <CasesPage />
+        <SessionsPage />
       </ProtectedRoute>
     ),
   },
@@ -119,7 +119,7 @@ export const router = createBrowserRouter([
     ),
   },
   {
-    path: '/settings/service-providers',
+    path: '/service-providers',
     element: (
       <ProtectedRoute>
         <ServiceProvidersPage />

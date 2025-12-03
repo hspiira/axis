@@ -130,18 +130,32 @@ export function ServiceProvidersPage() {
     setIsExporting(true)
     try {
       const data = providers.map((provider) => ({
-        Name: provider.name,
-        Type: provider.type,
-        Email: provider.contact_email || '',
-        Phone: provider.contact_phone || '',
-        Location: provider.location || '',
-        Status: provider.status,
-        Rating: provider.rating || '',
-        Verified: provider.is_verified ? 'Yes' : 'No',
-        Available: provider.is_available ? 'Yes' : 'No',
-        'Created Date': formatDateForExport(provider.created_at),
+        name: provider.name,
+        type: provider.type,
+        email: provider.contact_email || '',
+        phone: provider.contact_phone || '',
+        location: provider.location || '',
+        status: provider.status,
+        rating: provider.rating || '',
+        verified: provider.is_verified ? 'Yes' : 'No',
+        available: provider.is_available ? 'Yes' : 'No',
+        created_date: formatDateForExport(provider.created_at),
       }))
-      exportToCSV(data, `service-providers-${new Date().toISOString().split('T')[0]}.csv`)
+
+      const columns = [
+        { key: 'name' as const, label: 'Name' },
+        { key: 'type' as const, label: 'Type' },
+        { key: 'email' as const, label: 'Email' },
+        { key: 'phone' as const, label: 'Phone' },
+        { key: 'location' as const, label: 'Location' },
+        { key: 'status' as const, label: 'Status' },
+        { key: 'rating' as const, label: 'Rating' },
+        { key: 'verified' as const, label: 'Verified' },
+        { key: 'available' as const, label: 'Available' },
+        { key: 'created_date' as const, label: 'Created Date' },
+      ]
+
+      exportToCSV(data, columns, `service-providers-${new Date().toISOString().split('T')[0]}.csv`)
       toast.success('Providers exported successfully')
     } catch (error) {
       toast.error('Failed to export providers')

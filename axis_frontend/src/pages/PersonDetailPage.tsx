@@ -154,7 +154,7 @@ export function PersonDetailPage() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center h-96">
-          <div className="text-gray-400">Loading person details...</div>
+          <div className="text-theme-secondary">Loading person details...</div>
         </div>
       </AppLayout>
     )
@@ -168,7 +168,7 @@ export function PersonDetailPage() {
             <p className="text-red-400 mb-4">Failed to load person details</p>
             <button
               onClick={handleBack}
-              className="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors"
+              className="px-4 py-2 bg-white/10 text-theme rounded-lg hover:bg-white/20 transition-colors"
             >
               Back to Persons
             </button>
@@ -182,7 +182,7 @@ export function PersonDetailPage() {
     <AppLayout>
       <div className="h-full flex flex-col" key={id}>
         {/* Tabbed Content */}
-        <div className="flex-1 overflow-hidden bg-gray-900/50">
+        <div className="flex-1 overflow-hidden bg-[#100f0a]">
           <div className="max-w-7xl mx-auto h-full">
             <PersonDetailTabs person={person} activeTab={activeTab} onEdit={handleEdit} />
           </div>

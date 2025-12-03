@@ -597,8 +597,8 @@ export function useRescheduleSession() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, scheduled_date, scheduled_time }: { id: string; scheduled_date: string; scheduled_time?: string }) =>
-      rescheduleSession(id, scheduled_date, scheduled_time),
+    mutationFn: ({ id, scheduled_at }: { id: string; scheduled_at: string }) =>
+      rescheduleSession(id, scheduled_at),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.serviceSessions.all })
       toast.success('Session rescheduled successfully')

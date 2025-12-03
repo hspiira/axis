@@ -71,7 +71,7 @@ export function DetailModal({
       {/* Backdrop */}
       <div
         className={cn(
-          'absolute inset-0 bg-black/50 backdrop-blur-[2px] transition-opacity duration-300',
+          'absolute inset-0 bg-black/30 backdrop-blur-[2px] transition-opacity duration-300',
           isAnimating ? 'opacity-100' : 'opacity-0'
         )}
       />
@@ -79,7 +79,7 @@ export function DetailModal({
       {/* Modal */}
       <div
         className={cn(
-          'relative w-full max-w-4xl bg-gray-900 border border-white/10 shadow-2xl overflow-hidden',
+          'relative w-full max-w-4xl bg-[#100f0a] border border-white/10 shadow-2xl overflow-hidden',
           'rounded-xl transition-all duration-300',
           isAnimating
             ? 'opacity-100 scale-100 translate-y-0'
@@ -89,7 +89,7 @@ export function DetailModal({
         style={{ maxHeight: '90vh', overflowY: 'auto' }}
       >
         {/* Header */}
-        <div className="sticky top-0 z-10 p-6 border-b border-white/10 bg-gray-900/95 backdrop-blur-sm">
+        <div className="sticky top-0 z-10 p-6 border-b border-white/10 bg-[#100f0a]/95 backdrop-blur-sm">
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <h2 className="text-2xl font-bold text-white mb-2">{title}</h2>

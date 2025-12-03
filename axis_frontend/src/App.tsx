@@ -13,6 +13,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import { ClientProvider } from './contexts/ClientContext'
 import { PageTitleProvider } from './contexts/PageTitleContext'
 import { BreadcrumbProvider } from './contexts/BreadcrumbContext'
+import { ThemeProvider } from './contexts/ThemeContext'
 import { QueryClientProvider, queryClient } from './lib/react-query'
 import { router } from './router'
 
@@ -20,16 +21,18 @@ function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <ClientProvider>
-            <PageTitleProvider>
-              <BreadcrumbProvider>
-            <RouterProvider router={router} />
-            <Toaster />
-              </BreadcrumbProvider>
-            </PageTitleProvider>
-          </ClientProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <ClientProvider>
+              <PageTitleProvider>
+                <BreadcrumbProvider>
+                  <RouterProvider router={router} />
+                  <Toaster />
+                </BreadcrumbProvider>
+              </PageTitleProvider>
+            </ClientProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   )

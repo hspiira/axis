@@ -175,7 +175,7 @@ export function SignInModal({ isOpen, onClose }: SignInModalProps) {
                     ? 'border-red-900/50 focus:ring-red-500/50 focus:border-red-500/50'
                     : 'border-white/10 hover:border-white/20 hover:bg-white/[0.07]'
                 )}
-                placeholder="admin@alchamey.eap"
+                placeholder="admin@alchemy.com"
                 autoComplete="email"
                 disabled={isSubmitting || isLoading}
               />

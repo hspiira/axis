@@ -11,14 +11,13 @@
 import { Link, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard,
-  FileText,
+  Calendar,
   Building2,
   FileCheck,
   Users,
   Stethoscope,
+  Shield,
   FolderOpen,
-  Search,
-  ChevronRight,
   X,
   Settings,
 } from 'lucide-react'
@@ -37,19 +36,42 @@ interface NavItem {
   icon: React.ComponentType<{ className?: string }>
 }
 
-// Frequently accessed operational models
-const navItems: NavItem[] = [
-  { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-  { label: 'Cases', path: '/cases', icon: FileText },
-  { label: 'Clients', path: '/clients', icon: Building2 },
-  { label: 'Contracts', path: '/contracts', icon: FileCheck },
-  { label: 'Persons', path: '/persons', icon: Users },
-  { label: 'Services', path: '/services', icon: Stethoscope },
-  { label: 'Documents', path: '/documents', icon: FolderOpen },
-]
+interface NavSection {
+  items: NavItem[]
+}
 
-// Configuration/settings models (less frequently accessed)
-const settingsPath = '/settings'
+// Core operational sections
+const coreSection: NavSection = {
+  items: [
+    { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { label: 'Sessions', path: '/sessions', icon: Calendar },
+  ],
+}
+
+// Management sections
+const managementSection: NavSection = {
+  items: [
+    { label: 'Clients', path: '/clients', icon: Building2 },
+    { label: 'Contracts', path: '/contracts', icon: FileCheck },
+    { label: 'Persons', path: '/persons', icon: Users },
+  ],
+}
+
+// Services sections
+const servicesSection: NavSection = {
+  items: [
+    { label: 'Services', path: '/services', icon: Stethoscope },
+    { label: 'Service Providers', path: '/service-providers', icon: Shield },
+    { label: 'Documents', path: '/documents', icon: FolderOpen },
+  ],
+}
+
+// Configuration sections
+const configSection: NavSection = {
+  items: [
+    { label: 'Settings', path: '/settings', icon: Settings },
+  ],
+}
 
 export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
   const location = useLocation()
@@ -72,6 +94,29 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
     return user?.email || 'User'
   }
 
+  const renderNavSection = (section: NavSection) => {
+    return section.items.map((item) => {
+      const Icon = item.icon
+      const isActive = location.pathname === item.path || location.pathname.startsWith(`${item.path}/`)
+      return (
+        <Link
+          key={item.path}
+          to={item.path}
+          onClick={onClose}
+          className={cn(
+            'flex items-center gap-3 px-4 py-2 text-sm font-medium transition-all',
+            isActive
+              ? 'bg-white/10 text-theme'
+              : 'text-theme-secondary hover:text-theme hover:bg-white/5'
+          )}
+        >
+          <Icon className="h-[14px] w-[14px] flex-shrink-0" />
+          <span>{item.label}</span>
+        </Link>
+      )
+    })
+  }
+
   return (
     <>
       {/* Mobile Overlay */}
@@ -85,7 +130,7 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
       {/* Sidebar - Always visible on desktop, toggleable on mobile */}
       <aside
         className={cn(
-          'flex flex-col h-screen bg-gray-900/50 border-r border-white/10 transition-transform duration-300 ease-in-out',
+          'flex flex-col h-screen bg-theme transition-transform duration-300 ease-in-out',
           'w-64 flex-shrink-0',
           // On mobile: fixed positioning with slide animation
           'fixed lg:relative lg:translate-x-0',
@@ -95,94 +140,67 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
           'z-50 lg:z-auto'
         )}
       >
-        {/* Logo Section */}
-        <div className="px-4 py-5 flex items-center justify-between">
-          <Link to="/dashboard" onClick={onClose} className="flex items-center">
-            <Logo size="md" showText={true} />
-          </Link>
-          <button
-            onClick={onClose}
-            className="lg:hidden text-gray-400 hover:text-white transition-colors p-1"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-
-        {/* Search Section */}
-        <div className="px-3 py-2">
-          <button
-            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-emerald-300 hover:bg-emerald-500/10 transition-all"
-            onClick={() => {
-              // TODO: Implement search functionality
-            }}
-          >
-            <Search className="h-5 w-5 flex-shrink-0" />
-            <span>Search</span>
-          </button>
+        {/* User Profile Section - Top */}
+        <div className="h-16 px-4 lg:px-6 flex flex-col justify-center">
+          <div className="flex items-center gap-2">
+            <h2 className="text-base font-semibold text-theme truncate">
+              {getUserDisplayName()}
+            </h2>
+            <Link
+              to="/profile"
+              onClick={onClose}
+              className="text-theme-tertiary hover:text-theme-secondary transition-colors"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
+                <path d="M8 1.33334L14.6667 8.00001L8 14.6667M13.3333 8.00001H1.33334" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </Link>
+          </div>
+          <p className="text-sm text-theme-tertiary truncate">
+            {user?.email || 'user@example.com'}
+          </p>
         </div>
 
         {/* Navigation Section */}
         <div className="flex-1 overflow-y-auto py-2">
-          <nav className="px-2 space-y-0">
-            {navItems.map((item) => {
-              const Icon = item.icon
-              const isActive = location.pathname === item.path || location.pathname.startsWith(`${item.path}/`)
-              return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={onClose}
-                  className={cn(
-                    'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all',
-                    isActive
-                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                      : 'text-gray-400 hover:text-emerald-300 hover:bg-emerald-500/10'
-                  )}
-                >
-                  <Icon className="h-5 w-5 flex-shrink-0" />
-                  <span>{item.label}</span>
-                </Link>
-              )
-            })}
+          <nav className="space-y-0">
+            {/* Core Section */}
+            <div className="py-2">
+              {renderNavSection(coreSection)}
+            </div>
+
+            {/* Management Section */}
+            <div className="py-2 border-t border-white/5">
+              {renderNavSection(managementSection)}
+            </div>
+
+            {/* Services Section */}
+            <div className="py-2 border-t border-white/5">
+              {renderNavSection(servicesSection)}
+            </div>
+
+            {/* Configuration Section */}
+            <div className="py-2 border-t border-white/5">
+              {renderNavSection(configSection)}
+            </div>
           </nav>
         </div>
 
-        {/* Settings Section */}
-        <div className="px-3 py-2 border-t border-white/10">
-          <Link
-            to={settingsPath}
-            onClick={onClose}
-            className={cn(
-              'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all',
-              location.pathname.startsWith(settingsPath)
-                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                : 'text-gray-400 hover:text-emerald-300 hover:bg-emerald-500/10'
-            )}
-          >
-            <Settings className="h-5 w-5 flex-shrink-0" />
-            <span>Settings</span>
+        {/* Logo Section - Bottom */}
+        <div className="px-4 py-4 border-t border-white/10">
+          <Link to="/dashboard" onClick={onClose} className="flex items-center justify-center">
+            <Logo size="sm" showText={true} />
           </Link>
         </div>
 
-        {/* User Profile Section */}
-        <div className="px-3 py-4">
-          <Link
-            to="/profile"
-            onClick={onClose}
-            className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-emerald-500/10 transition-all group"
-          >
-            <div className="h-9 w-9 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white text-xs font-semibold flex-shrink-0">
-              {getUserInitials()}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">
-                {getUserDisplayName()}
-              </p>
-            </div>
-            <ChevronRight className="h-4 w-4 flex-shrink-0 text-gray-400 group-hover:text-emerald-300 transition-colors" />
-          </Link>
-        </div>
-    </aside>
+        {/* Mobile Close Button */}
+        <button
+          onClick={onClose}
+          className="lg:hidden absolute top-4 right-4 text-theme-secondary hover:text-theme transition-colors p-1"
+        >
+          <X className="h-5 w-5" />
+        </button>
+      </aside>
     </>
   )
 }

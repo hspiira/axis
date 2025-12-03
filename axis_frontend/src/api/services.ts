@@ -37,10 +37,11 @@ export type ServiceStatus = (typeof ServiceStatus)[keyof typeof ServiceStatus]
 
 export const SessionStatus = {
   SCHEDULED: 'Scheduled',
-  IN_PROGRESS: 'InProgress',
+  RESCHEDULED: 'Rescheduled',
   COMPLETED: 'Completed',
-  CANCELLED: 'Cancelled',
-  NO_SHOW: 'NoShow',
+  CANCELED: 'Canceled',
+  NO_SHOW: 'No Show',
+  POSTPONED: 'Postponed',
 } as const
 
 export type SessionStatus = (typeof SessionStatus)[keyof typeof SessionStatus]
@@ -258,16 +259,19 @@ export interface ServiceAssignmentFormData {
 
 export interface ServiceSession {
   id: string
-  assignment: ServiceAssignment
-  provider: ServiceProvider | null
-  scheduled_date: string
-  scheduled_time: string | null
-  duration_minutes: number | null
+  service: { id: string; name: string }
+  provider: { id: string; name: string } | null
+  person: { id: string; name: string }
+  scheduled_at: string
+  completed_at: string | null
   status: SessionStatus
-  location: string | null
   notes: string | null
-  completed_date: string | null
+  feedback: string | null
+  duration: number | null
+  location: string | null
   cancellation_reason: string | null
+  reschedule_count: number
+  is_group_session: boolean
   metadata: Record<string, unknown> | null
   created_at: string
   updated_at: string
@@ -275,28 +279,26 @@ export interface ServiceSession {
 
 export interface ServiceSessionList {
   id: string
-  assignment_id: string
   service_name: string
-  client_name: string
-  person_name: string | null
-  provider_id: string | null
   provider_name: string | null
-  scheduled_date: string
-  scheduled_time: string | null
-  duration_minutes: number | null
+  person_name: string
+  scheduled_at: string
+  completed_at: string | null
   status: SessionStatus
-  location: string | null
+  duration: number | null
+  is_group_session: boolean
   created_at: string
+  updated_at: string
 }
 
 export interface ServiceSessionFormData {
-  assignment_id: string
-  provider_id?: string
-  scheduled_date: string
-  scheduled_time?: string
-  duration_minutes?: number
+  service_id: string
+  provider_id: string
+  person_id: string
+  scheduled_at: string
   status?: SessionStatus
   location?: string
+  is_group_session?: boolean
   notes?: string
   metadata?: Record<string, unknown>
 }
@@ -369,10 +371,11 @@ export interface AssignmentSearchParams {
 
 export interface SessionSearchParams {
   search?: string
-  assignment_id?: string
+  service_id?: string
   provider_id?: string
   person_id?: string
   status?: SessionStatus
+  is_group_session?: boolean
   date_from?: string
   date_to?: string
 }
@@ -658,8 +661,8 @@ export const cancelSession = async (id: string, reason: string): Promise<Service
   return response.data
 }
 
-export const rescheduleSession = async (id: string, scheduled_date: string, scheduled_time?: string): Promise<ServiceSession> => {
-  const response = await apiClient.post(`/services/sessions/${id}/reschedule/`, { scheduled_date, scheduled_time })
+export const rescheduleSession = async (id: string, scheduled_at: string): Promise<ServiceSession> => {
+  const response = await apiClient.post(`/services/sessions/${id}/reschedule/`, { scheduled_at })
   return response.data
 }
 
