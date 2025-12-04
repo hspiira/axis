@@ -15,7 +15,7 @@ import type { ServiceAssignmentList } from '@/api/services'
 interface ServiceAssignmentsTableProps {
   assignments: ServiceAssignmentList[]
   isLoading: boolean
-  onEdit: (assignmentId: string) => void
+  onEdit?: (assignmentId: string) => void
 }
 
 export function ServiceAssignmentsTable({
@@ -87,9 +87,11 @@ export function ServiceAssignmentsTable({
             <th className="text-center p-4 text-xs font-medium text-theme-tertiary uppercase tracking-wider">
               Status
             </th>
-            <th className="text-right p-4 text-xs font-medium text-theme-tertiary uppercase tracking-wider">
-              Actions
-            </th>
+            {onEdit && (
+              <th className="text-right p-4 text-xs font-medium text-theme-tertiary uppercase tracking-wider">
+                Actions
+              </th>
+            )}
           </tr>
         </thead>
         <tbody className="divide-y divide-theme">
@@ -164,24 +166,26 @@ export function ServiceAssignmentsTable({
               </td>
 
               {/* Actions */}
-              <td className="p-4">
-                <div className="flex items-center justify-end gap-2">
-                  <button
-                    onClick={() => onEdit(assignment.id)}
-                    className="p-2 text-theme-secondary hover:text-theme hover:bg-white/10 rounded-lg transition-colors"
-                    title="Edit assignment"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(assignment.id, assignment.service_name)}
-                    className="p-2 text-theme-secondary hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                    title="Delete assignment"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
-              </td>
+              {onEdit && (
+                <td className="p-4">
+                  <div className="flex items-center justify-end gap-2">
+                    <button
+                      onClick={() => onEdit(assignment.id)}
+                      className="p-2 text-theme-secondary hover:text-theme hover:bg-white/10 rounded-lg transition-colors"
+                      title="Edit assignment"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(assignment.id, assignment.service_name)}
+                      className="p-2 text-theme-secondary hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                      title="Delete assignment"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

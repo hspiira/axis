@@ -101,7 +101,7 @@ export function ServiceOverviewTab({ service }: ServiceOverviewTabProps) {
             value={service.category?.name || 'Uncategorized'}
             icon={<Tag className="h-4 w-4 text-gray-400" />}
           />
-          <InfoRow label="Status" value={<StatusBadge status={service.status} />} />
+          <InfoRow label="Status" value={service.status} />
           <InfoRow
             label="Duration"
             value={service.duration_minutes ? `${service.duration_minutes} minutes` : 'Not specified'}

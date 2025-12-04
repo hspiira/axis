@@ -11,6 +11,7 @@ import { CreateEmployeeForm } from './CreateEmployeeForm'
 import { CreateDependentForm } from './CreateDependentForm'
 
 interface CreatePersonModalProps {
+  isOpen: boolean
   onClose: () => void
   onSuccess: () => void
   initialClientId?: string
@@ -45,13 +46,16 @@ const personTypeOptions = [
   },
 ]
 
-export function CreatePersonModal({ onClose, onSuccess, initialClientId }: CreatePersonModalProps) {
+export function CreatePersonModal({ isOpen, onClose, onSuccess, initialClientId }: CreatePersonModalProps) {
   const [selectedType, setSelectedType] = useState<PersonTypeSelection>(null)
 
   // Handle back to type selection
   const handleBack = () => {
     setSelectedType(null)
   }
+
+  // Don't render if not open
+  if (!isOpen) return null
 
   // Render type selection
   if (!selectedType) {

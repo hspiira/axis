@@ -4,9 +4,9 @@
  * Displays and manages service providers for EAP services.
  */
 
-import { useEffect, useState } from 'react'
-import { AppLayout } from '@/components/AppLayout'
-import { usePageTitle } from '@/contexts/PageTitleContext'
+import { useState } from 'react'
+import { ResourcePageLayout } from '@/components/layouts/ResourcePageLayout'
+import { useModal } from '@/hooks/useModal'
 import { ServiceProvidersTable } from '@/components/service-providers/ServiceProvidersTable'
 import { ServiceProvidersFilters } from '@/components/service-providers/ServiceProvidersFilters'
 import { ServiceProviderFormModal } from '@/components/service-providers/ServiceProviderFormModal'
@@ -26,18 +26,13 @@ import { exportToCSV, formatDateForExport } from '@/utils/export'
 import { useURLSearchParams } from '@/hooks/useURLSearchParams'
 import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut'
 
-type ConfirmAction =
-  | { type: 'verify'; provider: ServiceProviderList }
-  | { type: 'delete'; provider: ServiceProviderList }
-  | null
-
 export function ServiceProvidersPage() {
-  const { setPageTitle } = usePageTitle()
   const { params: urlParams, updateParams } = useURLSearchParams<ProviderSearchParams>()
 
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  const [editingProvider, setEditingProvider] = useState<ServiceProviderList | null>(null)
-  const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null)
+  // Modal management
+  const formModal = useModal<ServiceProviderList>()
+  const verifyModal = useModal<ServiceProviderList>()
+  const deleteModal = useModal<ServiceProviderList>()
   const [isExporting, setIsExporting] = useState(false)
 
   // Initialize filters from URL params
@@ -49,78 +44,46 @@ export function ServiceProvidersPage() {
 
   const createProvider = useCreateProvider()
   const updateProvider = useUpdateProvider()
-  const deleteProvider = useDeleteProvider()
-  const verifyProvider = useVerifyProvider()
-  const { data: providerDetail } = useProvider(editingProvider?.id || '')
-
-  useEffect(() => {
-    setPageTitle('Service Providers', 'Manage EAP service providers')
-    return () => setPageTitle(null)
-  }, [setPageTitle])
-
-  // Keyboard shortcuts
-  useKeyboardShortcut(
-    { key: 'n', metaKey: true },
-    () => setIsCreateModalOpen(true)
-  )
-  useKeyboardShortcut(
-    { key: 'e', metaKey: true },
-    () => {
-      if (editingProvider) {
-        setIsCreateModalOpen(true)
-      }
-    }
-  )
-  useKeyboardShortcut(
-    { key: 'Escape' },
-    () => {
-      setIsCreateModalOpen(false)
-      setEditingProvider(null)
-    }
-  )
+  const deleteProviderMutation = useDeleteProvider()
+  const verifyProviderMutation = useVerifyProvider()
+  const { data: providerDetail } = useProvider(formModal.data?.id || '')
 
   const handleCreate = () => {
-    setEditingProvider(null)
-    setIsCreateModalOpen(true)
+    formModal.open()
   }
 
   const handleEdit = (provider: ServiceProviderList) => {
-    setEditingProvider(provider)
-    setIsCreateModalOpen(true)
+    formModal.open(provider)
   }
 
   const handleDelete = (provider: ServiceProviderList) => {
-    setConfirmAction({ type: 'delete', provider })
+    deleteModal.open(provider)
   }
 
   const handleVerify = (provider: ServiceProviderList) => {
-    setConfirmAction({ type: 'verify', provider })
+    verifyModal.open(provider)
   }
 
-  const handleConfirmAction = async () => {
-    if (!confirmAction) return
+  const confirmDelete = async () => {
+    if (!deleteModal.data) return
+    await deleteProviderMutation.mutateAsync(deleteModal.data.id)
+    deleteModal.close()
+  }
 
-    try {
-      if (confirmAction.type === 'delete') {
-        await deleteProvider.mutateAsync(confirmAction.provider.id)
-      } else if (confirmAction.type === 'verify') {
-        await verifyProvider.mutateAsync(confirmAction.provider.id)
-      }
-      setConfirmAction(null)
-    } catch (error) {
-      // Error handled by mutation hooks
-    }
+  const confirmVerify = async () => {
+    if (!verifyModal.data) return
+    await verifyProviderMutation.mutateAsync(verifyModal.data.id)
+    verifyModal.close()
   }
 
   const handleSubmit = async (data: ServiceProviderFormData) => {
     try {
-      if (editingProvider) {
-        await updateProvider.mutateAsync({ id: editingProvider.id, data })
+      if (formModal.data) {
+        await updateProvider.mutateAsync({ id: formModal.data.id, data })
       } else {
         await createProvider.mutateAsync(data)
       }
-      setIsCreateModalOpen(false)
-      setEditingProvider(null)
+      formModal.close()
     } catch (error) {
       // Error handled by mutation hooks
     }
@@ -164,29 +127,28 @@ export function ServiceProvidersPage() {
     }
   }
 
-  const getConfirmMessage = () => {
-    if (!confirmAction) return ''
-
-    if (confirmAction.type === 'delete') {
-      return `Are you sure you want to delete "${confirmAction.provider.name}"? This action cannot be undone.`
-    } else if (confirmAction.type === 'verify') {
-      return `Are you sure you want to verify "${confirmAction.provider.name}" as a qualified service provider?`
-    }
-    return ''
-  }
-
-  const getConfirmTitle = () => {
-    if (!confirmAction) return ''
-
-    if (confirmAction.type === 'delete') return 'Delete Provider'
-    if (confirmAction.type === 'verify') return 'Verify Provider'
-    return ''
-  }
+  // Keyboard shortcuts
+  useKeyboardShortcut(
+    { key: 'n', metaKey: true },
+    () => formModal.open(),
+    { enabled: !formModal.isOpen }
+  )
+  useKeyboardShortcut(
+    { key: 'e', metaKey: true },
+    handleExport,
+    { enabled: !isExporting && providers.length > 0 }
+  )
+  useKeyboardShortcut(
+    { key: 'Escape' },
+    () => formModal.close(),
+    { enabled: formModal.isOpen }
+  )
 
   return (
-    <AppLayout>
-      <div className="max-w-7xl mx-auto px-4 lg:px-6 py-6 space-y-6">
-        {/* Filters */}
+    <ResourcePageLayout
+      title="Service Providers"
+      subtitle="Manage EAP service providers"
+      filters={
         <ServiceProvidersFilters
           filters={filters}
           onFiltersChange={updateParams}
@@ -194,63 +156,68 @@ export function ServiceProvidersPage() {
           isExporting={isExporting}
           onCreate={handleCreate}
         />
+      }
+      modals={
+        <>
+          {/* Create/Edit Modal */}
+          <ServiceProviderFormModal
+            {...formModal.props}
+            onSubmit={handleSubmit}
+            initialData={
+              formModal.data && providerDetail
+                ? {
+                    name: providerDetail.name,
+                    type: providerDetail.type,
+                    contact_email: providerDetail.contact_email || undefined,
+                    contact_phone: providerDetail.contact_phone || undefined,
+                    location: providerDetail.location || undefined,
+                    qualifications: providerDetail.qualifications || undefined,
+                    specializations: providerDetail.specializations || undefined,
+                    availability: providerDetail.availability || undefined,
+                    rating: providerDetail.rating || undefined,
+                    is_verified: providerDetail.is_verified,
+                    status: providerDetail.status,
+                    metadata: providerDetail.metadata || undefined,
+                  }
+                : undefined
+            }
+            loading={createProvider.isPending || updateProvider.isPending}
+            title={formModal.data ? 'Edit Service Provider' : 'Create New Service Provider'}
+          />
 
-        {/* Providers Table */}
-        <ServiceProvidersTable
-          providers={providers}
-          isLoading={isLoading}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onVerify={handleVerify}
-        />
-      </div>
+          {/* Verify Confirm Dialog */}
+          <ConfirmDialog
+            {...verifyModal.props}
+            onConfirm={confirmVerify}
+            title="Verify Provider"
+            message={verifyModal.data ? `Are you sure you want to verify "${verifyModal.data.name}" as a qualified service provider?` : ''}
+            confirmText="Verify"
+            cancelText="Cancel"
+            variant="success"
+            isLoading={verifyProviderMutation.isPending}
+          />
 
-      {/* Create/Edit Modal */}
-      {isCreateModalOpen && (
-        <ServiceProviderFormModal
-          isOpen={isCreateModalOpen}
-          onClose={() => {
-            setIsCreateModalOpen(false)
-            setEditingProvider(null)
-          }}
-          onSubmit={handleSubmit}
-          initialData={
-            editingProvider && providerDetail
-              ? {
-                  name: providerDetail.name,
-                  type: providerDetail.type,
-                  contact_email: providerDetail.contact_email || undefined,
-                  contact_phone: providerDetail.contact_phone || undefined,
-                  location: providerDetail.location || undefined,
-                  qualifications: providerDetail.qualifications || undefined,
-                  specializations: providerDetail.specializations || undefined,
-                  availability: providerDetail.availability || undefined,
-                  rating: providerDetail.rating || undefined,
-                  is_verified: providerDetail.is_verified,
-                  status: providerDetail.status,
-                  metadata: providerDetail.metadata || undefined,
-                }
-              : undefined
-          }
-          loading={createProvider.isPending || updateProvider.isPending}
-          title={editingProvider ? 'Edit Service Provider' : 'Create New Service Provider'}
-        />
-      )}
-
-      {/* Confirm Dialog */}
-      {confirmAction && (
-        <ConfirmDialog
-          isOpen={true}
-          onClose={() => setConfirmAction(null)}
-          onConfirm={handleConfirmAction}
-          title={getConfirmTitle()}
-          message={getConfirmMessage()}
-          confirmText={confirmAction.type === 'delete' ? 'Delete' : 'Verify'}
-          cancelText="Cancel"
-          variant={confirmAction.type === 'delete' ? 'danger' : 'success'}
-          isLoading={deleteProvider.isPending || verifyProvider.isPending}
-        />
-      )}
-    </AppLayout>
+          {/* Delete Confirm Dialog */}
+          <ConfirmDialog
+            {...deleteModal.props}
+            onConfirm={confirmDelete}
+            title="Delete Provider"
+            message={deleteModal.data ? `Are you sure you want to delete "${deleteModal.data.name}"? This action cannot be undone.` : ''}
+            confirmText="Delete"
+            cancelText="Cancel"
+            variant="danger"
+            isLoading={deleteProviderMutation.isPending}
+          />
+        </>
+      }
+    >
+      <ServiceProvidersTable
+        providers={providers}
+        isLoading={isLoading}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onVerify={handleVerify}
+      />
+    </ResourcePageLayout>
   )
 }

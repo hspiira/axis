@@ -89,7 +89,7 @@ export function LandingPage() {
           />
           {/* Clean gradient overlay - no purple, keeps image visible */}
           <div className="absolute inset-0 bg-gradient-to-br from-black/75 via-gray-900/50 to-black/75"></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/30"></div>
+          <div className="absolute inset-0 bg-linear-to-t from-black/85 via-transparent to-black/30"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/50"></div>
           <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]"></div>
         </div>
@@ -109,7 +109,7 @@ export function LandingPage() {
                 alt="Wellness meditation"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+              <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent"></div>
             </div>
             
             {/* Exercise image - different animation */}
@@ -125,7 +125,7 @@ export function LandingPage() {
                 alt="Physical wellness"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+              <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent"></div>
             </div>
             
             {/* Zen stones - subtle rotation animation */}
@@ -141,7 +141,7 @@ export function LandingPage() {
                 alt="Balance concept"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+              <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent"></div>
             </div>
             
             {/* Office image - subtle movement */}
@@ -157,7 +157,7 @@ export function LandingPage() {
                 alt="Professional wellness"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+              <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent"></div>
             </div>
           </div>
         
@@ -181,7 +181,7 @@ export function LandingPage() {
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white tracking-tight leading-tight">
                 Employee
                 <br />
-                <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+                <span className="bg-linear-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
                   Wellness
                 </span>
               </h1>
@@ -192,7 +192,7 @@ export function LandingPage() {
               </p>
 
               <div className="flex flex-col sm:flex-row items-start gap-4 pt-4">
-                <button className="px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-purple-800 transition-all shadow-lg shadow-purple-500/50 hover:shadow-xl hover:shadow-purple-500/50">
+                <button className="px-8 py-4 bg-linear-to-r from-purple-600 to-purple-700 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-purple-800 transition-all shadow-lg shadow-purple-500/50 hover:shadow-xl hover:shadow-purple-500/50">
                   Get Started
                 </button>
                 <button className="px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-lg font-semibold hover:bg-white/20 transition-all">
@@ -202,10 +202,10 @@ export function LandingPage() {
             </div>
             
             {/* Right side - Floating metrics overlay on background */}
-            <div className="relative lg:min-h-[600px] flex items-center justify-center hidden lg:flex">
+            <div className="relative lg:min-h-[600px] items-center justify-center hidden lg:flex">
               {/* Integrated metrics overlay - floating on background - no border, part of background */}
               <div className="absolute top-8 right-8 text-right">
-                <p className="text-6xl lg:text-7xl font-bold mb-1 drop-shadow-2xl bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+                <p className="text-6xl lg:text-7xl font-bold mb-1 drop-shadow-2xl bg-linear-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
                   {heroAnimatedClients.toLocaleString()}
                 </p>
                 <p className="text-sm lg:text-base text-purple-300/80 font-medium drop-shadow-lg">Active Cases</p>
@@ -213,7 +213,7 @@ export function LandingPage() {
               
               {/* Integrated metrics overlay - bottom - no border, part of background */}
               <div className="absolute bottom-8 left-8">
-                <p className="text-6xl lg:text-7xl font-bold mb-1 drop-shadow-2xl bg-gradient-to-r from-green-400 via-yellow-400 to-green-400 bg-clip-text text-transparent">
+                <p className="text-6xl lg:text-7xl font-bold mb-1 drop-shadow-2xl bg-linear-to-r from-green-400 via-yellow-400 to-green-400 bg-clip-text text-transparent">
                   {heroAnimatedSatisfaction.toFixed(1)}%
                 </p>
                 <p className="text-sm lg:text-base text-green-300/80 font-medium drop-shadow-lg">Satisfaction Rate</p>
@@ -282,7 +282,7 @@ export function LandingPage() {
       {/* Wellness Showcase Section */}
       <section className="relative py-32 bg-[#100f0a] border-t border-white/5 overflow-hidden">
         {/* Subtle background pattern */}
-        <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]"></div>
+        <div className="absolute inset-0 bg-grid-white/[0.02] bg-size-[50px_50px]"></div>
         <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-pink-500/5 rounded-full blur-3xl"></div>
         
@@ -296,7 +296,7 @@ export function LandingPage() {
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               <span className="text-white">Holistic </span>
-              <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
                 Employee Support
               </span>
             </h2>
@@ -314,7 +314,7 @@ export function LandingPage() {
             }`}
           >
             <div 
-              className={`relative group rounded-3xl overflow-hidden aspect-[4/3] border border-white/10 hover:border-purple-500/50 transition-all duration-700 hover:scale-[1.03] hover:shadow-2xl hover:shadow-purple-500/30 backdrop-blur-sm ${
+              className={`relative group rounded-3xl overflow-hidden aspect-4/3 border border-white/10 hover:border-purple-500/50 transition-all duration-700 hover:scale-[1.03] hover:shadow-2xl hover:shadow-purple-500/30 backdrop-blur-sm ${
                 servicesHasIntersected 
                   ? 'opacity-100 translate-y-0 translate-x-0' 
                   : 'opacity-0 translate-y-20 -translate-x-10'
@@ -326,8 +326,8 @@ export function LandingPage() {
                 alt="Mindfulness and mental wellness"
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent group-hover:from-black/80"></div>
-              <div className="absolute inset-0 bg-gradient-to-t from-purple-500/0 via-transparent to-transparent group-hover:from-purple-500/10 transition-all duration-500"></div>
+              <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/50 to-transparent group-hover:from-black/80"></div>
+              <div className="absolute inset-0 bg-linear-to-t from-purple-500/0 via-transparent to-transparent group-hover:from-purple-500/10 transition-all duration-500"></div>
               <div className="absolute bottom-0 left-0 right-0 p-6 transform group-hover:translate-y-0 translate-y-2 transition-transform duration-300">
                 <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-purple-300 transition-colors">Mental Wellness</h3>
                 <p className="text-gray-300 text-sm">Confidential counseling and therapy sessions for emotional support</p>
@@ -335,7 +335,7 @@ export function LandingPage() {
             </div>
             
             <div 
-              className={`relative group rounded-3xl overflow-hidden aspect-[4/3] border border-white/10 hover:border-purple-500/50 transition-all duration-700 hover:scale-[1.03] hover:shadow-2xl hover:shadow-purple-500/30 backdrop-blur-sm ${
+              className={`relative group rounded-3xl overflow-hidden aspect-4/3 border border-white/10 hover:border-purple-500/50 transition-all duration-700 hover:scale-[1.03] hover:shadow-2xl hover:shadow-purple-500/30 backdrop-blur-sm ${
                 servicesHasIntersected 
                   ? 'opacity-100 translate-y-0 translate-x-0' 
                   : 'opacity-0 translate-y-20 translate-x-0'
@@ -347,8 +347,8 @@ export function LandingPage() {
                 alt="Physical wellness and fitness"
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent group-hover:from-black/80"></div>
-              <div className="absolute inset-0 bg-gradient-to-t from-purple-500/0 via-transparent to-transparent group-hover:from-purple-500/10 transition-all duration-500"></div>
+              <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/50 to-transparent group-hover:from-black/80"></div>
+              <div className="absolute inset-0 bg-linear-to-t from-purple-500/0 via-transparent to-transparent group-hover:from-purple-500/10 transition-all duration-500"></div>
               <div className="absolute bottom-0 left-0 right-0 p-6 transform group-hover:translate-y-0 translate-y-2 transition-transform duration-300">
                 <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-purple-300 transition-colors">Physical Wellness</h3>
                 <p className="text-gray-300 text-sm">Fitness programs and health resources for active lifestyle</p>
@@ -356,7 +356,7 @@ export function LandingPage() {
             </div>
             
             <div 
-              className={`relative group rounded-3xl overflow-hidden aspect-[4/3] border border-white/10 hover:border-purple-500/50 transition-all duration-700 hover:scale-[1.03] hover:shadow-2xl hover:shadow-purple-500/30 backdrop-blur-sm ${
+              className={`relative group rounded-3xl overflow-hidden aspect-4/3 border border-white/10 hover:border-purple-500/50 transition-all duration-700 hover:scale-[1.03] hover:shadow-2xl hover:shadow-purple-500/30 backdrop-blur-sm ${
                 servicesHasIntersected 
                   ? 'opacity-100 translate-y-0 translate-x-0' 
                   : 'opacity-0 translate-y-20 translate-x-10'
@@ -368,8 +368,8 @@ export function LandingPage() {
                 alt="Work-life balance"
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent group-hover:from-black/80"></div>
-              <div className="absolute inset-0 bg-gradient-to-t from-purple-500/0 via-transparent to-transparent group-hover:from-purple-500/10 transition-all duration-500"></div>
+              <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/50 to-transparent group-hover:from-black/80"></div>
+              <div className="absolute inset-0 bg-linear-to-t from-purple-500/0 via-transparent to-transparent group-hover:from-purple-500/10 transition-all duration-500"></div>
               <div className="absolute bottom-0 left-0 right-0 p-6 transform group-hover:translate-y-0 translate-y-2 transition-transform duration-300">
                 <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-purple-300 transition-colors">Work-Life Balance</h3>
                 <p className="text-gray-300 text-sm">Resources and support for maintaining healthy work-life harmony</p>
@@ -689,8 +689,8 @@ function ServiceCard({
             alt={imageAlt || title}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/50 to-transparent group-hover:from-black/75"></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-purple-500/0 via-transparent to-transparent group-hover:from-purple-500/10 transition-all duration-500"></div>
+          <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/50 to-transparent group-hover:from-black/75"></div>
+          <div className="absolute inset-0 bg-linear-to-t from-purple-500/0 via-transparent to-transparent group-hover:from-purple-500/10 transition-all duration-500"></div>
           <div className="absolute top-4 right-4">
             <span className="px-3 py-1.5 text-xs font-medium bg-green-500/20 text-green-400 rounded-full border border-green-500/30 backdrop-blur-md shadow-lg">
               {status}

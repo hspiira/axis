@@ -4,13 +4,13 @@
  * Displays and manages client organizations.
  */
 
-import { useEffect, useState, useMemo, useRef } from 'react'
+import { useState, useMemo } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { useSearchParams, useNavigate } from 'react-router-dom'
-import { AppLayout } from '@/components/AppLayout'
-import { usePageTitle } from '@/contexts/PageTitleContext'
+import { useNavigate } from 'react-router-dom'
+import { ResourcePageLayout } from '@/components/layouts/ResourcePageLayout'
 import { useURLSearchParams } from '@/hooks/useURLSearchParams'
 import { useKeyboardShortcut } from '@/hooks/useKeyboardShortcut'
+import { useModal } from '@/hooks/useModal'
 import { ClientsTable } from '@/components/clients/ClientsTable'
 import { ClientsFilters } from '@/components/clients/ClientsFilters'
 import { ClientFormModal } from '@/components/clients/ClientFormModal'
@@ -33,26 +33,20 @@ import { toast } from '@/lib/toast'
 import { activateClient, deactivateClient, archiveClient, deleteClient } from '@/api/clients'
 import { exportToCSV, formatDateForExport } from '@/utils/export'
 
-type ConfirmAction =
-  | { type: 'deactivate'; client: ClientList }
-  | { type: 'archive'; client: ClientList }
-  | { type: 'delete'; client: ClientList }
-  | { type: 'bulkActivate'; clientIds: string[] }
-  | { type: 'bulkDeactivate'; clientIds: string[] }
-  | { type: 'bulkArchive'; clientIds: string[] }
-  | { type: 'bulkDelete'; clientIds: string[] }
-  | null
-
 export function ClientsPage() {
-  const { setPageTitle } = usePageTitle()
   const queryClient = useQueryClient()
   const navigate = useNavigate()
   const { params: urlParams, updateParams } = useURLSearchParams<ClientSearchParams>()
-  const [searchParams, setSearchParams] = useSearchParams()
 
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  const [editingClient, setEditingClient] = useState<ClientList | null>(null)
-  const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null)
+  // Modal management
+  const formModal = useModal<ClientList>()
+  const deactivateModal = useModal<ClientList>()
+  const archiveModal = useModal<ClientList>()
+  const deleteModal = useModal<ClientList>()
+  const bulkActivateModal = useModal<string[]>()
+  const bulkDeactivateModal = useModal<string[]>()
+  const bulkArchiveModal = useModal<string[]>()
+  const bulkDeleteModal = useModal<string[]>()
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [isProcessingBulk, setIsProcessingBulk] = useState(false)
   const [isExporting, setIsExporting] = useState(false)
@@ -66,7 +60,6 @@ export function ClientsPage() {
   const allClientsQuery = useClients()
   const { data: clients = [], isLoading } = hasFilters ? clientsQuery : allClientsQuery
 
-
   const deleteClientMutation = useDeleteClient()
   const activateClientMutation = useActivateClient()
   const deactivateClientMutation = useDeactivateClient()
@@ -75,23 +68,17 @@ export function ClientsPage() {
   const createClient = useCreateClient()
   const updateClient = useUpdateClient()
 
-  useEffect(() => {
-    setPageTitle('Client Management', 'Manage client organizations and their contracts')
-    return () => setPageTitle(null)
-  }, [setPageTitle])
-
   const handleView = (client: ClientList) => {
     // Navigate to dedicated client detail page
     navigate(`/clients/${client.id}`)
   }
 
   const handleEdit = (client: ClientList) => {
-    setEditingClient(client)
-    setIsCreateModalOpen(true)
+    formModal.open(client)
   }
 
   // Fetch full client data when editing
-  const { data: clientDetail } = useClient(editingClient?.id || '')
+  const { data: clientDetail } = useClient(formModal.data?.id || '')
 
   const handleActivate = async (client: ClientList) => {
     try {
@@ -102,11 +89,11 @@ export function ClientsPage() {
   }
 
   const handleDeactivate = (client: ClientList) => {
-    setConfirmAction({ type: 'deactivate', client })
+    deactivateModal.open(client)
   }
 
   const handleArchive = (client: ClientList) => {
-    setConfirmAction({ type: 'archive', client })
+    archiveModal.open(client)
   }
 
   const handleVerify = async (client: ClientList) => {
@@ -118,165 +105,167 @@ export function ClientsPage() {
   }
 
   const handleDelete = (client: ClientList) => {
-    setConfirmAction({ type: 'delete', client })
+    deleteModal.open(client)
   }
 
-  const handleConfirmAction = async (inputValue?: string) => {
-    if (!confirmAction) return
+  const confirmDeactivate = async () => {
+    if (!deactivateModal.data) return
+    await deactivateClientMutation.mutateAsync({ id: deactivateModal.data.id })
+    deactivateModal.close()
+  }
 
-    try {
-      switch (confirmAction.type) {
-        case 'deactivate':
-          await deactivateClientMutation.mutateAsync({ id: confirmAction.client.id })
-          break
-        case 'archive':
-          if (!inputValue?.trim()) return
-          await archiveClientMutation.mutateAsync({ id: confirmAction.client.id, reason: inputValue })
-          break
-        case 'delete':
-          await deleteClientMutation.mutateAsync(confirmAction.client.id)
-          break
-        case 'bulkActivate': {
-          setIsProcessingBulk(true)
-          const total = confirmAction.clientIds.length
-          let successful = 0
-          let failed = 0
+  const confirmArchive = async (inputValue?: string) => {
+    if (!archiveModal.data || !inputValue?.trim()) return
+    await archiveClientMutation.mutateAsync({ id: archiveModal.data.id, reason: inputValue })
+    archiveModal.close()
+  }
 
-          for (const clientId of confirmAction.clientIds) {
-            try {
-              await activateClient(clientId)
-              successful++
-            } catch (error) {
-              failed++
-            }
-          }
+  const confirmDelete = async () => {
+    if (!deleteModal.data) return
+    await deleteClientMutation.mutateAsync(deleteModal.data.id)
+    deleteModal.close()
+  }
 
-          // Invalidate queries to refresh data
-          queryClient.invalidateQueries({ queryKey: ['clients'] })
+  const confirmBulkActivate = async () => {
+    if (!bulkActivateModal.data) return
 
-          // Show single summary toast
-          if (failed === 0) {
-            toast.success(`Successfully activated ${successful} client${successful > 1 ? 's' : ''}`)
-          } else if (successful === 0) {
-            toast.error(`Failed to activate ${failed} client${failed > 1 ? 's' : ''}`)
-          } else {
-            toast.warning(`Activated ${successful} client${successful > 1 ? 's' : ''}, ${failed} failed`)
-          }
+    setIsProcessingBulk(true)
+    const clientIds = bulkActivateModal.data
+    let successful = 0
+    let failed = 0
 
-          setIsProcessingBulk(false)
-          setSelectedIds(new Set())
-          break
-        }
-        case 'bulkDeactivate': {
-          setIsProcessingBulk(true)
-          const total = confirmAction.clientIds.length
-          let successful = 0
-          let failed = 0
-
-          for (const clientId of confirmAction.clientIds) {
-            try {
-              await deactivateClient(clientId)
-              successful++
-            } catch (error) {
-              failed++
-            }
-          }
-
-          queryClient.invalidateQueries({ queryKey: ['clients'] })
-
-          if (failed === 0) {
-            toast.success(`Successfully deactivated ${successful} client${successful > 1 ? 's' : ''}`)
-          } else if (successful === 0) {
-            toast.error(`Failed to deactivate ${failed} client${failed > 1 ? 's' : ''}`)
-          } else {
-            toast.warning(`Deactivated ${successful} client${successful > 1 ? 's' : ''}, ${failed} failed`)
-          }
-
-          setIsProcessingBulk(false)
-          setSelectedIds(new Set())
-          break
-        }
-        case 'bulkArchive': {
-          if (!inputValue?.trim()) return
-          setIsProcessingBulk(true)
-          const total = confirmAction.clientIds.length
-          let successful = 0
-          let failed = 0
-
-          for (const clientId of confirmAction.clientIds) {
-            try {
-              await archiveClient(clientId, inputValue)
-              successful++
-            } catch (error) {
-              failed++
-            }
-          }
-
-          queryClient.invalidateQueries({ queryKey: ['clients'] })
-
-          if (failed === 0) {
-            toast.success(`Successfully archived ${successful} client${successful > 1 ? 's' : ''}`)
-          } else if (successful === 0) {
-            toast.error(`Failed to archive ${failed} client${failed > 1 ? 's' : ''}`)
-          } else {
-            toast.warning(`Archived ${successful} client${successful > 1 ? 's' : ''}, ${failed} failed`)
-          }
-
-          setIsProcessingBulk(false)
-          setSelectedIds(new Set())
-          break
-        }
-        case 'bulkDelete': {
-          setIsProcessingBulk(true)
-          const total = confirmAction.clientIds.length
-          let successful = 0
-          let failed = 0
-
-          for (const clientId of confirmAction.clientIds) {
-            try {
-              await deleteClient(clientId)
-              successful++
-            } catch (error) {
-              failed++
-            }
-          }
-
-          queryClient.invalidateQueries({ queryKey: ['clients'] })
-
-          if (failed === 0) {
-            toast.success(`Successfully deleted ${successful} client${successful > 1 ? 's' : ''}`)
-          } else if (successful === 0) {
-            toast.error(`Failed to delete ${failed} client${failed > 1 ? 's' : ''}`)
-          } else {
-            toast.warning(`Deleted ${successful} client${successful > 1 ? 's' : ''}, ${failed} failed`)
-          }
-
-          setIsProcessingBulk(false)
-          setSelectedIds(new Set())
-          break
-        }
+    for (const clientId of clientIds) {
+      try {
+        await activateClient(clientId)
+        successful++
+      } catch (error) {
+        failed++
       }
-      setConfirmAction(null)
-    } catch (error) {
-      // Error handled by hook
-      setIsProcessingBulk(false)
     }
+
+    queryClient.invalidateQueries({ queryKey: ['clients'] })
+
+    if (failed === 0) {
+      toast.success(`Successfully activated ${successful} client${successful > 1 ? 's' : ''}`)
+    } else if (successful === 0) {
+      toast.error(`Failed to activate ${failed} client${failed > 1 ? 's' : ''}`)
+    } else {
+      toast.warning(`Activated ${successful} client${successful > 1 ? 's' : ''}, ${failed} failed`)
+    }
+
+    setIsProcessingBulk(false)
+    setSelectedIds(new Set())
+    bulkActivateModal.close()
+  }
+
+  const confirmBulkDeactivate = async () => {
+    if (!bulkDeactivateModal.data) return
+
+    setIsProcessingBulk(true)
+    const clientIds = bulkDeactivateModal.data
+    let successful = 0
+    let failed = 0
+
+    for (const clientId of clientIds) {
+      try {
+        await deactivateClient(clientId)
+        successful++
+      } catch (error) {
+        failed++
+      }
+    }
+
+    queryClient.invalidateQueries({ queryKey: ['clients'] })
+
+    if (failed === 0) {
+      toast.success(`Successfully deactivated ${successful} client${successful > 1 ? 's' : ''}`)
+    } else if (successful === 0) {
+      toast.error(`Failed to deactivate ${failed} client${failed > 1 ? 's' : ''}`)
+    } else {
+      toast.warning(`Deactivated ${successful} client${successful > 1 ? 's' : ''}, ${failed} failed`)
+    }
+
+    setIsProcessingBulk(false)
+    setSelectedIds(new Set())
+    bulkDeactivateModal.close()
+  }
+
+  const confirmBulkArchive = async (inputValue?: string) => {
+    if (!bulkArchiveModal.data || !inputValue?.trim()) return
+
+    setIsProcessingBulk(true)
+    const clientIds = bulkArchiveModal.data
+    let successful = 0
+    let failed = 0
+
+    for (const clientId of clientIds) {
+      try {
+        await archiveClient(clientId, inputValue)
+        successful++
+      } catch (error) {
+        failed++
+      }
+    }
+
+    queryClient.invalidateQueries({ queryKey: ['clients'] })
+
+    if (failed === 0) {
+      toast.success(`Successfully archived ${successful} client${successful > 1 ? 's' : ''}`)
+    } else if (successful === 0) {
+      toast.error(`Failed to archive ${failed} client${failed > 1 ? 's' : ''}`)
+    } else {
+      toast.warning(`Archived ${successful} client${successful > 1 ? 's' : ''}, ${failed} failed`)
+    }
+
+    setIsProcessingBulk(false)
+    setSelectedIds(new Set())
+    bulkArchiveModal.close()
+  }
+
+  const confirmBulkDelete = async () => {
+    if (!bulkDeleteModal.data) return
+
+    setIsProcessingBulk(true)
+    const clientIds = bulkDeleteModal.data
+    let successful = 0
+    let failed = 0
+
+    for (const clientId of clientIds) {
+      try {
+        await deleteClient(clientId)
+        successful++
+      } catch (error) {
+        failed++
+      }
+    }
+
+    queryClient.invalidateQueries({ queryKey: ['clients'] })
+
+    if (failed === 0) {
+      toast.success(`Successfully deleted ${successful} client${successful > 1 ? 's' : ''}`)
+    } else if (successful === 0) {
+      toast.error(`Failed to delete ${failed} client${failed > 1 ? 's' : ''}`)
+    } else {
+      toast.warning(`Deleted ${successful} client${successful > 1 ? 's' : ''}, ${failed} failed`)
+    }
+
+    setIsProcessingBulk(false)
+    setSelectedIds(new Set())
+    bulkDeleteModal.close()
   }
 
   const handleCreate = () => {
-    setEditingClient(null)
-    setIsCreateModalOpen(true)
+    formModal.open()
   }
 
   const handleFormSubmit = async (data: ClientFormData) => {
     try {
-      if (editingClient) {
-        await updateClient.mutateAsync({ id: editingClient.id, data })
+      if (formModal.data) {
+        await updateClient.mutateAsync({ id: formModal.data.id, data })
       } else {
         await createClient.mutateAsync(data)
       }
-      setIsCreateModalOpen(false)
-      setEditingClient(null)
+      formModal.close()
     } catch (error) {
       // Error handled by hook
     }
@@ -285,22 +274,22 @@ export function ClientsPage() {
   // Bulk action handlers
   const handleBulkActivate = () => {
     const clientIds = Array.from(selectedIds)
-    setConfirmAction({ type: 'bulkActivate', clientIds })
+    bulkActivateModal.open(clientIds)
   }
 
   const handleBulkDeactivate = () => {
     const clientIds = Array.from(selectedIds)
-    setConfirmAction({ type: 'bulkDeactivate', clientIds })
+    bulkDeactivateModal.open(clientIds)
   }
 
   const handleBulkArchive = () => {
     const clientIds = Array.from(selectedIds)
-    setConfirmAction({ type: 'bulkArchive', clientIds })
+    bulkArchiveModal.open(clientIds)
   }
 
   const handleBulkDelete = () => {
     const clientIds = Array.from(selectedIds)
-    setConfirmAction({ type: 'bulkDelete', clientIds })
+    bulkDeleteModal.open(clientIds)
   }
 
   const handleClearSelection = () => {
@@ -348,7 +337,7 @@ export function ClientsPage() {
   useKeyboardShortcut(
     { key: 'n', metaKey: true }, // Cmd+N or Ctrl+N
     handleCreate,
-    { enabled: !isCreateModalOpen }
+    { enabled: !formModal.isOpen }
   )
 
   useKeyboardShortcut(
@@ -360,11 +349,8 @@ export function ClientsPage() {
   useKeyboardShortcut(
     { key: 'Escape' },
     () => {
-      if (isCreateModalOpen) {
-        setIsCreateModalOpen(false)
-        setEditingClient(null)
-      } else if (confirmAction) {
-        setConfirmAction(null)
+      if (formModal.isOpen) {
+        formModal.close()
       } else if (selectedIds.size > 0) {
         handleClearSelection()
       }
@@ -373,186 +359,172 @@ export function ClientsPage() {
   )
 
   return (
-    <AppLayout>
-      <div className="max-w-7xl mx-auto px-4 lg:px-6 py-6">
-        {/* Filters */}
-        <div className="mb-6">
-          <ClientsFilters
-            filters={filters}
-            onFiltersChange={updateParams}
-            onCreate={handleCreate}
-            onExport={handleExport}
-            isExporting={isExporting}
+    <ResourcePageLayout
+      title="Client Management"
+      subtitle="Manage client organizations and their contracts"
+      filters={
+        <ClientsFilters
+          filters={filters}
+          onFiltersChange={updateParams}
+          onCreate={handleCreate}
+          onExport={handleExport}
+          isExporting={isExporting}
+        />
+      }
+      modals={
+        <>
+          {/* Form Modal */}
+          <ClientFormModal
+            {...formModal.props}
+            onSubmit={handleFormSubmit}
+            initialData={
+              formModal.data && clientDetail
+                ? {
+                    name: clientDetail.name,
+                    email: clientDetail.email || undefined,
+                    phone: clientDetail.phone || undefined,
+                    website: clientDetail.website || undefined,
+                    address: clientDetail.address || undefined,
+                    billing_address: clientDetail.billing_address || undefined,
+                    timezone: clientDetail.timezone || undefined,
+                    tax_id: clientDetail.tax_id || undefined,
+                    contact_person: clientDetail.contact_person || undefined,
+                    contact_email: clientDetail.contact_email || undefined,
+                    contact_phone: clientDetail.contact_phone || undefined,
+                    industry_id: clientDetail.industry?.id || undefined,
+                    status: clientDetail.status,
+                    preferred_contact_method: clientDetail.preferred_contact_method || undefined,
+                    is_verified: clientDetail.is_verified,
+                    tag_ids: clientDetail.tags?.map(tag => tag.id) || undefined,
+                    parent_client: clientDetail.parent_client || undefined,
+                    last_contact_date: clientDetail.last_contact_date || undefined,
+                    notes: clientDetail.notes || undefined,
+                    metadata: clientDetail.metadata || undefined,
+                  }
+                : undefined
+            }
+            isLoading={createClient.isPending || updateClient.isPending}
+            title={formModal.data ? 'Edit Client' : 'Add New Client'}
           />
-        </div>
 
-        {/* Clients Table */}
-        <ClientsTable
-          clients={clients}
-          isLoading={isLoading}
-          onView={handleView}
-          onEdit={handleEdit}
-          onActivate={handleActivate}
-          onDeactivate={handleDeactivate}
-          onArchive={handleArchive}
-          onVerify={handleVerify}
-          onDelete={handleDelete}
-          selectedIds={selectedIds}
-          onSelectionChange={setSelectedIds}
-        />
-      </div>
+          {/* Deactivate Modal */}
+          <ConfirmDialog
+            {...deactivateModal.props}
+            onConfirm={confirmDeactivate}
+            title="Deactivate Client"
+            message={deactivateModal.data ? `Are you sure you want to deactivate ${deactivateModal.data.name}? They will no longer be able to access services.` : ''}
+            confirmText="Deactivate"
+            cancelText="Cancel"
+            variant="warning"
+            isLoading={deactivateClientMutation.isPending}
+          />
 
-      {/* Bulk Actions Toolbar */}
-      <BulkActionsToolbar
-        selectedCount={selectedIds.size}
-        onClearSelection={handleClearSelection}
-        onBulkActivate={handleBulkActivate}
-        onBulkDeactivate={handleBulkDeactivate}
-        onBulkArchive={handleBulkArchive}
-        onBulkDelete={handleBulkDelete}
-        isProcessing={isProcessingBulk}
+          {/* Archive Modal */}
+          <ConfirmDialog
+            {...archiveModal.props}
+            onConfirm={confirmArchive}
+            title="Archive Client"
+            message={archiveModal.data ? `Are you sure you want to archive ${archiveModal.data.name}?` : ''}
+            confirmText="Archive"
+            cancelText="Cancel"
+            variant="warning"
+            requireInput
+            inputPlaceholder="Enter reason for archiving..."
+            inputLabel="Reason (required)"
+            isLoading={archiveClientMutation.isPending}
+          />
+
+          {/* Delete Modal */}
+          <ConfirmDialog
+            {...deleteModal.props}
+            onConfirm={confirmDelete}
+            title="Delete Client"
+            message={deleteModal.data ? `Are you sure you want to delete ${deleteModal.data.name}? This action cannot be undone.` : ''}
+            confirmText="Delete"
+            cancelText="Cancel"
+            variant="danger"
+            isLoading={deleteClientMutation.isPending}
+          />
+
+          {/* Bulk Activate Modal */}
+          <ConfirmDialog
+            {...bulkActivateModal.props}
+            onConfirm={confirmBulkActivate}
+            title="Activate Clients"
+            message={`Are you sure you want to activate ${bulkActivateModal.data?.length || 0} client(s)?`}
+            confirmText="Activate"
+            cancelText="Cancel"
+            variant="success"
+            isLoading={isProcessingBulk}
+          />
+
+          {/* Bulk Deactivate Modal */}
+          <ConfirmDialog
+            {...bulkDeactivateModal.props}
+            onConfirm={confirmBulkDeactivate}
+            title="Deactivate Clients"
+            message={`Are you sure you want to deactivate ${bulkDeactivateModal.data?.length || 0} client(s)?`}
+            confirmText="Deactivate"
+            cancelText="Cancel"
+            variant="warning"
+            isLoading={isProcessingBulk}
+          />
+
+          {/* Bulk Archive Modal */}
+          <ConfirmDialog
+            {...bulkArchiveModal.props}
+            onConfirm={confirmBulkArchive}
+            title="Archive Clients"
+            message={`Are you sure you want to archive ${bulkArchiveModal.data?.length || 0} client(s)?`}
+            confirmText="Archive"
+            cancelText="Cancel"
+            variant="warning"
+            requireInput
+            inputPlaceholder="Enter reason for archiving..."
+            inputLabel="Reason (required)"
+            isLoading={isProcessingBulk}
+          />
+
+          {/* Bulk Delete Modal */}
+          <ConfirmDialog
+            {...bulkDeleteModal.props}
+            onConfirm={confirmBulkDelete}
+            title="Delete Clients"
+            message={`Are you sure you want to delete ${bulkDeleteModal.data?.length || 0} client(s)? This action cannot be undone.`}
+            confirmText="Delete"
+            cancelText="Cancel"
+            variant="danger"
+            isLoading={isProcessingBulk}
+          />
+
+          {/* Bulk Actions Toolbar */}
+          {selectedIds.size > 0 && (
+            <BulkActionsToolbar
+              selectedCount={selectedIds.size}
+              onClearSelection={handleClearSelection}
+              onBulkActivate={handleBulkActivate}
+              onBulkDeactivate={handleBulkDeactivate}
+              onBulkArchive={handleBulkArchive}
+              onBulkDelete={handleBulkDelete}
+              isProcessing={isProcessingBulk}
+            />
+          )}
+        </>
+      }
+    >
+      <ClientsTable
+        clients={clients}
+        isLoading={isLoading}
+        onView={handleView}
+        onEdit={handleEdit}
+        onActivate={handleActivate}
+        onDeactivate={handleDeactivate}
+        onArchive={handleArchive}
+        onVerify={handleVerify}
+        onDelete={handleDelete}
+        selectedIds={selectedIds}
+        onSelectionChange={setSelectedIds}
       />
-
-      {/* Create/Edit Modal */}
-      <ClientFormModal
-        isOpen={isCreateModalOpen}
-        onClose={() => {
-          setIsCreateModalOpen(false)
-          setEditingClient(null)
-        }}
-        onSubmit={handleFormSubmit}
-        initialData={
-          editingClient && clientDetail
-            ? {
-                name: clientDetail.name,
-                email: clientDetail.email || undefined,
-                phone: clientDetail.phone || undefined,
-                website: clientDetail.website || undefined,
-                address: clientDetail.address || undefined,
-                billing_address: clientDetail.billing_address || undefined,
-                timezone: clientDetail.timezone || undefined,
-                tax_id: clientDetail.tax_id || undefined,
-                contact_person: clientDetail.contact_person || undefined,
-                contact_email: clientDetail.contact_email || undefined,
-                contact_phone: clientDetail.contact_phone || undefined,
-                industry_id: clientDetail.industry?.id || undefined,
-                status: clientDetail.status,
-                preferred_contact_method: clientDetail.preferred_contact_method || undefined,
-                is_verified: clientDetail.is_verified,
-                notes: clientDetail.notes || undefined,
-              }
-            : undefined
-        }
-        isLoading={createClient.isPending || updateClient.isPending}
-        title={editingClient ? 'Edit Client' : 'Add New Client'}
-      />
-
-
-      {/* Confirm Dialogs */}
-      {confirmAction?.type === 'deactivate' && (
-        <ConfirmDialog
-          isOpen={true}
-          onClose={() => setConfirmAction(null)}
-          onConfirm={handleConfirmAction}
-          title="Deactivate Client"
-          message={`Are you sure you want to deactivate ${confirmAction.client.name}? This will prevent the client from being used in new contracts or cases.`}
-          confirmText="Deactivate"
-          cancelText="Cancel"
-          variant="warning"
-          isLoading={deactivateClientMutation.isPending}
-        />
-      )}
-
-      {confirmAction?.type === 'archive' && (
-        <ConfirmDialog
-          isOpen={true}
-          onClose={() => setConfirmAction(null)}
-          onConfirm={handleConfirmAction}
-          title="Archive Client"
-          message={`Please provide a reason for archiving ${confirmAction.client.name}. Archived clients can be restored later.`}
-          confirmText="Archive"
-          cancelText="Cancel"
-          variant="warning"
-          requireInput={true}
-          inputLabel="Reason for archiving"
-          inputPlaceholder="e.g., Client no longer active, Contract ended..."
-          isLoading={archiveClientMutation.isPending}
-        />
-      )}
-
-      {confirmAction?.type === 'delete' && (
-        <ConfirmDialog
-          isOpen={true}
-          onClose={() => setConfirmAction(null)}
-          onConfirm={handleConfirmAction}
-          title="Delete Client"
-          message={`Are you sure you want to delete ${confirmAction.client.name}? This action cannot be undone and will permanently remove all client data.`}
-          confirmText="Delete"
-          cancelText="Cancel"
-          variant="danger"
-          isLoading={deleteClientMutation.isPending}
-        />
-      )}
-
-      {/* Bulk Confirm Dialogs */}
-      {confirmAction?.type === 'bulkActivate' && (
-        <ConfirmDialog
-          isOpen={true}
-          onClose={() => setConfirmAction(null)}
-          onConfirm={handleConfirmAction}
-          title="Activate Clients"
-          message={`Are you sure you want to activate ${confirmAction.clientIds.length} client${confirmAction.clientIds.length > 1 ? 's' : ''}? They will be available for new contracts and cases.`}
-          confirmText="Activate"
-          cancelText="Cancel"
-          variant="success"
-          isLoading={isProcessingBulk}
-        />
-      )}
-
-      {confirmAction?.type === 'bulkDeactivate' && (
-        <ConfirmDialog
-          isOpen={true}
-          onClose={() => setConfirmAction(null)}
-          onConfirm={handleConfirmAction}
-          title="Deactivate Clients"
-          message={`Are you sure you want to deactivate ${confirmAction.clientIds.length} client${confirmAction.clientIds.length > 1 ? 's' : ''}? They will not be available for new contracts or cases.`}
-          confirmText="Deactivate"
-          cancelText="Cancel"
-          variant="warning"
-          isLoading={isProcessingBulk}
-        />
-      )}
-
-      {confirmAction?.type === 'bulkArchive' && (
-        <ConfirmDialog
-          isOpen={true}
-          onClose={() => setConfirmAction(null)}
-          onConfirm={handleConfirmAction}
-          title="Archive Clients"
-          message={`Please provide a reason for archiving ${confirmAction.clientIds.length} client${confirmAction.clientIds.length > 1 ? 's' : ''}. Archived clients can be restored later.`}
-          confirmText="Archive"
-          cancelText="Cancel"
-          variant="warning"
-          requireInput={true}
-          inputLabel="Reason for archiving"
-          inputPlaceholder="e.g., Clients no longer active, Contracts ended..."
-          isLoading={isProcessingBulk}
-        />
-      )}
-
-      {confirmAction?.type === 'bulkDelete' && (
-        <ConfirmDialog
-          isOpen={true}
-          onClose={() => setConfirmAction(null)}
-          onConfirm={handleConfirmAction}
-          title="Delete Clients"
-          message={`Are you sure you want to delete ${confirmAction.clientIds.length} client${confirmAction.clientIds.length > 1 ? 's' : ''}? This action cannot be undone and will permanently remove all client data.`}
-          confirmText="Delete"
-          cancelText="Cancel"
-          variant="danger"
-          isLoading={isProcessingBulk}
-        />
-      )}
-    </AppLayout>
+    </ResourcePageLayout>
   )
 }

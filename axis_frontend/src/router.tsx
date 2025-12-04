@@ -20,7 +20,9 @@ import { PersonDetailPage } from '@/pages/PersonDetailPage'
 import { ServicesPage } from '@/pages/ServicesPage'
 import { ServiceDetailPage } from '@/pages/ServiceDetailPage'
 import { ServiceProvidersPage } from '@/pages/ServiceProvidersPage'
+import { ServiceProviderDetailPage } from '@/pages/ServiceProviderDetailPage'
 import { ServiceAssignmentsPage } from '@/pages/ServiceAssignmentsPage'
+import { SessionDetailPage } from '@/pages/SessionDetailPage'
 import { DocumentsPage } from '@/pages/DocumentsPage'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { IndustriesSettingsPage } from '@/pages/settings/IndustriesSettingsPage'
@@ -53,6 +55,14 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <SessionsPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/sessions/:id',
+    element: (
+      <ProtectedRoute>
+        <SessionDetailPage />
       </ProtectedRoute>
     ),
   },
@@ -133,6 +143,14 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <ServiceProvidersPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/service-providers/:id',
+    element: (
+      <ProtectedRoute>
+        <ServiceProviderDetailPage />
       </ProtectedRoute>
     ),
   },

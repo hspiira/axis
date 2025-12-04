@@ -14,7 +14,7 @@ interface ClientContractsTabProps {
 
 export function ClientContractsTab({ client }: ClientContractsTabProps) {
   // Placeholder for contracts data - will be fetched from API
-  const contracts = []
+  const contracts: any[] = []
 
   return (
     <div className="space-y-6 max-w-6xl">

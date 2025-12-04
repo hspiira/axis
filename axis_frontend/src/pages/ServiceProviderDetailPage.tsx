@@ -11,9 +11,8 @@ import { Edit2, Shield, ShieldOff, Loader2, AlertCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import { AppLayout } from '@/components/AppLayout'
 import { useBreadcrumbs, type BreadcrumbItem } from '@/contexts/BreadcrumbContext'
-import { useServiceProvider, useUpdateServiceProvider } from '@/hooks/useServices'
+import { useProvider, useUpdateProvider } from '@/hooks/useServices'
 import { ServiceProviderDetailTabs } from '@/components/service-providers/ServiceProviderDetailTabs'
-import { ProviderStatus } from '@/api/services'
 
 // Tab labels mapping
 const TAB_LABELS: Record<string, string> = {
@@ -30,8 +29,8 @@ export function ServiceProviderDetailPage() {
   const { setBreadcrumbs, setMenuActions } = useBreadcrumbs()
 
   // Fetch provider data
-  const { data: provider, isLoading, error } = useServiceProvider(id || '')
-  const updateProviderMutation = useUpdateServiceProvider()
+  const { data: provider, isLoading, error } = useProvider(id || '')
+  const updateProviderMutation = useUpdateProvider()
 
   // Get active tab from URL
   const activeTab = searchParams.get('tab') || 'overview'
@@ -53,7 +52,20 @@ export function ServiceProviderDetailPage() {
     try {
       await updateProviderMutation.mutateAsync({
         id: provider.id,
-        data: { ...provider, is_verified: !provider.is_verified },
+        data: {
+          name: provider.name,
+          type: provider.type,
+          contact_email: provider.contact_email || undefined,
+          contact_phone: provider.contact_phone || undefined,
+          location: provider.location || undefined,
+          qualifications: provider.qualifications || undefined,
+          specializations: provider.specializations || undefined,
+          availability: provider.availability || undefined,
+          rating: provider.rating || undefined,
+          is_verified: !provider.is_verified,
+          status: provider.status,
+          metadata: provider.metadata || undefined,
+        },
       })
       toast.success(`Provider ${provider.is_verified ? 'unverified' : 'verified'} successfully`)
     } catch (error) {
@@ -64,42 +76,43 @@ export function ServiceProviderDetailPage() {
 
   // Set breadcrumbs and menu actions
   useEffect(() => {
-    if (provider) {
-      // Build breadcrumbs with tab awareness
-      const breadcrumbsArray: BreadcrumbItem[] = [
-        { label: 'Service Providers', to: '/service-providers' },
-        { label: provider.name, to: `/service-providers/${id}` },
-      ]
+    if (!provider) return
 
-      // Add current tab if not overview
-      if (activeTab !== 'overview') {
-        breadcrumbsArray.push({
-          label: TAB_LABELS[activeTab] || activeTab,
-        })
-      }
+    // Build breadcrumbs with tab awareness
+    const breadcrumbsArray: BreadcrumbItem[] = [
+      { label: 'Service Providers', to: '/service-providers' },
+      { label: provider.name, to: `/service-providers/${id}` },
+    ]
 
-      setBreadcrumbs(breadcrumbsArray)
-
-      setMenuActions([
-        {
-          label: 'Edit Provider',
-          icon: <Edit2 className="h-4 w-4" />,
-          onClick: handleEdit,
-        },
-        {
-          label: provider.is_verified ? 'Remove Verification' : 'Verify Provider',
-          icon: provider.is_verified ? <ShieldOff className="h-4 w-4" /> : <Shield className="h-4 w-4" />,
-          onClick: handleToggleVerification,
-          loading: updateProviderMutation.isPending,
-        },
-      ])
+    // Add current tab if not overview
+    if (activeTab !== 'overview') {
+      breadcrumbsArray.push({
+        label: TAB_LABELS[activeTab] || activeTab,
+      })
     }
+
+    setBreadcrumbs(breadcrumbsArray)
+
+    setMenuActions([
+      {
+        label: 'Edit Provider',
+        icon: <Edit2 className="h-4 w-4" />,
+        onClick: handleEdit,
+      },
+      {
+        label: provider.is_verified ? 'Remove Verification' : 'Verify Provider',
+        icon: provider.is_verified ? <ShieldOff className="h-4 w-4" /> : <Shield className="h-4 w-4" />,
+        onClick: handleToggleVerification,
+        loading: updateProviderMutation.isPending,
+      },
+    ])
 
     return () => {
       setBreadcrumbs([])
       setMenuActions([])
     }
-  }, [provider, activeTab, id, setBreadcrumbs, setMenuActions, handleEdit, handleToggleVerification, updateProviderMutation.isPending])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [provider?.id, provider?.name, provider?.is_verified, activeTab, updateProviderMutation.isPending])
 
   // Loading state
   if (isLoading) {

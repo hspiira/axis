@@ -151,6 +151,15 @@ export const queryKeys = {
     detail: (id: string) => [...queryKeys.persons.details(), id] as const,
     byClient: (clientId: string, filters?: string) => [...queryKeys.persons.all, 'by-client', clientId, filters] as const,
   },
+
+  // Documents
+  documents: {
+    all: ['documents'] as const,
+    lists: () => [...queryKeys.documents.all, 'list'] as const,
+    list: (filters?: string) => [...queryKeys.documents.lists(), filters] as const,
+    details: () => [...queryKeys.documents.all, 'detail'] as const,
+    detail: (id: string) => [...queryKeys.documents.details(), id] as const,
+  },
 }
 
 /**

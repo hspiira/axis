@@ -56,7 +56,18 @@ export function ServiceDetailPage() {
     try {
       await updateServiceMutation.mutateAsync({
         id: service.id,
-        data: { ...service, status: newStatus },
+        data: {
+          name: service.name,
+          status: newStatus,
+          description: service.description || undefined,
+          category_id: service.category?.id || undefined,
+          duration_minutes: service.duration_minutes || undefined,
+          default_price: service.default_price || undefined,
+          is_billable: service.is_billable,
+          requires_provider: service.requires_provider,
+          max_sessions_per_person: service.max_sessions_per_person || undefined,
+          metadata: service.metadata || undefined,
+        },
       })
       toast.success(`Service ${action}d successfully`)
     } catch (error) {
@@ -67,43 +78,44 @@ export function ServiceDetailPage() {
 
   // Set breadcrumbs and menu actions
   useEffect(() => {
-    if (service) {
-      // Build breadcrumbs with tab awareness
-      const breadcrumbsArray: BreadcrumbItem[] = [
-        { label: 'Services', to: '/services' },
-        { label: service.name, to: `/services/${id}` },
-      ]
+    if (!service) return
 
-      // Add current tab if not overview
-      if (activeTab !== 'overview') {
-        breadcrumbsArray.push({
-          label: TAB_LABELS[activeTab] || activeTab,
-        })
-      }
+    // Build breadcrumbs with tab awareness
+    const breadcrumbsArray: BreadcrumbItem[] = [
+      { label: 'Services', to: '/services' },
+      { label: service.name, to: `/services/${id}` },
+    ]
 
-      setBreadcrumbs(breadcrumbsArray)
-
-      setMenuActions([
-        {
-          label: 'Edit Service',
-          icon: <Edit2 className="h-4 w-4" />,
-          onClick: handleEdit,
-        },
-        {
-          label: service.status === ServiceStatus.ACTIVE ? 'Archive Service' : 'Activate Service',
-          icon: <Archive className="h-4 w-4" />,
-          onClick: handleToggleStatus,
-          variant: service.status === ServiceStatus.ACTIVE ? 'danger' : undefined,
-          loading: updateServiceMutation.isPending,
-        },
-      ])
+    // Add current tab if not overview
+    if (activeTab !== 'overview') {
+      breadcrumbsArray.push({
+        label: TAB_LABELS[activeTab] || activeTab,
+      })
     }
+
+    setBreadcrumbs(breadcrumbsArray)
+
+    setMenuActions([
+      {
+        label: 'Edit Service',
+        icon: <Edit2 className="h-4 w-4" />,
+        onClick: handleEdit,
+      },
+      {
+        label: service.status === ServiceStatus.ACTIVE ? 'Archive Service' : 'Activate Service',
+        icon: <Archive className="h-4 w-4" />,
+        onClick: handleToggleStatus,
+        variant: service.status === ServiceStatus.ACTIVE ? 'danger' : undefined,
+        loading: updateServiceMutation.isPending,
+      },
+    ])
 
     return () => {
       setBreadcrumbs([])
       setMenuActions([])
     }
-  }, [service, activeTab, id, setBreadcrumbs, setMenuActions, handleEdit, handleToggleStatus, updateServiceMutation.isPending])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [service?.id, service?.name, service?.status, activeTab, updateServiceMutation.isPending])
 
   // Loading state
   if (isLoading) {

@@ -4,9 +4,9 @@
  * Displays and manages EAP services, providers, and sessions.
  */
 
-import { useEffect, useState } from 'react'
-import { AppLayout } from '@/components/AppLayout'
-import { usePageTitle } from '@/contexts/PageTitleContext'
+import { useState } from 'react'
+import { ResourcePageLayout } from '@/components/layouts/ResourcePageLayout'
+import { useModal } from '@/hooks/useModal'
 import { ServicesTable } from '@/components/services/ServicesTable'
 import { ServicesFilters } from '@/components/services/ServicesFilters'
 import { ServiceFormModal } from '@/components/services/ServiceFormModal'
@@ -34,12 +34,13 @@ type ConfirmAction =
   | null
 
 export function ServicesPage() {
-  const { setPageTitle } = usePageTitle()
   const { params: urlParams, updateParams } = useURLSearchParams<ServiceSearchParams>()
 
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  const [editingService, setEditingService] = useState<ServiceList | null>(null)
-  const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null)
+  // Modal management
+  const formModal = useModal<ServiceList>()
+  const activateModal = useModal<ServiceList>()
+  const deactivateModal = useModal<ServiceList>()
+  const deleteModal = useModal<ServiceList>()
   const [isExporting, setIsExporting] = useState(false)
 
   // Initialize filters from URL params
@@ -55,66 +56,56 @@ export function ServicesPage() {
   const createService = useCreateService()
   const updateService = useUpdateService()
 
-  useEffect(() => {
-    setPageTitle('Services Management', 'Manage EAP services, providers, and sessions')
-    return () => setPageTitle(null)
-  }, [setPageTitle])
 
   // Fetch full service data when editing
-  const { data: serviceDetail } = useService(editingService?.id || '')
+  const { data: serviceDetail } = useService(formModal.data?.id || '')
 
   const handleCreate = () => {
-    setEditingService(null)
-    setIsCreateModalOpen(true)
+    formModal.open()
   }
 
   const handleEdit = (service: ServiceList) => {
-    setEditingService(service)
-    setIsCreateModalOpen(true)
+    formModal.open(service)
   }
 
   const handleActivate = (service: ServiceList) => {
-    setConfirmAction({ type: 'activate', service })
+    activateModal.open(service)
   }
 
   const handleDeactivate = (service: ServiceList) => {
-    setConfirmAction({ type: 'deactivate', service })
+    deactivateModal.open(service)
   }
 
   const handleDelete = (service: ServiceList) => {
-    setConfirmAction({ type: 'delete', service })
+    deleteModal.open(service)
   }
 
-  const handleConfirmAction = async () => {
-    if (!confirmAction) return
+  const confirmActivate = async () => {
+    if (!activateModal.data) return
+    await activateServiceMutation.mutateAsync(activateModal.data.id)
+    activateModal.close()
+  }
 
-    try {
-      switch (confirmAction.type) {
-        case 'activate':
-          await activateServiceMutation.mutateAsync(confirmAction.service.id)
-          break
-        case 'deactivate':
-          await deactivateServiceMutation.mutateAsync(confirmAction.service.id)
-          break
-        case 'delete':
-          await deleteServiceMutation.mutateAsync(confirmAction.service.id)
-          break
-      }
-      setConfirmAction(null)
-    } catch (error) {
-      // Error handled by hook
-    }
+  const confirmDeactivate = async () => {
+    if (!deactivateModal.data) return
+    await deactivateServiceMutation.mutateAsync(deactivateModal.data.id)
+    deactivateModal.close()
+  }
+
+  const confirmDelete = async () => {
+    if (!deleteModal.data) return
+    await deleteServiceMutation.mutateAsync(deleteModal.data.id)
+    deleteModal.close()
   }
 
   const handleFormSubmit = async (data: ServiceFormData) => {
     try {
-      if (editingService) {
-        await updateService.mutateAsync({ id: editingService.id, data })
+      if (formModal.data) {
+        await updateService.mutateAsync({ id: formModal.data.id, data })
       } else {
         await createService.mutateAsync(data)
       }
-      setIsCreateModalOpen(false)
-      setEditingService(null)
+      formModal.close()
     } catch (error) {
       // Error handled by hook
     }
@@ -161,7 +152,7 @@ export function ServicesPage() {
   useKeyboardShortcut(
     { key: 'n', metaKey: true },
     handleCreate,
-    { enabled: !isCreateModalOpen }
+    { enabled: !formModal.isOpen }
   )
 
   useKeyboardShortcut(
@@ -173,111 +164,96 @@ export function ServicesPage() {
   useKeyboardShortcut(
     { key: 'Escape' },
     () => {
-      if (isCreateModalOpen) {
-        setIsCreateModalOpen(false)
-        setEditingService(null)
-      } else if (confirmAction) {
-        setConfirmAction(null)
+      if (formModal.isOpen) {
+        formModal.close()
       }
     },
     { enabled: true }
   )
 
   return (
-    <AppLayout>
-      <div className="max-w-7xl mx-auto px-4 lg:px-6 py-6">
-        {/* Filters */}
-        <div className="mb-6">
-          <ServicesFilters
-            filters={filters}
-            onFiltersChange={updateParams}
-            onCreate={handleCreate}
-            onExport={handleExport}
-            isExporting={isExporting}
+    <ResourcePageLayout
+      title="Services Management"
+      subtitle="Manage EAP services, providers, and sessions"
+      filters={
+        <ServicesFilters
+          filters={filters}
+          onFiltersChange={updateParams}
+          onCreate={handleCreate}
+          onExport={handleExport}
+          isExporting={isExporting}
+        />
+      }
+      modals={
+        <>
+          {/* Create/Edit Modal */}
+          <ServiceFormModal
+            {...formModal.props}
+            onSubmit={handleFormSubmit}
+            initialData={
+              formModal.data && serviceDetail
+                ? {
+                    name: serviceDetail.name,
+                    description: serviceDetail.description || undefined,
+                    category_id: serviceDetail.category?.id || undefined,
+                    status: serviceDetail.status,
+                    duration_minutes: serviceDetail.duration_minutes || undefined,
+                    default_price: serviceDetail.default_price || undefined,
+                    is_billable: serviceDetail.is_billable,
+                    requires_provider: serviceDetail.requires_provider,
+                    max_sessions_per_person: serviceDetail.max_sessions_per_person || undefined,
+                    metadata: serviceDetail.metadata || undefined,
+                  }
+                : undefined
+            }
+            isLoading={createService.isPending || updateService.isPending}
+            title={formModal.data ? 'Edit Service' : 'Add New Service'}
           />
-        </div>
 
-        {/* Services Table */}
-        <ServicesTable
-          services={services}
-          isLoading={isLoading}
-          onEdit={handleEdit}
-          onActivate={handleActivate}
-          onDeactivate={handleDeactivate}
-          onDelete={handleDelete}
-        />
-      </div>
+          {/* Confirm Dialogs */}
+          <ConfirmDialog
+            {...activateModal.props}
+            onConfirm={confirmActivate}
+            title="Activate Service"
+            message={activateModal.data ? `Are you sure you want to activate ${activateModal.data.name}? This will make the service available for assignments.` : ''}
+            confirmText="Activate"
+            cancelText="Cancel"
+            variant="success"
+            isLoading={activateServiceMutation.isPending}
+          />
 
-      {/* Create/Edit Modal */}
-      <ServiceFormModal
-        isOpen={isCreateModalOpen}
-        onClose={() => {
-          setIsCreateModalOpen(false)
-          setEditingService(null)
-        }}
-        onSubmit={handleFormSubmit}
-        initialData={
-          editingService && serviceDetail
-            ? {
-                name: serviceDetail.name,
-                description: serviceDetail.description || undefined,
-                category_id: serviceDetail.category?.id || undefined,
-                status: serviceDetail.status,
-                duration_minutes: serviceDetail.duration_minutes || undefined,
-                default_price: serviceDetail.default_price || undefined,
-                is_billable: serviceDetail.is_billable,
-                requires_provider: serviceDetail.requires_provider,
-                max_sessions_per_person: serviceDetail.max_sessions_per_person || undefined,
-                metadata: serviceDetail.metadata || undefined,
-              }
-            : undefined
-        }
-        isLoading={createService.isPending || updateService.isPending}
-        title={editingService ? 'Edit Service' : 'Add New Service'}
+          <ConfirmDialog
+            {...deactivateModal.props}
+            onConfirm={confirmDeactivate}
+            title="Deactivate Service"
+            message={deactivateModal.data ? `Are you sure you want to deactivate ${deactivateModal.data.name}? This will prevent new assignments.` : ''}
+            confirmText="Deactivate"
+            cancelText="Cancel"
+            variant="warning"
+            isLoading={deactivateServiceMutation.isPending}
+          />
+
+          <ConfirmDialog
+            {...deleteModal.props}
+            onConfirm={confirmDelete}
+            title="Delete Service"
+            message={deleteModal.data ? `Are you sure you want to delete ${deleteModal.data.name}? This action cannot be undone.` : ''}
+            confirmText="Delete"
+            cancelText="Cancel"
+            variant="danger"
+            isLoading={deleteServiceMutation.isPending}
+          />
+        </>
+      }
+    >
+      <ServicesTable
+        services={services}
+        isLoading={isLoading}
+        onEdit={handleEdit}
+        onActivate={handleActivate}
+        onDeactivate={handleDeactivate}
+        onDelete={handleDelete}
       />
-
-      {/* Confirm Dialogs */}
-      {confirmAction?.type === 'activate' && (
-        <ConfirmDialog
-          isOpen={true}
-          onClose={() => setConfirmAction(null)}
-          onConfirm={handleConfirmAction}
-          title="Activate Service"
-          message={`Are you sure you want to activate ${confirmAction.service.name}? This will make the service available for assignments.`}
-          confirmText="Activate"
-          cancelText="Cancel"
-          variant="success"
-          isLoading={activateServiceMutation.isPending}
-        />
-      )}
-
-      {confirmAction?.type === 'deactivate' && (
-        <ConfirmDialog
-          isOpen={true}
-          onClose={() => setConfirmAction(null)}
-          onConfirm={handleConfirmAction}
-          title="Deactivate Service"
-          message={`Are you sure you want to deactivate ${confirmAction.service.name}? This will prevent new assignments.`}
-          confirmText="Deactivate"
-          cancelText="Cancel"
-          variant="warning"
-          isLoading={deactivateServiceMutation.isPending}
-        />
-      )}
-
-      {confirmAction?.type === 'delete' && (
-        <ConfirmDialog
-          isOpen={true}
-          onClose={() => setConfirmAction(null)}
-          onConfirm={handleConfirmAction}
-          title="Delete Service"
-          message={`Are you sure you want to delete ${confirmAction.service.name}? This action cannot be undone.`}
-          confirmText="Delete"
-          cancelText="Cancel"
-          variant="danger"
-          isLoading={deleteServiceMutation.isPending}
-        />
-      )}
-    </AppLayout>
+    </ResourcePageLayout>
   )
 }

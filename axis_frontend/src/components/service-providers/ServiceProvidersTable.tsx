@@ -5,6 +5,7 @@
  */
 
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Edit, Trash2, CheckCircle, Shield, Mail, Phone } from 'lucide-react'
 import type { ServiceProviderList } from '@/api/services'
 import { formatShortDate } from '@/utils/formatters'
@@ -28,6 +29,7 @@ export function ServiceProvidersTable({
   onDelete,
   onVerify,
 }: ServiceProvidersTableProps) {
+  const navigate = useNavigate()
   const [sortField, setSortField] = useState<SortField>('name')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
   const [currentPage, setCurrentPage] = useState(1)
@@ -158,7 +160,7 @@ export function ServiceProvidersTable({
               <tr
                 key={provider.id}
                 className="hover:bg-white/5 transition-colors cursor-pointer"
-                onClick={() => onEdit(provider)}
+                onClick={() => navigate(`/service-providers/${provider.id}`)}
               >
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">

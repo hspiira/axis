@@ -5,6 +5,7 @@
  */
 
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Edit, Trash2, CheckCircle, X, Calendar, Users } from 'lucide-react'
 import type { ServiceSessionList } from '@/api/services'
 import { formatShortDate, formatTime } from '@/utils/formatters'
@@ -13,10 +14,10 @@ import { SessionStatusBadge } from '@/components/ui'
 interface SessionsTableProps {
   sessions: ServiceSessionList[]
   isLoading: boolean
-  onEdit: (session: ServiceSessionList) => void
-  onDelete: (session: ServiceSessionList) => void
-  onComplete: (session: ServiceSessionList) => void
-  onCancel: (session: ServiceSessionList) => void
+  onEdit?: (session: ServiceSessionList) => void
+  onDelete?: (session: ServiceSessionList) => void
+  onComplete?: (session: ServiceSessionList) => void
+  onCancel?: (session: ServiceSessionList) => void
 }
 
 type SortField = 'service_name' | 'person_name' | 'status' | 'scheduled_at'
@@ -30,6 +31,7 @@ export function SessionsTable({
   onComplete,
   onCancel,
 }: SessionsTableProps) {
+  const navigate = useNavigate()
   const [sortField, setSortField] = useState<SortField>('scheduled_at')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
   const [currentPage, setCurrentPage] = useState(1)
@@ -140,9 +142,11 @@ export function SessionsTable({
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
                 Duration
               </th>
-              <th className="px-4 py-3 w-32 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                Actions
-              </th>
+              {(onEdit || onComplete || onCancel || onDelete) && (
+                <th className="px-4 py-3 w-32 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                  Actions
+                </th>
+              )}
             </tr>
           </thead>
           <tbody className="divide-y divide-white/10">
@@ -150,7 +154,7 @@ export function SessionsTable({
               <tr
                 key={session.id}
                 className="hover:bg-white/5 transition-colors cursor-pointer"
-                onClick={() => onEdit(session)}
+                onClick={() => navigate(`/sessions/${session.id}`)}
               >
                 <td className="px-4 py-3">
                   <div className="flex flex-col gap-1">
@@ -178,45 +182,51 @@ export function SessionsTable({
                 <td className="px-4 py-3 text-sm text-gray-400">
                   {session.duration ? `${session.duration} min` : '—'}
                 </td>
-                <td
-                  className="px-4 py-3"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => onEdit(session)}
-                      className="p-1 text-gray-400 hover:text-cream-400 transition-colors"
-                      aria-label="Edit"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </button>
-                    {session.status === 'Scheduled' && (
-                      <button
-                        onClick={() => onComplete(session)}
-                        className="p-1 text-gray-400 hover:text-cream-400 transition-colors"
-                        aria-label="Complete"
-                      >
-                        <CheckCircle className="h-4 w-4" />
-                      </button>
-                    )}
-                    {(session.status === 'Scheduled' || session.status === 'Rescheduled') && (
-                      <button
-                        onClick={() => onCancel(session)}
-                        className="p-1 text-gray-400 hover:text-orange-400 transition-colors"
-                        aria-label="Cancel"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    )}
-                    <button
-                      onClick={() => onDelete(session)}
-                      className="p-1 text-gray-400 hover:text-rose-400 transition-colors"
-                      aria-label="Delete"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </td>
+                {(onEdit || onComplete || onCancel || onDelete) && (
+                  <td
+                    className="px-4 py-3"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="flex items-center gap-2">
+                      {onEdit && (
+                        <button
+                          onClick={() => onEdit(session)}
+                          className="p-1 text-gray-400 hover:text-cream-400 transition-colors"
+                          aria-label="Edit"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
+                      )}
+                      {onComplete && session.status === 'Scheduled' && (
+                        <button
+                          onClick={() => onComplete(session)}
+                          className="p-1 text-gray-400 hover:text-cream-400 transition-colors"
+                          aria-label="Complete"
+                        >
+                          <CheckCircle className="h-4 w-4" />
+                        </button>
+                      )}
+                      {onCancel && (session.status === 'Scheduled' || session.status === 'Rescheduled') && (
+                        <button
+                          onClick={() => onCancel(session)}
+                          className="p-1 text-gray-400 hover:text-orange-400 transition-colors"
+                          aria-label="Cancel"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      )}
+                      {onDelete && (
+                        <button
+                          onClick={() => onDelete(session)}
+                          className="p-1 text-gray-400 hover:text-rose-400 transition-colors"
+                          aria-label="Delete"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>

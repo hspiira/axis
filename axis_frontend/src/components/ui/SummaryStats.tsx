@@ -17,7 +17,7 @@ interface StatItem {
 
 interface SummaryStatsProps {
   stats: StatItem[]
-  columns?: 2 | 3 | 4
+  columns?: 2 | 3 | 4 | 5 | 6
   variant?: 'default' | 'cards' | 'compact'
   className?: string
 }
@@ -26,7 +26,7 @@ interface SummaryStatsProps {
  * SummaryStats - Main container for displaying multiple stat cards
  *
  * @param stats - Array of stat items to display
- * @param columns - Number of columns in grid (2, 3, or 4)
+ * @param columns - Number of columns in grid (2, 3, 4, 5, or 6)
  * @param variant - Display variant:
  *   - 'default': Stats on theme-secondary background with border (minimal design)
  *   - 'cards': Individual cards with white/5 background and borders (prominent design)
@@ -42,7 +42,9 @@ export function SummaryStats({
   const gridCols = {
     2: 'grid-cols-1 md:grid-cols-2',
     3: 'grid-cols-1 md:grid-cols-3',
-    4: 'grid-cols-1 md:grid-cols-4'
+    4: 'grid-cols-1 md:grid-cols-4',
+    5: 'grid-cols-1 md:grid-cols-5',
+    6: 'grid-cols-1 md:grid-cols-6'
   }
 
   const variants = {

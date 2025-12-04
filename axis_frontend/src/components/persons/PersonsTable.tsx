@@ -23,7 +23,7 @@ import { cn } from '@/lib/utils'
 import { formatShortDate } from '@/utils/formatters'
 import { StatusBadge } from '../ui'
 
-type SortField = 'profile.full_name' | 'person_type' | 'client_name' | 'status' | 'created_at'
+type SortField = 'profile.full_name' | 'person_type' | 'client_name' | 'status' | 'last_service_date'
 type SortDirection = 'asc' | 'desc'
 
 interface PersonsTableProps {
@@ -48,13 +48,6 @@ const personTypeBadgeColors: Record<PersonType, string> = {
   [PersonType.SERVICE_PROVIDER]: 'bg-amber-500/10 text-amber-400 border-cream-500/20',
 }
 
-const personStatusColors: Record<string, string> = {
-  'Active': 'bg-amber-500/10 text-cream-400 border-cream-500/20',
-  'Inactive': 'bg-gray-500/10 text-gray-400 border-gray-500/20',
-  'Suspended': 'bg-amber-500/10 text-amber-400 border-cream-500/20',
-  'Archived': 'bg-slate-500/10 text-slate-400 border-slate-500/20',
-}
-
 export function PersonsTable({
   persons,
   isLoading = false,
@@ -66,8 +59,8 @@ export function PersonsTable({
   const [menuPosition, setMenuPosition] = useState<{ top: number; right: number } | null>(null)
   const [menuPerson, setMenuPerson] = useState<PersonListItem | null>(null)
   const buttonRefs = useRef<Record<string, HTMLButtonElement>>({})
-  const [sortField, setSortField] = useState<SortField>('created_at')
-  const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
+  const [sortField, setSortField] = useState<SortField>('profile.full_name')
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
   const [currentPage, setCurrentPage] = useState(1)
 
   // Calculate menu position when it opens
@@ -236,11 +229,11 @@ export function PersonsTable({
                 </th>
                 <th className="px-3 py-2 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider">
                   <button
-                    onClick={() => handleSort('created_at')}
+                    onClick={() => handleSort('last_service_date')}
                     className="flex items-center gap-1 hover:text-white transition-colors"
                   >
-                    Created
-                    {getSortIcon('created_at')}
+                    Last Service
+                    {getSortIcon('last_service_date')}
                   </button>
                 </th>
                 <th className="px-3 py-2 w-20 text-xs font-semibold text-gray-400 uppercase tracking-wider">
@@ -300,9 +293,9 @@ export function PersonsTable({
                     )}
                   </td>
 
-                  {/* Created */}
+                  {/* Last Service */}
                   <td className="px-3 py-2 text-sm text-gray-400">
-                    {formatShortDate(person.created_at)}
+                    {person.last_service_date ? formatShortDate(person.last_service_date) : <span className="text-gray-500">—</span>}
                   </td>
 
                   {/* Actions */}

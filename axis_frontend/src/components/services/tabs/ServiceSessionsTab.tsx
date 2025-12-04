@@ -89,7 +89,7 @@ export function ServiceSessionsTab({ service }: ServiceSessionsTabProps) {
   }
 
   return (
-    <div className="space-y-6 max-w-7xl">
+    <div className="space-y-6">
       {/* Statistics Cards */}
       <SummaryStats
         variant="cards"
