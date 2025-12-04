@@ -11,6 +11,7 @@ import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { getClientAssignments } from '@/api/services'
 import { formatDate } from '@/lib/utils'
+import { ServiceStatusBadge, UsageIndicator } from '@/components/ui'
 import type { Client } from '@/api/clients'
 
 interface ClientServicesTabProps {
@@ -25,28 +26,6 @@ export function ClientServicesTab({ client }: ClientServicesTabProps) {
     queryKey: ['service-assignments', 'client', client.id],
     queryFn: () => getClientAssignments(client.id),
   })
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Active':
-        return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
-      case 'Inactive':
-        return 'text-red-400 bg-red-500/10 border-red-500/20'
-      case 'Pending':
-        return 'text-cream-400 bg-yellow-500/10 border-yellow-500/20'
-      case 'Archived':
-        return 'text-gray-500 bg-gray-600/10 border-gray-600/20'
-      default:
-        return 'text-gray-400 bg-gray-500/10 border-gray-500/20'
-    }
-  }
-
-  const getUsageColor = (used: number, total: number) => {
-    const percentage = (used / total) * 100
-    if (percentage >= 90) return 'text-red-400'
-    if (percentage >= 70) return 'text-cream-400'
-    return 'text-cream-400'
-  }
 
   if (isLoading) {
     return (
@@ -106,13 +85,7 @@ export function ClientServicesTab({ client }: ClientServicesTabProps) {
                     >
                       {assignment.service_name}
                     </Link>
-                    <span
-                      className={`px-2 py-1 text-xs font-medium rounded-md border ${getStatusColor(
-                        assignment.status
-                      )}`}
-                    >
-                      {assignment.status}
-                    </span>
+                    <ServiceStatusBadge status={assignment.status} variant="card" />
                   </div>
 
                   {assignment.person_name && (
@@ -126,20 +99,10 @@ export function ClientServicesTab({ client }: ClientServicesTabProps) {
                 </div>
 
                 {/* Session Usage */}
-                <div className="text-right">
-                  <div
-                    className={`text-2xl font-bold ${getUsageColor(
-                      assignment.used_sessions,
-                      assignment.assigned_sessions
-                    )}`}
-                  >
-                    {assignment.used_sessions} / {assignment.assigned_sessions}
-                  </div>
-                  <div className="text-xs text-theme-tertiary">Sessions Used</div>
-                  <div className="text-sm text-theme-secondary mt-1">
-                    {assignment.remaining_sessions} remaining
-                  </div>
-                </div>
+                <UsageIndicator
+                  used={assignment.used_sessions}
+                  total={assignment.assigned_sessions}
+                />
               </div>
 
               {/* Details Row */}
@@ -180,7 +143,7 @@ export function ClientServicesTab({ client }: ClientServicesTabProps) {
                     // TODO: Open session creation modal with pre-filled assignment
                     toast.info('Session scheduling coming soon')
                   }}
-                  className="flex-1 px-4 py-2 bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 font-medium transition-colors text-sm font-medium"
+                  className="flex-1 px-4 py-2 bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 font-medium transition-colors text-sm"
                 >
                   Schedule Session
                 </button>

@@ -7,6 +7,7 @@
  */
 
 import { useState, useMemo, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   Stethoscope,
   MoreVertical,
@@ -50,6 +51,7 @@ export function ServicesTable({
   onDelete,
   pageSize = 10,
 }: ServicesTableProps) {
+  const navigate = useNavigate()
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
   const [menuPosition, setMenuPosition] = useState<{ top: number; right: number } | null>(null)
   const [menuService, setMenuService] = useState<ServiceList | null>(null)
@@ -213,7 +215,11 @@ export function ServicesTable({
             </thead>
             <tbody className="divide-y divide-white/10">
               {paginatedServices.map((service) => (
-                <tr key={service.id} className="hover:bg-white/5 transition-colors">
+                <tr
+                  key={service.id}
+                  onClick={() => navigate(`/services/${service.id}`)}
+                  className="hover:bg-white/5 transition-colors cursor-pointer"
+                >
                   <td className="px-3 py-2">
                     <div className="text-sm font-medium text-white truncate max-w-xs">
                       {service.name}

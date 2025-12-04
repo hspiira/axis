@@ -13,6 +13,7 @@ import { DocumentsTable } from '@/components/documents/DocumentsTable'
 import { DocumentUploadModal } from '@/components/documents/DocumentUploadModal'
 import { DocumentDetailModal } from '@/components/documents/DocumentDetailModal'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
+import { SummaryStats } from '@/components/ui'
 import { cn } from '@/lib/utils'
 
 export function DocumentsPage() {
@@ -182,36 +183,16 @@ export function DocumentsPage() {
       <div className="p-6 space-y-6">
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <FileText className="h-5 w-5 text-cream-400" />
-              <span className="text-sm text-gray-400">Total Documents</span>
-            </div>
-            <p className="text-2xl font-bold text-white">{stats.total}</p>
-          </div>
-          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <File className="h-5 w-5 text-cream-400" />
-              <span className="text-sm text-gray-400">Published</span>
-            </div>
-            <p className="text-2xl font-bold text-white">{stats.published}</p>
-          </div>
-          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Folder className="h-5 w-5 text-purple-400" />
-              <span className="text-sm text-gray-400">Confidential</span>
-            </div>
-            <p className="text-2xl font-bold text-white">{stats.confidential}</p>
-          </div>
-          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <FileText className="h-5 w-5 text-cream-400" />
-              <span className="text-sm text-gray-400">Expired</span>
-            </div>
-            <p className="text-2xl font-bold text-white">{stats.expired}</p>
-          </div>
-        </div>
+        <SummaryStats
+          variant="cards"
+          columns={4}
+          stats={[
+            { label: 'Total Documents', value: stats.total, icon: FileText, iconColor: 'text-cream-400', color: 'text-white' },
+            { label: 'Published', value: stats.published, icon: File, iconColor: 'text-cream-400', color: 'text-white' },
+            { label: 'Confidential', value: stats.confidential, icon: Folder, iconColor: 'text-purple-400', color: 'text-white' },
+            { label: 'Expired', value: stats.expired, icon: FileText, iconColor: 'text-cream-400', color: 'text-white' },
+          ]}
+        />
 
         {/* Search and Filters */}
         <div className="space-y-3">

@@ -5,8 +5,8 @@
  */
 
 import { type ClientDetail } from '@/api/clients'
-import { Briefcase, Calendar, DollarSign, AlertCircle } from 'lucide-react'
-import { formatDate } from '@/utils/formatters'
+import { Briefcase, Calendar, DollarSign } from 'lucide-react'
+import { SummaryStats } from '@/components/ui'
 
 interface ClientContractsTabProps {
   client: ClientDetail
@@ -19,29 +19,15 @@ export function ClientContractsTab({ client }: ClientContractsTabProps) {
   return (
     <div className="space-y-6 max-w-6xl">
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Briefcase className="h-5 w-5 text-cream-400" />
-            <span className="text-sm text-gray-400">Active Contracts</span>
-          </div>
-          <p className="text-2xl font-bold text-white">{client.active_contracts_count || 0}</p>
-        </div>
-        <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <DollarSign className="h-5 w-5 text-cream-400" />
-            <span className="text-sm text-gray-400">Total Value</span>
-          </div>
-          <p className="text-2xl font-bold text-white">—</p>
-        </div>
-        <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Calendar className="h-5 w-5 text-cream-400" />
-            <span className="text-sm text-gray-400">Expiring Soon</span>
-          </div>
-          <p className="text-2xl font-bold text-white">—</p>
-        </div>
-      </div>
+      <SummaryStats
+        variant="cards"
+        columns={3}
+        stats={[
+          { label: 'Active Contracts', value: client.active_contracts_count || 0, icon: Briefcase, iconColor: 'text-cream-400', color: 'text-white' },
+          { label: 'Total Value', value: '—', icon: DollarSign, iconColor: 'text-cream-400', color: 'text-white' },
+          { label: 'Expiring Soon', value: '—', icon: Calendar, iconColor: 'text-cream-400', color: 'text-white' },
+        ]}
+      />
 
       {/* Contracts List */}
       <div className="bg-white/5 border border-white/10 rounded-lg p-6">

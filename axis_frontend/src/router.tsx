@@ -18,6 +18,7 @@ import { ContractDetailPage } from '@/pages/ContractDetailPage'
 import { PersonsPage } from '@/pages/PersonsPage'
 import { PersonDetailPage } from '@/pages/PersonDetailPage'
 import { ServicesPage } from '@/pages/ServicesPage'
+import { ServiceDetailPage } from '@/pages/ServiceDetailPage'
 import { ServiceProvidersPage } from '@/pages/ServiceProvidersPage'
 import { ServiceAssignmentsPage } from '@/pages/ServiceAssignmentsPage'
 import { DocumentsPage } from '@/pages/DocumentsPage'
@@ -116,6 +117,14 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <ServicesPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/services/:id',
+    element: (
+      <ProtectedRoute>
+        <ServiceDetailPage />
       </ProtectedRoute>
     ),
   },

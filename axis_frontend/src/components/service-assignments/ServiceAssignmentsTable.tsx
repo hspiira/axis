@@ -9,6 +9,7 @@ import { Building2, User, Calendar, Edit, Trash2, AlertCircle } from 'lucide-rea
 import { toast } from 'sonner'
 import { formatDate } from '@/lib/utils'
 import { useDeleteAssignment } from '@/hooks/useServices'
+import { ServiceStatusBadge, UsageIndicator } from '@/components/ui'
 import type { ServiceAssignmentList } from '@/api/services'
 
 interface ServiceAssignmentsTableProps {
@@ -39,28 +40,6 @@ export function ServiceAssignmentsTable({
     } catch (error) {
       toast.error('Failed to delete assignment')
     }
-  }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Active':
-        return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
-      case 'Inactive':
-        return 'text-red-400 bg-red-500/10 border-red-500/20'
-      case 'Pending':
-        return 'text-cream-400 bg-yellow-500/10 border-yellow-500/20'
-      case 'Archived':
-        return 'text-gray-500 bg-gray-600/10 border-gray-600/20'
-      default:
-        return 'text-gray-400 bg-gray-500/10 border-gray-500/20'
-    }
-  }
-
-  const getUsageColor = (used: number, total: number) => {
-    const percentage = (used / total) * 100
-    if (percentage >= 90) return 'text-red-400'
-    if (percentage >= 70) return 'text-cream-400'
-    return 'text-cream-400'
   }
 
   if (isLoading) {
@@ -154,19 +133,12 @@ export function ServiceAssignmentsTable({
 
               {/* Sessions */}
               <td className="p-4 text-center">
-                <div className="flex flex-col items-center gap-1">
-                  <div
-                    className={`text-lg font-bold ${getUsageColor(
-                      assignment.used_sessions,
-                      assignment.assigned_sessions
-                    )}`}
-                  >
-                    {assignment.used_sessions} / {assignment.assigned_sessions}
-                  </div>
-                  <div className="text-xs text-theme-tertiary">
-                    {assignment.remaining_sessions} remaining
-                  </div>
-                </div>
+                <UsageIndicator
+                  used={assignment.used_sessions}
+                  total={assignment.assigned_sessions}
+                  size="sm"
+                  showLabel={false}
+                />
               </td>
 
               {/* Date Range */}
@@ -188,13 +160,7 @@ export function ServiceAssignmentsTable({
 
               {/* Status */}
               <td className="p-4 text-center">
-                <span
-                  className={`inline-block px-2 py-1 text-xs font-medium rounded-md border ${getStatusColor(
-                    assignment.status
-                  )}`}
-                >
-                  {assignment.status}
-                </span>
+                <ServiceStatusBadge status={assignment.status} />
               </td>
 
               {/* Actions */}

@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { getPersonSessions, SessionStatus } from '@/api/services'
 import { formatDate } from '@/lib/utils'
+import { SessionStatusBadge, SummaryStats, sessionStatPresets } from '@/components/ui'
 import type { Person } from '@/api/persons'
 
 interface PersonSessionsTabProps {
@@ -24,24 +25,6 @@ export function PersonSessionsTab({ person }: PersonSessionsTabProps) {
     queryKey: ['sessions', 'person', person.id, statusFilter],
     queryFn: () => getPersonSessions(person.id),
   })
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Completed':
-        return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
-      case 'Scheduled':
-      case 'Rescheduled':
-        return 'text-blue-400 bg-blue-500/10 border-blue-500/20'
-      case 'Canceled':
-        return 'text-red-400 bg-red-500/10 border-red-500/20'
-      case 'No Show':
-        return 'text-orange-400 bg-orange-500/10 border-orange-500/20'
-      case 'Postponed':
-        return 'text-cream-400 bg-yellow-500/10 border-yellow-500/20'
-      default:
-        return 'text-gray-400 bg-gray-500/10 border-gray-500/20'
-    }
-  }
 
   const filteredSessions = sessions.filter((session) => {
     if (statusFilter !== 'all' && session.status !== statusFilter) return false
@@ -78,24 +61,12 @@ export function PersonSessionsTab({ person }: PersonSessionsTabProps) {
 
       {/* Summary Stats */}
       {sessions.length > 0 && (
-        <div className="grid grid-cols-4 gap-4 p-4 bg-theme-secondary rounded-lg border border-theme">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-theme">{sessions.length}</div>
-            <div className="text-xs text-theme-tertiary">Total Sessions</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-blue-400">{upcomingSessions.length}</div>
-            <div className="text-xs text-theme-tertiary">Upcoming</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-emerald-400">{completedSessions.length}</div>
-            <div className="text-xs text-theme-tertiary">Completed</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-red-400">{canceledSessions.length}</div>
-            <div className="text-xs text-theme-tertiary">Canceled/No Show</div>
-          </div>
-        </div>
+        <SummaryStats stats={[
+          sessionStatPresets.total(sessions.length),
+          sessionStatPresets.upcoming(upcomingSessions.length),
+          sessionStatPresets.completed(completedSessions.length),
+          sessionStatPresets.canceled(canceledSessions.length)
+        ]} />
       )}
 
       {/* Filters */}
@@ -142,13 +113,7 @@ export function PersonSessionsTab({ person }: PersonSessionsTabProps) {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold text-theme">{session.service_name}</h3>
-                    <span
-                      className={`px-2 py-1 text-xs font-medium rounded-md border ${getStatusColor(
-                        session.status
-                      )}`}
-                    >
-                      {session.status}
-                    </span>
+                    <SessionStatusBadge status={session.status} variant="card" />
                     {session.is_group_session && (
                       <span className="px-2 py-1 text-xs font-medium rounded-md border text-purple-400 bg-purple-500/10 border-purple-500/20">
                         Group

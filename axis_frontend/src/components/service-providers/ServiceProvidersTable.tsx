@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { Edit, Trash2, CheckCircle, Shield, Mail, Phone } from 'lucide-react'
 import type { ServiceProviderList } from '@/api/services'
 import { formatShortDate } from '@/utils/formatters'
+import { ServiceStatusBadge } from '@/components/ui'
 
 interface ServiceProvidersTableProps {
   providers: ServiceProviderList[]
@@ -80,27 +81,12 @@ export function ServiceProvidersTable({
     )
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Active':
-        return 'text-emerald-400'
-      case 'Inactive':
-        return 'text-red-400'
-      case 'Pending':
-        return 'text-cream-400'
-      case 'Suspended':
-        return 'text-cream-400'
-      default:
-        return 'text-gray-400'
-    }
-  }
-
   const getRatingColor = (rating: string | null) => {
     if (!rating) return 'text-gray-400'
     const numRating = parseFloat(rating)
     if (numRating >= 4.5) return 'text-cream-400'
-    if (numRating >= 4.0) return 'text-green-400'
-    if (numRating >= 3.5) return 'text-cream-400'
+    if (numRating >= 4.0) return 'text-emerald-400'
+    if (numRating >= 3.5) return 'text-yellow-400'
     if (numRating >= 3.0) return 'text-orange-400'
     return 'text-rose-400'
   }
@@ -206,9 +192,7 @@ export function ServiceProvidersTable({
                   </div>
                 </td>
                 <td className="px-4 py-3">
-                  <span className={`text-sm font-medium ${getStatusColor(provider.status)}`}>
-                    {provider.status}
-                  </span>
+                  <ServiceStatusBadge status={provider.status} variant="text" />
                 </td>
                 <td className="px-4 py-3">
                   <span className={`text-sm font-medium ${getRatingColor(provider.rating)}`}>

@@ -17,6 +17,7 @@ import { usePersonsByClient } from '@/hooks/usePersons'
 import { PersonsTable } from '@/components/persons/PersonsTable'
 import { ErrorAlert } from '@/components/ui/ErrorAlert'
 import { CreatePersonModal } from '@/components/persons/CreatePersonModal'
+import { SummaryStats } from '@/components/ui'
 import { cn } from '@/lib/utils'
 
 interface ClientPersonsTabProps {
@@ -24,32 +25,8 @@ interface ClientPersonsTabProps {
 }
 
 /**
- * Statistics Card Component
- * 
- * Single Responsibility: Display a single statistic
- */
-interface StatCardProps {
-  label: string
-  value: number | string
-  icon: React.ReactNode
-  iconColor: string
-}
-
-function StatCard({ label, value, icon, iconColor }: StatCardProps) {
-  return (
-        <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-2">
-        <div className={cn('h-5 w-5', iconColor)}>{icon}</div>
-        <span className="text-sm text-gray-400">{label}</span>
-          </div>
-      <p className="text-2xl font-bold text-white">{value}</p>
-        </div>
-  )
-}
-
-/**
  * Search Input Component
- * 
+ *
  * Single Responsibility: Handle search input
  */
 interface SearchInputProps {
@@ -227,32 +204,16 @@ export function ClientPersonsTab({ client }: ClientPersonsTabProps) {
   return (
     <div className="space-y-6 max-w-7xl">
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatCard
-          label="Total Employees"
-          value={stats.totalEmployees}
-          icon={<Users className="h-5 w-5" />}
-          iconColor="text-cream-400"
-        />
-        <StatCard
-          label="Active Employees"
-          value={stats.activeEmployees}
-          icon={<Users className="h-5 w-5" />}
-          iconColor="text-cream-400"
-        />
-        <StatCard
-          label="Dependents"
-          value={stats.dependents}
-          icon={<Users className="h-5 w-5" />}
-          iconColor="text-purple-400"
-        />
-        <StatCard
-          label="Eligible for Services"
-          value={stats.eligible}
-          icon={<Users className="h-5 w-5" />}
-          iconColor="text-amber-400"
-        />
-      </div>
+      <SummaryStats
+        variant="cards"
+        columns={4}
+        stats={[
+          { label: 'Total Employees', value: stats.totalEmployees, icon: Users, iconColor: 'text-cream-400', color: 'text-white' },
+          { label: 'Active Employees', value: stats.activeEmployees, icon: Users, iconColor: 'text-cream-400', color: 'text-white' },
+          { label: 'Dependents', value: stats.dependents, icon: Users, iconColor: 'text-purple-400', color: 'text-white' },
+          { label: 'Eligible for Services', value: stats.eligible, icon: Users, iconColor: 'text-cream-400', color: 'text-white' },
+        ]}
+      />
 
       {/* Persons List Section */}
       <div className="bg-white/5 border border-white/10 rounded-lg p-6">

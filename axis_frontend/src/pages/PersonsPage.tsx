@@ -18,7 +18,6 @@
 
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Users, Plus } from 'lucide-react'
 import { AppLayout } from '@/components/AppLayout'
 import { usePageTitle } from '@/contexts/PageTitleContext'
 import { personsApi, type PersonListItem, type PersonFilters as ApiPersonFilters } from '@/api/persons'

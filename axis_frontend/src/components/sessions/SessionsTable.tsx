@@ -8,6 +8,7 @@ import { useState } from 'react'
 import { Edit, Trash2, CheckCircle, X, Calendar, Users } from 'lucide-react'
 import type { ServiceSessionList } from '@/api/services'
 import { formatShortDate, formatTime } from '@/utils/formatters'
+import { SessionStatusBadge } from '@/components/ui'
 
 interface SessionsTableProps {
   sessions: ServiceSessionList[]
@@ -80,25 +81,6 @@ export function SessionsTable({
     return (
       <span className="ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>
     )
-  }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Scheduled':
-        return 'text-blue-400'
-      case 'Rescheduled':
-        return 'text-blue-400'
-      case 'Completed':
-        return 'text-emerald-400'
-      case 'Canceled':
-        return 'text-red-400'
-      case 'No Show':
-        return 'text-orange-400'
-      case 'Postponed':
-        return 'text-cream-400'
-      default:
-        return 'text-gray-400'
-    }
   }
 
   if (isLoading) {
@@ -187,9 +169,7 @@ export function SessionsTable({
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-2">
-                    <span className={`text-sm font-medium ${getStatusColor(session.status)}`}>
-                      {session.status}
-                    </span>
+                    <SessionStatusBadge status={session.status} variant="text" />
                     {session.is_group_session && (
                       <Users className="h-3.5 w-3.5 text-purple-400" aria-label="Group Session" />
                     )}

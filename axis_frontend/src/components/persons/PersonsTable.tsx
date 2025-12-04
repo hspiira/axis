@@ -21,6 +21,7 @@ import {
 import { type PersonListItem, PersonType } from '@/api/persons'
 import { cn } from '@/lib/utils'
 import { formatShortDate } from '@/utils/formatters'
+import { StatusBadge } from '../ui'
 
 type SortField = 'profile.full_name' | 'person_type' | 'client_name' | 'status' | 'created_at'
 type SortDirection = 'asc' | 'desc'
@@ -287,12 +288,7 @@ export function PersonsTable({
 
                   {/* Status */}
                   <td className="px-3 py-2">
-                    <span className={cn(
-                      'inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border',
-                      personStatusColors[person.status] || 'bg-gray-500/10 text-gray-400 border-gray-500/20'
-                    )}>
-                      {person.status}
-                    </span>
+                    <StatusBadge status={person.status}/>
                   </td>
 
                   {/* Eligible */}
@@ -337,14 +333,14 @@ export function PersonsTable({
       {openMenuId && menuPosition && (
         <>
           <div
-            className="fixed inset-0 z-[100]"
+            className="fixed inset-0 z-100"
             onClick={(e) => {
               e.stopPropagation()
               setOpenMenuId(null)
             }}
           />
           <div
-            className="fixed w-48 bg-gray-900 border border-white/10 rounded-lg shadow-xl z-[101]"
+            className="fixed w-48 bg-gray-900 border border-white/10 rounded-lg shadow-xl z-101"
             style={{
               top: `${menuPosition.top}px`,
               right: `${menuPosition.right}px`,

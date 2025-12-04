@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import { AppLayout } from '@/components/AppLayout'
 import { usePageTitle } from '@/contexts/PageTitleContext'
 import { Briefcase, Search, Filter, Download, Plus, Calendar, DollarSign } from 'lucide-react'
+import { SummaryStats } from '@/components/ui'
 
 export function ContractsPage() {
   const { setPageTitle } = usePageTitle()
@@ -25,36 +26,16 @@ export function ContractsPage() {
       <div className="p-6 space-y-6">
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Briefcase className="h-5 w-5 text-cream-400" />
-              <span className="text-sm text-gray-400">Total Contracts</span>
-            </div>
-            <p className="text-2xl font-bold text-white">0</p>
-          </div>
-          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Calendar className="h-5 w-5 text-cream-400" />
-              <span className="text-sm text-gray-400">Active</span>
-            </div>
-            <p className="text-2xl font-bold text-white">0</p>
-          </div>
-          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <DollarSign className="h-5 w-5 text-green-400" />
-              <span className="text-sm text-gray-400">Total Value</span>
-            </div>
-            <p className="text-2xl font-bold text-white">$0</p>
-          </div>
-          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Calendar className="h-5 w-5 text-cream-400" />
-              <span className="text-sm text-gray-400">Expiring Soon</span>
-            </div>
-            <p className="text-2xl font-bold text-white">0</p>
-          </div>
-        </div>
+        <SummaryStats
+          variant="cards"
+          columns={4}
+          stats={[
+            { label: 'Total Contracts', value: 0, icon: Briefcase, iconColor: 'text-cream-400', color: 'text-white' },
+            { label: 'Active', value: 0, icon: Calendar, iconColor: 'text-cream-400', color: 'text-white' },
+            { label: 'Total Value', value: '$0', icon: DollarSign, iconColor: 'text-emerald-400', color: 'text-white' },
+            { label: 'Expiring Soon', value: 0, icon: Calendar, iconColor: 'text-cream-400', color: 'text-white' },
+          ]}
+        />
 
         {/* Search and Filters */}
         <div className="flex items-center gap-2 flex-wrap">
@@ -76,7 +57,7 @@ export function ContractsPage() {
             <Download className="h-3.5 w-3.5" />
             Export
           </button>
-          <button className="px-2.5 py-1.5 bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 font-medium transition-colors flex items-center gap-1.5 text-xs font-medium">
+          <button className="px-2.5 py-1.5 bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 font-medium transition-colors flex items-center gap-1.5 text-xs">
             <Plus className="h-3.5 w-3.5" />
             New Contract
           </button>
@@ -88,7 +69,7 @@ export function ContractsPage() {
             <Briefcase className="h-16 w-16 text-gray-600 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-white mb-2">No contracts found</h3>
             <p className="text-gray-400 mb-6">Get started by creating your first contract</p>
-            <button className="px-2.5 py-1.5 bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 font-medium transition-colors inline-flex items-center gap-1.5 text-xs font-medium">
+            <button className="px-2.5 py-1.5 bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 font-medium transition-colors inline-flex items-center gap-1.5 text-xs">
               <Plus className="h-3.5 w-3.5" />
               Create Contract
             </button>

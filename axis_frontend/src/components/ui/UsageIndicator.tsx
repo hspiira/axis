@@ -21,7 +21,6 @@ export function UsageIndicator({
   size = 'md',
   showLabel = true
 }: UsageIndicatorProps) {
-  const percentage = (used / total) * 100
   const color = getUsageColor(used, total)
 
   const sizes = {

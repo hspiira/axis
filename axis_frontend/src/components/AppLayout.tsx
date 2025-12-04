@@ -10,7 +10,7 @@
  */
 
 import { useState, useRef, useEffect } from 'react'
-import { Menu, Info, ChevronRight, Settings, MoreVertical, Loader2, LogOut, Sun, Moon } from 'lucide-react'
+import { Menu, Info, ChevronRight, Settings, MoreVertical, Loader2, LogOut, Sun, Moon, User } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { usePageTitle } from '@/contexts/PageTitleContext'
@@ -281,26 +281,49 @@ export function AppLayout({ children }: AppLayoutProps) {
 
               {/* Profile Dropdown */}
               {profileMenuOpen && (
-                <div className="absolute right-0 top-full mt-2 w-64 bg-theme border border-theme rounded-lg shadow-xl z-50 overflow-hidden">
+                <div className="absolute right-0 top-full mt-2 w-64 bg-[#0a0a0a] border border-cream-500/10 rounded-lg shadow-xl z-50 overflow-hidden">
                   {/* User Info */}
-                  <div className="p-4 border-b border-theme">
-                    <p className="text-sm font-semibold text-theme truncate">
-                      {getUserDisplayName()}
-                    </p>
-                    <p className="text-xs text-theme-secondary truncate mt-1">
-                      {user?.email || 'user@example.com'}
-                    </p>
-                    <p className="text-xs text-theme-tertiary mt-1">Download for macOS</p>
+                  <div className="p-4 border-b border-cream-500/10">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="h-12 w-12 rounded-full bg-gradient-to-br from-cream-500 to-teal-500 flex items-center justify-center text-white text-sm font-semibold shrink-0">
+                        {getUserInitials()}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-theme truncate">
+                          {getUserDisplayName()}
+                        </p>
+                        <p className="text-xs text-theme-secondary truncate">
+                          {user?.email || 'user@example.com'}
+                        </p>
+                      </div>
+                    </div>
+                    {user?.is_superuser && (
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-1 bg-purple-500/20 text-purple-400 border border-purple-500/30 rounded-full text-xs font-medium">
+                          Administrator
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Menu Items */}
                   <div className="py-1">
                     <button
-                      onClick={handleLogout}
-                      className="w-full text-left px-4 py-2.5 text-sm text-theme-secondary hover:bg-white/10 hover:text-theme transition-colors flex items-center justify-between"
+                      onClick={() => {
+                        navigate('/profile')
+                        setProfileMenuOpen(false)
+                      }}
+                      className="w-full text-left px-4 py-2.5 text-sm text-theme-secondary hover:bg-white/10 hover:text-theme transition-colors flex items-center gap-3"
                     >
-                      <span>Log Out</span>
+                      <User className="h-4 w-4" />
+                      <span>Profile & Settings</span>
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors flex items-center gap-3"
+                    >
                       <LogOut className="h-4 w-4" />
+                      <span>Log Out</span>
                     </button>
                   </div>
                 </div>
