@@ -64,7 +64,7 @@ export function BulkActionsToolbar({
                 'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors',
                 isProcessing
                   ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
-                  : 'bg-emerald-600 text-white hover:bg-emerald-700'
+                  : 'bg-cream-500 text-gray-900 font-medium hover:bg-cream-400'
               )}
             >
               <Power className="h-4 w-4" />
@@ -119,7 +119,7 @@ export function BulkActionsToolbar({
         {isProcessing && (
           <div className="mt-3 pt-3 border-t border-white/10">
             <div className="flex items-center gap-2">
-              <div className="animate-spin h-4 w-4 border-2 border-emerald-500 border-t-transparent rounded-full" />
+              <div className="animate-spin h-4 w-4 border-2 border-cream-500 border-t-transparent rounded-full" />
               <span className="text-xs text-gray-400">Processing bulk operation...</span>
             </div>
           </div>

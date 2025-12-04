@@ -87,15 +87,15 @@ export function SessionsTable({
       case 'Scheduled':
         return 'text-blue-400'
       case 'Rescheduled':
-        return 'text-yellow-400'
+        return 'text-blue-400'
       case 'Completed':
         return 'text-emerald-400'
       case 'Canceled':
-        return 'text-rose-400'
+        return 'text-red-400'
       case 'No Show':
         return 'text-orange-400'
       case 'Postponed':
-        return 'text-purple-400'
+        return 'text-cream-400'
       default:
         return 'text-gray-400'
     }
@@ -104,7 +104,7 @@ export function SessionsTable({
   if (isLoading) {
     return (
       <div className="bg-white/5 border border-white/10 rounded-lg p-12 text-center">
-        <div className="inline-block animate-spin h-8 w-8 border-4 border-emerald-500 border-t-transparent rounded-full mb-4" />
+        <div className="inline-block animate-spin h-8 w-8 border-4 border-cream-500 border-t-transparent rounded-full mb-4" />
         <p className="text-gray-400">Loading sessions...</p>
       </div>
     )
@@ -205,7 +205,7 @@ export function SessionsTable({
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => onEdit(session)}
-                      className="p-1 text-gray-400 hover:text-emerald-400 transition-colors"
+                      className="p-1 text-gray-400 hover:text-cream-400 transition-colors"
                       aria-label="Edit"
                     >
                       <Edit className="h-4 w-4" />
@@ -213,7 +213,7 @@ export function SessionsTable({
                     {session.status === 'Scheduled' && (
                       <button
                         onClick={() => onComplete(session)}
-                        className="p-1 text-gray-400 hover:text-emerald-400 transition-colors"
+                        className="p-1 text-gray-400 hover:text-cream-400 transition-colors"
                         aria-label="Complete"
                       >
                         <CheckCircle className="h-4 w-4" />

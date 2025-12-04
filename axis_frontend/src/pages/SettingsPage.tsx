@@ -76,8 +76,8 @@ export function SettingsPage() {
                 className="bg-white/5 border border-white/10 rounded-xl p-6 hover:bg-white/[0.07] transition-all"
               >
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="p-2 bg-emerald-500/20 rounded-lg">
-                    <SectionIcon className="h-5 w-5 text-emerald-400" />
+                  <div className="p-2 bg-cream-500/20 rounded-lg">
+                    <SectionIcon className="h-5 w-5 text-cream-400" />
                   </div>
                   <div>
                     <h3 className="text-lg font-semibold text-white">{section.title}</h3>
@@ -93,7 +93,7 @@ export function SettingsPage() {
                         to={item.path}
                         className={cn(
                           'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all',
-                          'text-gray-400 hover:text-emerald-300 hover:bg-emerald-500/10'
+                          'text-gray-400 hover:text-yellow-300 hover:bg-amber-500/10'
                         )}
                       >
                         <ItemIcon className="h-4 w-4" />

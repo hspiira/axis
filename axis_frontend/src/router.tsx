@@ -19,6 +19,7 @@ import { PersonsPage } from '@/pages/PersonsPage'
 import { PersonDetailPage } from '@/pages/PersonDetailPage'
 import { ServicesPage } from '@/pages/ServicesPage'
 import { ServiceProvidersPage } from '@/pages/ServiceProvidersPage'
+import { ServiceAssignmentsPage } from '@/pages/ServiceAssignmentsPage'
 import { DocumentsPage } from '@/pages/DocumentsPage'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { IndustriesSettingsPage } from '@/pages/settings/IndustriesSettingsPage'
@@ -123,6 +124,14 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <ServiceProvidersPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/service-assignments',
+    element: (
+      <ProtectedRoute>
+        <ServiceAssignmentsPage />
       </ProtectedRoute>
     ),
   },

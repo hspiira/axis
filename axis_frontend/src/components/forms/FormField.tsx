@@ -65,7 +65,7 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
         <div className="relative group">
           {/* Left Icon */}
           {leftIcon && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none z-10 text-gray-500 group-focus-within:text-emerald-400 transition-colors">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none z-10 text-gray-500 group-focus-within:text-cream-400 transition-colors">
               {leftIcon}
             </div>
           )}
@@ -77,7 +77,7 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
             className={cn(
               'w-full py-2 px-3 bg-white/5 border rounded-lg',
               'text-white placeholder-gray-500 text-sm',
-              'focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50',
+              'focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50',
               'transition-all duration-200',
               'backdrop-blur-sm',
               'disabled:opacity-50 disabled:cursor-not-allowed',

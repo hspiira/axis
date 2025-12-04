@@ -17,7 +17,7 @@ export function PersonNotesTab({ person }: PersonNotesTabProps) {
       {person.notes ? (
         <div className="bg-white/5 border border-white/10 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <ClipboardList className="h-5 w-5 text-emerald-400" />
+            <ClipboardList className="h-5 w-5 text-cream-400" />
             Notes
           </h3>
           <p className="text-gray-300 whitespace-pre-wrap">{person.notes}</p>

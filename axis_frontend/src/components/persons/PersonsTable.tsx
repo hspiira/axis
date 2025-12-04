@@ -41,16 +41,16 @@ const personTypeLabels: Record<PersonType, string> = {
 }
 
 const personTypeBadgeColors: Record<PersonType, string> = {
-  [PersonType.CLIENT_EMPLOYEE]: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+  [PersonType.CLIENT_EMPLOYEE]: 'bg-amber-500/10 text-cream-400 border-cream-500/20',
   [PersonType.DEPENDENT]: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-  [PersonType.PLATFORM_STAFF]: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-  [PersonType.SERVICE_PROVIDER]: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+  [PersonType.PLATFORM_STAFF]: 'bg-amber-500/10 text-cream-400 border-cream-500/20',
+  [PersonType.SERVICE_PROVIDER]: 'bg-amber-500/10 text-amber-400 border-cream-500/20',
 }
 
 const personStatusColors: Record<string, string> = {
-  'Active': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+  'Active': 'bg-amber-500/10 text-cream-400 border-cream-500/20',
   'Inactive': 'bg-gray-500/10 text-gray-400 border-gray-500/20',
-  'Suspended': 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+  'Suspended': 'bg-amber-500/10 text-amber-400 border-cream-500/20',
   'Archived': 'bg-slate-500/10 text-slate-400 border-slate-500/20',
 }
 
@@ -160,16 +160,16 @@ export function PersonsTable({
       return <ChevronsUpDown className="h-4 w-4 text-gray-500" />
     }
     return sortDirection === 'asc' ? (
-      <ChevronUp className="h-4 w-4 text-emerald-400" />
+      <ChevronUp className="h-4 w-4 text-cream-400" />
     ) : (
-      <ChevronDown className="h-4 w-4 text-emerald-400" />
+      <ChevronDown className="h-4 w-4 text-cream-400" />
     )
   }
 
   if (isLoading) {
     return (
       <div className="bg-white/5 border border-white/10 rounded-lg p-12 text-center">
-        <div className="inline-block animate-spin h-8 w-8 border-4 border-emerald-500 border-t-transparent rounded-full mb-4" />
+        <div className="inline-block animate-spin h-8 w-8 border-4 border-cream-500 border-t-transparent rounded-full mb-4" />
         <p className="text-gray-400">Loading persons...</p>
       </div>
     )
@@ -298,7 +298,7 @@ export function PersonsTable({
                   {/* Eligible */}
                   <td className="px-3 py-2">
                     {person.is_eligible ? (
-                      <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                      <CheckCircle2 className="h-4 w-4 text-cream-400" />
                     ) : (
                       <XCircle className="h-4 w-4 text-gray-500" />
                     )}
@@ -435,7 +435,7 @@ export function PersonsTable({
                     className={cn(
                       'px-3 py-1 rounded-lg text-sm font-medium transition-colors',
                       currentPage === page
-                        ? 'bg-emerald-600 text-white'
+                        ? 'bg-cream-500 text-gray-900 font-medium'
                         : 'text-gray-400 hover:text-white hover:bg-white/10'
                     )}
                   >

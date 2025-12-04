@@ -28,7 +28,7 @@ export function ClientSelector() {
   if (isLoading) {
     return (
       <div className="flex items-center gap-2 px-3 py-2 text-sm text-gray-400">
-        <div className="animate-spin h-4 w-4 border-2 border-emerald-500 border-t-transparent rounded-full" />
+        <div className="animate-spin h-4 w-4 border-2 border-cream-500 border-t-transparent rounded-full" />
         Loading...
       </div>
     )
@@ -57,7 +57,7 @@ export function ClientSelector() {
       <select
         value={clientId || ''}
         onChange={(e) => setClientId(e.target.value)}
-        className="appearance-none bg-white/5 border border-white/10 text-white text-sm rounded-lg px-4 py-2 pr-8 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all cursor-pointer"
+        className="appearance-none bg-white/5 border border-white/10 text-white text-sm rounded-lg px-4 py-2 pr-8 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-cream-500 transition-all cursor-pointer"
       >
         {clients.map((client) => (
           <option key={client.id} value={client.id} className="bg-gray-900">

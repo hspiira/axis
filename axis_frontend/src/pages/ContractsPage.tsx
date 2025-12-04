@@ -28,14 +28,14 @@ export function ContractsPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-white/5 border border-white/10 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Briefcase className="h-5 w-5 text-emerald-400" />
+              <Briefcase className="h-5 w-5 text-cream-400" />
               <span className="text-sm text-gray-400">Total Contracts</span>
             </div>
             <p className="text-2xl font-bold text-white">0</p>
           </div>
           <div className="bg-white/5 border border-white/10 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Calendar className="h-5 w-5 text-emerald-400" />
+              <Calendar className="h-5 w-5 text-cream-400" />
               <span className="text-sm text-gray-400">Active</span>
             </div>
             <p className="text-2xl font-bold text-white">0</p>
@@ -49,7 +49,7 @@ export function ContractsPage() {
           </div>
           <div className="bg-white/5 border border-white/10 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Calendar className="h-5 w-5 text-yellow-400" />
+              <Calendar className="h-5 w-5 text-cream-400" />
               <span className="text-sm text-gray-400">Expiring Soon</span>
             </div>
             <p className="text-2xl font-bold text-white">0</p>
@@ -65,7 +65,7 @@ export function ContractsPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search contracts..."
-              className="w-full pl-9 pr-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+              className="w-full pl-9 pr-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cream-500/50"
             />
           </div>
           <button className="px-2.5 py-1.5 bg-white/5 border border-white/10 rounded-lg text-gray-300 hover:bg-white/10 transition-colors flex items-center gap-1.5 text-xs font-medium">
@@ -76,7 +76,7 @@ export function ContractsPage() {
             <Download className="h-3.5 w-3.5" />
             Export
           </button>
-          <button className="px-2.5 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-1.5 text-xs font-medium">
+          <button className="px-2.5 py-1.5 bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 font-medium transition-colors flex items-center gap-1.5 text-xs font-medium">
             <Plus className="h-3.5 w-3.5" />
             New Contract
           </button>
@@ -88,7 +88,7 @@ export function ContractsPage() {
             <Briefcase className="h-16 w-16 text-gray-600 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-white mb-2">No contracts found</h3>
             <p className="text-gray-400 mb-6">Get started by creating your first contract</p>
-            <button className="px-2.5 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors inline-flex items-center gap-1.5 text-xs font-medium">
+            <button className="px-2.5 py-1.5 bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 font-medium transition-colors inline-flex items-center gap-1.5 text-xs font-medium">
               <Plus className="h-3.5 w-3.5" />
               Create Contract
             </button>

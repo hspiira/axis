@@ -131,7 +131,7 @@ export function CreateEmployeeForm({
               value={formData.client_id}
               onChange={(e) => handleChange('client_id', e.target.value)}
               required
-              className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200 backdrop-blur-sm"
+              className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50 transition-all duration-200 backdrop-blur-sm"
             >
               <option value="">Select a client</option>
               {clients.map((client) => (
@@ -156,7 +156,7 @@ export function CreateEmployeeForm({
               value={formData.full_name}
               onChange={(e) => handleChange('full_name', e.target.value)}
               required
-              className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200 backdrop-blur-sm"
+              className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50 transition-all duration-200 backdrop-blur-sm"
               placeholder="John Doe"
             />
           </div>
@@ -168,7 +168,7 @@ export function CreateEmployeeForm({
                 type="email"
                 value={formData.email}
                 onChange={(e) => handleChange('email', e.target.value)}
-                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200 backdrop-blur-sm"
+                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50 transition-all duration-200 backdrop-blur-sm"
                 placeholder="john.doe@example.com"
               />
             </div>
@@ -179,7 +179,7 @@ export function CreateEmployeeForm({
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => handleChange('phone', e.target.value)}
-                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200 backdrop-blur-sm"
+                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50 transition-all duration-200 backdrop-blur-sm"
                 placeholder="+1 (555) 000-0000"
               />
             </div>
@@ -192,7 +192,7 @@ export function CreateEmployeeForm({
                 type="date"
                 value={formData.date_of_birth}
                 onChange={(e) => handleChange('date_of_birth', e.target.value)}
-                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200 backdrop-blur-sm"
+                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50 transition-all duration-200 backdrop-blur-sm"
               />
             </div>
 
@@ -201,7 +201,7 @@ export function CreateEmployeeForm({
               <select
                 value={formData.gender}
                 onChange={(e) => handleChange('gender', e.target.value)}
-                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200 backdrop-blur-sm"
+                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50 transition-all duration-200 backdrop-blur-sm"
               >
                 <option value="">Select gender</option>
                 <option value="Male">Male</option>
@@ -218,7 +218,7 @@ export function CreateEmployeeForm({
               type="text"
               value={formData.address}
               onChange={(e) => handleChange('address', e.target.value)}
-              className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200 backdrop-blur-sm"
+              className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50 transition-all duration-200 backdrop-blur-sm"
               placeholder="123 Main St"
             />
           </div>
@@ -230,7 +230,7 @@ export function CreateEmployeeForm({
                 type="text"
                 value={formData.city}
                 onChange={(e) => handleChange('city', e.target.value)}
-                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200 backdrop-blur-sm"
+                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50 transition-all duration-200 backdrop-blur-sm"
                 placeholder="New York"
               />
             </div>
@@ -241,7 +241,7 @@ export function CreateEmployeeForm({
                 type="text"
                 value={formData.country}
                 onChange={(e) => handleChange('country', e.target.value)}
-                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200 backdrop-blur-sm"
+                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50 transition-all duration-200 backdrop-blur-sm"
                 placeholder="United States"
               />
             </div>
@@ -259,7 +259,7 @@ export function CreateEmployeeForm({
                 type="text"
                 value={formData.employee_id_number}
                 onChange={(e) => handleChange('employee_id_number', e.target.value)}
-                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200 backdrop-blur-sm"
+                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50 transition-all duration-200 backdrop-blur-sm"
                 placeholder="EMP-12345"
               />
             </div>
@@ -270,7 +270,7 @@ export function CreateEmployeeForm({
                 type="text"
                 value={formData.job_title}
                 onChange={(e) => handleChange('job_title', e.target.value)}
-                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200 backdrop-blur-sm"
+                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50 transition-all duration-200 backdrop-blur-sm"
                 placeholder="Software Engineer"
               />
             </div>
@@ -283,7 +283,7 @@ export function CreateEmployeeForm({
                 type="text"
                 value={formData.employee_department}
                 onChange={(e) => handleChange('employee_department', e.target.value)}
-                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200 backdrop-blur-sm"
+                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50 transition-all duration-200 backdrop-blur-sm"
                 placeholder="Engineering"
               />
             </div>
@@ -293,7 +293,7 @@ export function CreateEmployeeForm({
               <select
                 value={formData.employment_status}
                 onChange={(e) => handleChange('employment_status', e.target.value as EmploymentStatus)}
-                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200 backdrop-blur-sm"
+                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50 transition-all duration-200 backdrop-blur-sm"
               >
                 <option value={EmploymentStatus.FULL_TIME}>Full Time</option>
                 <option value={EmploymentStatus.PART_TIME}>Part Time</option>
@@ -309,7 +309,7 @@ export function CreateEmployeeForm({
               type="date"
               value={formData.employment_start_date}
               onChange={(e) => handleChange('employment_start_date', e.target.value)}
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50"
             />
           </div>
         </div>
@@ -326,7 +326,7 @@ export function CreateEmployeeForm({
           <button
             type="submit"
             disabled={isLoading || loadingClients}
-            className="px-6 py-3 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-6 py-3 bg-cream-500 text-gray-900 font-medium font-semibold rounded-lg hover:bg-cream-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
             Create Employee

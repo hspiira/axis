@@ -85,11 +85,11 @@ export function ServiceProvidersTable({
       case 'Active':
         return 'text-emerald-400'
       case 'Inactive':
-        return 'text-gray-400'
+        return 'text-red-400'
       case 'Pending':
-        return 'text-yellow-400'
+        return 'text-cream-400'
       case 'Suspended':
-        return 'text-rose-400'
+        return 'text-cream-400'
       default:
         return 'text-gray-400'
     }
@@ -98,9 +98,9 @@ export function ServiceProvidersTable({
   const getRatingColor = (rating: string | null) => {
     if (!rating) return 'text-gray-400'
     const numRating = parseFloat(rating)
-    if (numRating >= 4.5) return 'text-emerald-400'
+    if (numRating >= 4.5) return 'text-cream-400'
     if (numRating >= 4.0) return 'text-green-400'
-    if (numRating >= 3.5) return 'text-yellow-400'
+    if (numRating >= 3.5) return 'text-cream-400'
     if (numRating >= 3.0) return 'text-orange-400'
     return 'text-rose-400'
   }
@@ -108,7 +108,7 @@ export function ServiceProvidersTable({
   if (isLoading) {
     return (
       <div className="bg-white/5 border border-white/10 rounded-lg p-12 text-center">
-        <div className="inline-block animate-spin h-8 w-8 border-4 border-emerald-500 border-t-transparent rounded-full mb-4" />
+        <div className="inline-block animate-spin h-8 w-8 border-4 border-cream-500 border-t-transparent rounded-full mb-4" />
         <p className="text-gray-400">Loading providers...</p>
       </div>
     )
@@ -178,7 +178,7 @@ export function ServiceProvidersTable({
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-white">{provider.name}</span>
                     {provider.is_verified && (
-                      <CheckCircle className="h-4 w-4 text-emerald-400" aria-label="Verified" />
+                      <CheckCircle className="h-4 w-4 text-cream-400" aria-label="Verified" />
                     )}
                   </div>
                 </td>
@@ -225,7 +225,7 @@ export function ServiceProvidersTable({
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => onEdit(provider)}
-                      className="p-1 text-gray-400 hover:text-emerald-400 transition-colors"
+                      className="p-1 text-gray-400 hover:text-cream-400 transition-colors"
                       aria-label="Edit"
                     >
                       <Edit className="h-4 w-4" />
@@ -233,7 +233,7 @@ export function ServiceProvidersTable({
                     {!provider.is_verified && (
                       <button
                         onClick={() => onVerify(provider)}
-                        className="p-1 text-gray-400 hover:text-emerald-400 transition-colors"
+                        className="p-1 text-gray-400 hover:text-cream-400 transition-colors"
                         aria-label="Verify"
                       >
                         <CheckCircle className="h-4 w-4" />

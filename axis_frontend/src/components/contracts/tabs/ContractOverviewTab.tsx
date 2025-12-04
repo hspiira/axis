@@ -36,7 +36,7 @@ function Section({ icon, title, children, variant = 'default' }: SectionProps) {
   const variantClasses = {
     default: 'bg-white/5 border border-white/10',
     warning: 'bg-yellow-500/10 border border-yellow-500/20',
-    success: 'bg-emerald-500/10 border border-emerald-500/20',
+    success: 'bg-amber-500/10 border border-cream-500/20',
   }
 
   return (
@@ -84,8 +84,8 @@ export function ContractOverviewTab({ contract }: ContractOverviewTabProps) {
 
   const getPaymentStatusBadge = () => {
     const statusClasses = {
-      [PaymentStatus.PAID]: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-      [PaymentStatus.PENDING]: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
+      [PaymentStatus.PAID]: 'bg-amber-500/10 text-cream-400 border-cream-500/20',
+      [PaymentStatus.PENDING]: 'bg-yellow-500/10 text-cream-400 border-yellow-500/20',
       [PaymentStatus.OVERDUE]: 'bg-red-500/10 text-red-400 border-red-500/20',
     }
 
@@ -115,8 +115,8 @@ export function ContractOverviewTab({ contract }: ContractOverviewTabProps) {
       <div className="flex items-start gap-6 bg-white/5 border border-white/10 rounded-lg p-6">
         {/* Icon */}
         <div className="shrink-0">
-          <div className="h-24 w-24 rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 border-2 border-emerald-500/30 flex items-center justify-center">
-            <FileText className="h-12 w-12 text-emerald-400" />
+          <div className="h-24 w-24 rounded-full bg-gradient-to-br from-cream-500/20 to-cream-600/20 border-2 border-cream-500/30 flex items-center justify-center">
+            <FileText className="h-12 w-12 text-cream-400" />
           </div>
         </div>
 
@@ -129,7 +129,7 @@ export function ContractOverviewTab({ contract }: ContractOverviewTabProps) {
             <StatusBadge status={contract.status} />
             {getPaymentStatusBadge()}
             {contract.is_active && (
-              <span className="flex items-center gap-1 text-xs text-emerald-400 px-2 py-1 bg-emerald-500/10 rounded-full">
+              <span className="flex items-center gap-1 text-xs text-cream-400 px-2 py-1 bg-amber-500/10 rounded-full">
                 <CheckCircle className="h-3 w-3" />
                 Currently Active
               </span>
@@ -141,7 +141,7 @@ export function ContractOverviewTab({ contract }: ContractOverviewTabProps) {
               </span>
             )}
             {contract.is_pending_renewal && (
-              <span className="flex items-center gap-1 text-xs text-yellow-400 px-2 py-1 bg-yellow-500/10 rounded-full">
+              <span className="flex items-center gap-1 text-xs text-cream-400 px-2 py-1 bg-yellow-500/10 rounded-full">
                 <RefreshCw className="h-3 w-3" />
                 Pending Renewal
               </span>
@@ -177,7 +177,7 @@ export function ContractOverviewTab({ contract }: ContractOverviewTabProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Client Information */}
-        <Section icon={<Building2 className="h-5 w-5 text-emerald-400" />} title="Client Information">
+        <Section icon={<Building2 className="h-5 w-5 text-cream-400" />} title="Client Information">
           <div className="space-y-3">
             <InfoRow label="Client Name" value={contract.client?.name} />
             <InfoRow label="Client Email" value={contract.client?.email} />
@@ -186,7 +186,7 @@ export function ContractOverviewTab({ contract }: ContractOverviewTabProps) {
         </Section>
 
         {/* Contract Period */}
-        <Section icon={<Calendar className="h-5 w-5 text-emerald-400" />} title="Contract Period">
+        <Section icon={<Calendar className="h-5 w-5 text-cream-400" />} title="Contract Period">
           <div className="space-y-3">
             <InfoRow label="Start Date" value={formatDate(contract.start_date)} />
             <InfoRow label="End Date" value={formatDate(contract.end_date)} />
@@ -200,7 +200,7 @@ export function ContractOverviewTab({ contract }: ContractOverviewTabProps) {
                 contract.days_remaining > 0 ? (
                   <span
                     className={
-                      contract.days_remaining < 30 ? 'text-yellow-400' : 'text-emerald-400'
+                      contract.days_remaining < 30 ? 'text-cream-400' : 'text-cream-400'
                     }
                   >
                     {contract.days_remaining} days
@@ -216,7 +216,7 @@ export function ContractOverviewTab({ contract }: ContractOverviewTabProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Billing Information */}
-        <Section icon={<CreditCard className="h-5 w-5 text-emerald-400" />} title="Billing Information">
+        <Section icon={<CreditCard className="h-5 w-5 text-cream-400" />} title="Billing Information">
           <div className="space-y-3">
             <InfoRow
               label="Billing Rate"
@@ -235,7 +235,7 @@ export function ContractOverviewTab({ contract }: ContractOverviewTabProps) {
         </Section>
 
         {/* Contract Settings */}
-        <Section icon={<FileCheck className="h-5 w-5 text-emerald-400" />} title="Contract Settings">
+        <Section icon={<FileCheck className="h-5 w-5 text-cream-400" />} title="Contract Settings">
           <div className="space-y-3">
             <div className="flex items-start gap-2 text-sm">
               <span className="text-gray-400 min-w-fit">Status:</span>
@@ -248,7 +248,7 @@ export function ContractOverviewTab({ contract }: ContractOverviewTabProps) {
               <span className="text-gray-400 min-w-fit">Renewable:</span>
               <span
                 className={`font-medium flex items-center gap-1.5 ${
-                  contract.is_renewable ? 'text-emerald-400' : 'text-gray-400'
+                  contract.is_renewable ? 'text-cream-400' : 'text-gray-400'
                 }`}
               >
                 {contract.is_renewable ? (
@@ -268,7 +268,7 @@ export function ContractOverviewTab({ contract }: ContractOverviewTabProps) {
               <span className="text-gray-400 min-w-fit">Auto-Renew:</span>
               <span
                 className={`font-medium flex items-center gap-1.5 ${
-                  contract.is_auto_renew ? 'text-emerald-400' : 'text-gray-400'
+                  contract.is_auto_renew ? 'text-cream-400' : 'text-gray-400'
                 }`}
               >
                 {contract.is_auto_renew ? (
@@ -290,7 +290,7 @@ export function ContractOverviewTab({ contract }: ContractOverviewTabProps) {
 
       {/* Payment Terms */}
       {contract.payment_terms && (
-        <Section icon={<FileText className="h-5 w-5 text-emerald-400" />} title="Payment Terms">
+        <Section icon={<FileText className="h-5 w-5 text-cream-400" />} title="Payment Terms">
           <p className="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed">
             {contract.payment_terms}
           </p>
@@ -299,7 +299,7 @@ export function ContractOverviewTab({ contract }: ContractOverviewTabProps) {
 
       {/* Document Information */}
       {(contract.document_url || contract.signed_by || contract.signed_at) && (
-        <Section icon={<FileCheck className="h-5 w-5 text-emerald-400" />} title="Document Information">
+        <Section icon={<FileCheck className="h-5 w-5 text-cream-400" />} title="Document Information">
           <div className="space-y-3">
             {contract.document_url && (
               <InfoRow
@@ -309,7 +309,7 @@ export function ContractOverviewTab({ contract }: ContractOverviewTabProps) {
                     href={contract.document_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-emerald-400 hover:text-emerald-300 underline"
+                    className="text-cream-400 hover:text-yellow-300 underline"
                   >
                     View Contract Document
                   </a>
@@ -327,7 +327,7 @@ export function ContractOverviewTab({ contract }: ContractOverviewTabProps) {
       {/* Termination Reason */}
       {contract.termination_reason && (
         <Section
-          icon={<AlertCircle className="h-5 w-5 text-yellow-400" />}
+          icon={<AlertCircle className="h-5 w-5 text-cream-400" />}
           title="Termination Reason"
           variant="warning"
         >
@@ -339,7 +339,7 @@ export function ContractOverviewTab({ contract }: ContractOverviewTabProps) {
 
       {/* Notes */}
       {contract.notes && (
-        <Section icon={<FileText className="h-5 w-5 text-emerald-400" />} title="Notes">
+        <Section icon={<FileText className="h-5 w-5 text-cream-400" />} title="Notes">
           <p className="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed">{contract.notes}</p>
         </Section>
       )}

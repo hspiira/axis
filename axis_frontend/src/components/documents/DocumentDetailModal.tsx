@@ -32,8 +32,8 @@ const TYPE_LABELS: Record<string, string> = {
 
 const STATUS_COLORS: Record<string, string> = {
   Draft: 'bg-gray-500/20 text-gray-400',
-  Published: 'bg-emerald-500/20 text-emerald-400',
-  Archived: 'bg-yellow-500/20 text-yellow-400',
+  Published: 'bg-cream-500/20 text-cream-400',
+  Archived: 'bg-yellow-500/20 text-cream-400',
   Expired: 'bg-red-500/20 text-red-400',
 }
 
@@ -47,7 +47,7 @@ export function DocumentDetailModal({
   const sections: DetailSection[] = [
     {
       title: 'Document Information',
-      icon: <FileText className="h-5 w-5 text-emerald-400" />,
+      icon: <FileText className="h-5 w-5 text-cream-400" />,
       items: [
         { label: 'Title', value: document.title },
         { label: 'Type', value: TYPE_LABELS[document.type] || document.type },
@@ -62,7 +62,7 @@ export function DocumentDetailModal({
     },
     {
       title: 'File Information',
-      icon: <FileText className="h-5 w-5 text-emerald-400" />,
+      icon: <FileText className="h-5 w-5 text-cream-400" />,
       items: [
         { label: 'Filename', value: document.filename || 'N/A' },
         { label: 'File Type', value: document.file_type || 'N/A' },
@@ -80,12 +80,12 @@ export function DocumentDetailModal({
     },
     {
       title: 'Access & Security',
-      icon: <Lock className="h-5 w-5 text-yellow-400" />,
+      icon: <Lock className="h-5 w-5 text-cream-400" />,
       items: [
         {
           label: 'Confidential',
           value: document.is_confidential ? 'Yes' : 'No',
-          className: document.is_confidential ? 'text-yellow-400' : '',
+          className: document.is_confidential ? 'text-cream-400' : '',
         },
         { label: 'Active', value: document.is_active ? 'Yes' : 'No' },
         { label: 'Expired', value: document.is_expired ? 'Yes' : 'No' },
@@ -139,7 +139,7 @@ export function DocumentDetailModal({
             {document.status}
           </span>
           {document.is_confidential && (
-            <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs rounded-full">
+            <span className="inline-flex items-center gap-1 px-2 py-1 bg-yellow-500/20 text-cream-400 text-xs rounded-full">
               <Lock className="h-3 w-3" />
               Confidential
             </span>

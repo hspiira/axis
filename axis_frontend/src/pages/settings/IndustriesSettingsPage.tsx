@@ -84,7 +84,7 @@ export function IndustriesSettingsPage() {
           </button>
           <button
             onClick={handleCreate}
-            className="px-2.5 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-all flex items-center gap-1.5 text-xs font-medium"
+            className="px-2.5 py-1.5 bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 font-medium transition-all flex items-center gap-1.5 text-xs font-medium"
           >
             <Plus className="h-3.5 w-3.5" />
             Add Industry
@@ -95,7 +95,7 @@ export function IndustriesSettingsPage() {
         <div className="bg-white/5 border border-white/10 rounded-lg overflow-hidden">
           {isLoading ? (
             <div className="p-12 text-center">
-              <div className="inline-block animate-spin h-8 w-8 border-4 border-emerald-500 border-t-transparent rounded-full mb-4" />
+              <div className="inline-block animate-spin h-8 w-8 border-4 border-cream-500 border-t-transparent rounded-full mb-4" />
               <p className="text-gray-400">Loading industries...</p>
             </div>
           ) : industries.length === 0 ? (
@@ -104,7 +104,7 @@ export function IndustriesSettingsPage() {
               <p className="text-gray-400 mb-4">No industries found</p>
               <button
                 onClick={handleCreate}
-                className="px-2.5 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-all inline-flex items-center gap-1.5 text-xs font-medium"
+                className="px-2.5 py-1.5 bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 font-medium transition-all inline-flex items-center gap-1.5 text-xs font-medium"
               >
                 <Plus className="h-3.5 w-3.5" />
                 Add First Industry
@@ -132,7 +132,7 @@ export function IndustriesSettingsPage() {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleEdit(industry)}
-                          className="p-1 text-gray-400 hover:text-emerald-400 transition-colors"
+                          className="p-1 text-gray-400 hover:text-cream-400 transition-colors"
                           aria-label="Edit"
                         >
                           <Edit className="h-4 w-4" />
@@ -247,8 +247,8 @@ function IndustryFormModal({
       <div className="bg-gray-900 border border-white/10 rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-500/10 rounded-lg">
-              <Briefcase className="h-5 w-5 text-emerald-400" />
+            <div className="p-2 bg-amber-500/10 rounded-lg">
+              <Briefcase className="h-5 w-5 text-cream-400" />
             </div>
             <h2 className="text-xl font-semibold text-white">{title}</h2>
           </div>

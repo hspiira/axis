@@ -18,7 +18,7 @@ export function PersonPersonalInfoTab({ person }: PersonPersonalInfoTabProps) {
       {/* Profile Information */}
       <div className="bg-white/5 border border-white/10 rounded-lg p-6">
         <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <User className="h-5 w-5 text-emerald-400" />
+          <User className="h-5 w-5 text-cream-400" />
           Profile Information
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -50,7 +50,7 @@ export function PersonPersonalInfoTab({ person }: PersonPersonalInfoTabProps) {
       {/* Contact Information */}
       <div className="bg-white/5 border border-white/10 rounded-lg p-6">
         <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <Mail className="h-5 w-5 text-emerald-400" />
+          <Mail className="h-5 w-5 text-cream-400" />
           Contact Information
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -73,7 +73,7 @@ export function PersonPersonalInfoTab({ person }: PersonPersonalInfoTabProps) {
       {(person.profile?.address || person.profile?.city || person.profile?.country) && (
         <div className="bg-white/5 border border-white/10 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <MapPin className="h-5 w-5 text-emerald-400" />
+            <MapPin className="h-5 w-5 text-cream-400" />
             Address
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -97,7 +97,7 @@ export function PersonPersonalInfoTab({ person }: PersonPersonalInfoTabProps) {
       {person.guardian_email && (
         <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <Heart className="h-5 w-5 text-yellow-400" />
+            <Heart className="h-5 w-5 text-cream-400" />
             Guardian Information
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

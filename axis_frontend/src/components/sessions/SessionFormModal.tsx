@@ -73,8 +73,8 @@ export function SessionFormModal({
       <div className="bg-gray-900 border border-white/10 rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-500/10 rounded-lg">
-              <Calendar className="h-5 w-5 text-emerald-400" />
+            <div className="p-2 bg-amber-500/10 rounded-lg">
+              <Calendar className="h-5 w-5 text-cream-400" />
             </div>
             <h2 className="text-xl font-semibold text-white">{title}</h2>
           </div>
@@ -94,7 +94,7 @@ export function SessionFormModal({
                 value={formData.service_id}
                 onChange={(e) => handleChange('service_id', e.target.value)}
                 required
-                className="w-full px-3 py-2 bg-gray-800/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+                className="w-full px-3 py-2 bg-gray-800/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50"
               >
                 <option value="">Select a service...</option>
                 {services.map((service) => (
@@ -114,7 +114,7 @@ export function SessionFormModal({
                 value={formData.person_id}
                 onChange={(e) => handleChange('person_id', e.target.value)}
                 required
-                className="w-full px-3 py-2 bg-gray-800/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+                className="w-full px-3 py-2 bg-gray-800/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50"
               >
                 <option value="">Select a person...</option>
                 {persons.map((person) => (
@@ -134,7 +134,7 @@ export function SessionFormModal({
                 value={formData.provider_id}
                 onChange={(e) => handleChange('provider_id', e.target.value)}
                 required
-                className="w-full px-3 py-2 bg-gray-800/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+                className="w-full px-3 py-2 bg-gray-800/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50"
               >
                 <option value="">Select a provider...</option>
                 {providers.map((provider) => (
@@ -163,7 +163,7 @@ export function SessionFormModal({
               <select
                 value={formData.status || SessionStatusEnum.SCHEDULED}
                 onChange={(e) => handleChange('status', e.target.value as SessionStatus)}
-                className="w-full px-3 py-2 bg-gray-800/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+                className="w-full px-3 py-2 bg-gray-800/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50"
               >
                 {Object.values(SessionStatusEnum).map((status) => (
                   <option key={status} value={status}>
@@ -191,7 +191,7 @@ export function SessionFormModal({
                 id="is_group_session"
                 checked={formData.is_group_session || false}
                 onChange={(e) => handleChange('is_group_session', e.target.checked)}
-                className="w-4 h-4 rounded bg-gray-800/50 border-white/10 text-emerald-600 focus:ring-emerald-500/50"
+                className="w-4 h-4 rounded bg-gray-800/50 border-white/10 text-amber-600 focus:ring-cream-500/50"
               />
               <label htmlFor="is_group_session" className="text-sm font-medium text-gray-300">
                 Group Session

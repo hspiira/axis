@@ -155,9 +155,9 @@ export function ClientsTable({
       return <ChevronsUpDown className="h-4 w-4 text-gray-500" />
     }
     return sortDirection === 'asc' ? (
-      <ChevronUp className="h-4 w-4 text-emerald-400" />
+      <ChevronUp className="h-4 w-4 text-cream-400" />
     ) : (
-      <ChevronDown className="h-4 w-4 text-emerald-400" />
+      <ChevronDown className="h-4 w-4 text-cream-400" />
     )
   }
 
@@ -201,7 +201,7 @@ export function ClientsTable({
   if (isLoading) {
     return (
       <div className="bg-white/5 border border-white/10 rounded-lg p-12 text-center">
-        <div className="inline-block animate-spin h-8 w-8 border-4 border-emerald-500 border-t-transparent rounded-full mb-4" />
+        <div className="inline-block animate-spin h-8 w-8 border-4 border-cream-500 border-t-transparent rounded-full mb-4" />
         <p className="text-gray-400">Loading clients...</p>
       </div>
     )
@@ -234,7 +234,7 @@ export function ClientsTable({
                         }
                       }}
                       onChange={handleSelectAll}
-                      className="h-4 w-4 rounded bg-white/5 border-white/10 text-emerald-600 focus:ring-emerald-500/50 cursor-pointer"
+                      className="h-4 w-4 rounded bg-white/5 border-white/10 text-amber-600 focus:ring-cream-500/50 cursor-pointer"
                       aria-label="Select all clients on this page"
                     />
                   </th>
@@ -301,7 +301,7 @@ export function ClientsTable({
                 key={client.id}
                 className={cn(
                   "hover:bg-white/5 transition-colors cursor-pointer",
-                  selectedIds.has(client.id) && "bg-emerald-500/5"
+                  selectedIds.has(client.id) && "bg-amber-500/5"
                 )}
                 onClick={() => onView?.(client)}
               >
@@ -312,7 +312,7 @@ export function ClientsTable({
                       checked={selectedIds.has(client.id)}
                       onChange={(e) => handleSelectRow(client.id, e as any)}
                       onClick={(e) => e.stopPropagation()}
-                      className="h-4 w-4 rounded bg-white/5 border-white/10 text-emerald-600 focus:ring-emerald-500/50 cursor-pointer"
+                      className="h-4 w-4 rounded bg-white/5 border-white/10 text-amber-600 focus:ring-cream-500/50 cursor-pointer"
                       aria-label={`Select ${client.name}`}
                     />
                   </td>
@@ -349,7 +349,7 @@ export function ClientsTable({
                 </td>
                 <td className="px-3 py-2">
                   {client.is_verified ? (
-                    <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                    <CheckCircle2 className="h-4 w-4 text-cream-400" />
                   ) : (
                     <XCircle className="h-4 w-4 text-gray-500" />
                   )}
@@ -549,7 +549,7 @@ export function ClientsTable({
                     className={cn(
                       'px-3 py-1 rounded-lg text-sm font-medium transition-colors',
                       currentPage === page
-                        ? 'bg-emerald-600 text-white'
+                        ? 'bg-cream-500 text-gray-900 font-medium'
                         : 'text-gray-400 hover:text-white hover:bg-white/10'
                     )}
                   >

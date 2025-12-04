@@ -185,14 +185,14 @@ export function DocumentsPage() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="bg-white/5 border border-white/10 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <FileText className="h-5 w-5 text-emerald-400" />
+              <FileText className="h-5 w-5 text-cream-400" />
               <span className="text-sm text-gray-400">Total Documents</span>
             </div>
             <p className="text-2xl font-bold text-white">{stats.total}</p>
           </div>
           <div className="bg-white/5 border border-white/10 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <File className="h-5 w-5 text-emerald-400" />
+              <File className="h-5 w-5 text-cream-400" />
               <span className="text-sm text-gray-400">Published</span>
             </div>
             <p className="text-2xl font-bold text-white">{stats.published}</p>
@@ -206,7 +206,7 @@ export function DocumentsPage() {
           </div>
           <div className="bg-white/5 border border-white/10 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
-              <FileText className="h-5 w-5 text-yellow-400" />
+              <FileText className="h-5 w-5 text-cream-400" />
               <span className="text-sm text-gray-400">Expired</span>
             </div>
             <p className="text-2xl font-bold text-white">{stats.expired}</p>
@@ -224,7 +224,7 @@ export function DocumentsPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search documents..."
-                className="w-full pl-9 pr-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                className="w-full pl-9 pr-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cream-500/50"
               />
             </div>
 
@@ -235,7 +235,7 @@ export function DocumentsPage() {
                 className={cn(
                   'px-2 py-1 text-xs font-medium rounded-full transition-all',
                   !filters.status
-                    ? 'bg-emerald-600 text-white'
+                    ? 'bg-cream-500 text-gray-900 font-medium'
                     : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
                 )}
                 title="All Statuses"
@@ -261,7 +261,7 @@ export function DocumentsPage() {
                     className={cn(
                       'px-2 py-1 text-xs font-medium rounded-full transition-all flex items-center gap-1',
                       filters.status === status
-                        ? 'bg-emerald-600 text-white'
+                        ? 'bg-cream-500 text-gray-900 font-medium'
                         : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
                     )}
                     title={status}
@@ -277,7 +277,7 @@ export function DocumentsPage() {
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => setIsUploadModalOpen(true)}
-                className="px-2.5 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-1.5 text-xs font-medium"
+                className="px-2.5 py-1.5 bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 font-medium transition-colors flex items-center gap-1.5 text-xs font-medium"
                 title="Upload Document"
               >
                 <Upload className="h-3.5 w-3.5" />
@@ -327,7 +327,7 @@ export function DocumentsPage() {
                   className={cn(
                     'px-2 py-1 text-xs font-medium rounded-full transition-all',
                     filters.type === type
-                      ? 'bg-emerald-600 text-white'
+                      ? 'bg-cream-500 text-gray-900 font-medium'
                       : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
                   )}
                 >

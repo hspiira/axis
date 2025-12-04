@@ -105,11 +105,11 @@ export function ContractActivityTab({ contract }: ContractActivityTabProps) {
       case 'created':
       case 'activated':
       case 'renewed':
-        return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+        return 'text-cream-400 bg-amber-500/10 border-cream-500/20'
       case 'terminated':
         return 'text-red-400 bg-red-500/10 border-red-500/20'
       case 'payment':
-        return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+        return 'text-cream-400 bg-amber-500/10 border-cream-500/20'
       default:
         return 'text-gray-400 bg-white/5 border-white/10'
     }
@@ -120,7 +120,7 @@ export function ContractActivityTab({ contract }: ContractActivityTabProps) {
       <div className="bg-white/5 border border-white/10 rounded-lg p-6">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-            <Activity className="h-5 w-5 text-emerald-400" />
+            <Activity className="h-5 w-5 text-cream-400" />
             Activity History
           </h3>
         </div>

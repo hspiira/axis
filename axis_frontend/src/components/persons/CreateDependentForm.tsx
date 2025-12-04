@@ -136,7 +136,7 @@ export function CreateDependentForm({ onClose, onSuccess, onBack }: CreateDepend
               value={employeeSearch}
               onChange={(e) => setEmployeeSearch(e.target.value)}
               placeholder="Search employees..."
-              className="w-full pl-12 pr-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200 backdrop-blur-sm"
+              className="w-full pl-12 pr-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50 transition-all duration-200 backdrop-blur-sm"
             />
           </div>
 
@@ -147,7 +147,7 @@ export function CreateDependentForm({ onClose, onSuccess, onBack }: CreateDepend
               value={formData.primary_employee_id}
               onChange={(e) => handleChange('primary_employee_id', e.target.value)}
               required
-              className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200 backdrop-blur-sm"
+              className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50 transition-all duration-200 backdrop-blur-sm"
             >
               <option value="">Select an employee</option>
               {filteredEmployees.map((employee) => (
@@ -173,7 +173,7 @@ export function CreateDependentForm({ onClose, onSuccess, onBack }: CreateDepend
               value={formData.relationship_type}
               onChange={(e) => handleChange('relationship_type', e.target.value as RelationshipType)}
               required
-              className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200 backdrop-blur-sm"
+              className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50 transition-all duration-200 backdrop-blur-sm"
             >
               <option value={RelationshipType.SPOUSE}>Spouse</option>
               <option value={RelationshipType.CHILD}>Child</option>
@@ -197,7 +197,7 @@ export function CreateDependentForm({ onClose, onSuccess, onBack }: CreateDepend
               value={formData.full_name}
               onChange={(e) => handleChange('full_name', e.target.value)}
               required
-              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50"
               placeholder="Jane Doe"
             />
           </div>
@@ -209,7 +209,7 @@ export function CreateDependentForm({ onClose, onSuccess, onBack }: CreateDepend
                 type="date"
                 value={formData.date_of_birth}
                 onChange={(e) => handleChange('date_of_birth', e.target.value)}
-                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200 backdrop-blur-sm"
+                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50 transition-all duration-200 backdrop-blur-sm"
               />
             </div>
 
@@ -218,7 +218,7 @@ export function CreateDependentForm({ onClose, onSuccess, onBack }: CreateDepend
               <select
                 value={formData.gender}
                 onChange={(e) => handleChange('gender', e.target.value)}
-                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200 backdrop-blur-sm"
+                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50 transition-all duration-200 backdrop-blur-sm"
               >
                 <option value="">Select gender</option>
                 <option value="Male">Male</option>
@@ -236,7 +236,7 @@ export function CreateDependentForm({ onClose, onSuccess, onBack }: CreateDepend
                 type="email"
                 value={formData.email}
                 onChange={(e) => handleChange('email', e.target.value)}
-                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200 backdrop-blur-sm"
+                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50 transition-all duration-200 backdrop-blur-sm"
                 placeholder="jane.doe@example.com"
               />
             </div>
@@ -247,7 +247,7 @@ export function CreateDependentForm({ onClose, onSuccess, onBack }: CreateDepend
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => handleChange('phone', e.target.value)}
-                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all duration-200 backdrop-blur-sm"
+                className="w-full py-2 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 text-sm hover:border-white/20 hover:bg-white/[0.07] focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50 transition-all duration-200 backdrop-blur-sm"
                 placeholder="+1 (555) 000-0000"
               />
             </div>
@@ -266,7 +266,7 @@ export function CreateDependentForm({ onClose, onSuccess, onBack }: CreateDepend
           <button
             type="submit"
             disabled={isLoading || loadingEmployees}
-            className="px-6 py-3 bg-emerald-600 text-white font-semibold rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-6 py-3 bg-cream-500 text-gray-900 font-medium font-semibold rounded-lg hover:bg-cream-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
             Create Dependent

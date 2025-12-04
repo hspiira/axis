@@ -133,16 +133,16 @@ export function ServicesTable({
       return <ChevronsUpDown className="h-4 w-4 text-gray-500" />
     }
     return sortDirection === 'asc' ? (
-      <ChevronUp className="h-4 w-4 text-emerald-400" />
+      <ChevronUp className="h-4 w-4 text-cream-400" />
     ) : (
-      <ChevronDown className="h-4 w-4 text-emerald-400" />
+      <ChevronDown className="h-4 w-4 text-cream-400" />
     )
   }
 
   if (isLoading) {
     return (
       <div className="bg-white/5 border border-white/10 rounded-lg p-12 text-center">
-        <div className="inline-block animate-spin h-8 w-8 border-4 border-emerald-500 border-t-transparent rounded-full mb-4" />
+        <div className="inline-block animate-spin h-8 w-8 border-4 border-cream-500 border-t-transparent rounded-full mb-4" />
         <p className="text-gray-400">Loading services...</p>
       </div>
     )
@@ -254,7 +254,7 @@ export function ServicesTable({
                         </div>
                       )}
                       {service.is_billable ? (
-                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" aria-label="Billable" />
+                        <CheckCircle2 className="h-3.5 w-3.5 text-cream-400" aria-label="Billable" />
                       ) : (
                         <XCircle className="h-3.5 w-3.5 text-gray-500" aria-label="Non-billable" />
                       )}
@@ -262,7 +262,7 @@ export function ServicesTable({
                   </td>
                   <td className="px-3 py-2">
                     <div className="text-sm text-gray-300">
-                      <span className="text-emerald-400">{service.active_assignments}</span>
+                      <span className="text-cream-400">{service.active_assignments}</span>
                       <span className="text-gray-500 mx-1">/</span>
                       <span>{service.total_sessions} sessions</span>
                     </div>
@@ -420,7 +420,7 @@ export function ServicesTable({
                     className={cn(
                       'px-3 py-1 rounded-lg text-sm font-medium transition-colors',
                       currentPage === page
-                        ? 'bg-emerald-600 text-white'
+                        ? 'bg-cream-500 text-gray-900 font-medium'
                         : 'text-gray-400 hover:text-white hover:bg-white/10'
                     )}
                   >

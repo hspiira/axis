@@ -67,7 +67,7 @@ function SearchInput({ value, onChange, placeholder = 'Search persons...' }: Sea
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+        className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50 transition-all"
       />
           </div>
   )
@@ -92,7 +92,7 @@ function FilterSelect({ label, value, onChange, options }: FilterSelectProps) {
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50 transition-all"
+        className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50 transition-all"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
@@ -207,7 +207,7 @@ export function ClientPersonsTab({ client }: ClientPersonsTabProps) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
           </div>
     )
   }
@@ -232,13 +232,13 @@ export function ClientPersonsTab({ client }: ClientPersonsTabProps) {
           label="Total Employees"
           value={stats.totalEmployees}
           icon={<Users className="h-5 w-5" />}
-          iconColor="text-emerald-400"
+          iconColor="text-cream-400"
         />
         <StatCard
           label="Active Employees"
           value={stats.activeEmployees}
           icon={<Users className="h-5 w-5" />}
-          iconColor="text-emerald-400"
+          iconColor="text-cream-400"
         />
         <StatCard
           label="Dependents"
@@ -266,7 +266,7 @@ export function ClientPersonsTab({ client }: ClientPersonsTabProps) {
           </div>
           <button
             onClick={handleCreateEmployee}
-            className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 font-medium transition-colors flex items-center gap-2"
           >
             <UserPlus className="h-4 w-4" />
             Add Employee
@@ -343,7 +343,7 @@ export function ClientPersonsTab({ client }: ClientPersonsTabProps) {
                           className={cn(
                             'px-3 py-1 rounded-lg text-sm transition-colors',
                             currentPage === page
-                              ? 'bg-emerald-600 text-white'
+                              ? 'bg-cream-500 text-gray-900 font-medium'
                               : 'text-gray-400 hover:text-white hover:bg-white/10'
                           )}
                         >
@@ -379,7 +379,7 @@ export function ClientPersonsTab({ client }: ClientPersonsTabProps) {
                     setSearchQuery('')
                     setStatusFilter('all')
                   }}
-                  className="mt-2 text-sm text-emerald-400 hover:text-emerald-300 transition-colors"
+                  className="mt-2 text-sm text-cream-400 hover:text-yellow-300 transition-colors"
                 >
                   Clear filters
                 </button>
@@ -393,7 +393,7 @@ export function ClientPersonsTab({ client }: ClientPersonsTabProps) {
           </p>
                 <button
                   onClick={handleCreateEmployee}
-                  className="mt-4 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2 mx-auto"
+                  className="mt-4 px-4 py-2 bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 font-medium transition-colors flex items-center gap-2 mx-auto"
                 >
                   <UserPlus className="h-4 w-4" />
                   Add First Employee

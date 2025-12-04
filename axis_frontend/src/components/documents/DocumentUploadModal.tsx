@@ -232,7 +232,7 @@ export function DocumentUploadModal({
               className={cn(
                 'flex-1 p-4 border rounded-lg transition-all',
                 uploadMethod === 'file'
-                  ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400'
+                  ? 'border-cream-500 bg-amber-500/10 text-cream-400'
                   : 'border-white/10 bg-white/5 text-white hover:bg-white/10'
               )}
             >
@@ -245,7 +245,7 @@ export function DocumentUploadModal({
               className={cn(
                 'flex-1 p-4 border rounded-lg transition-all',
                 uploadMethod === 'url'
-                  ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400'
+                  ? 'border-cream-500 bg-amber-500/10 text-cream-400'
                   : 'border-white/10 bg-white/5 text-gray-400 hover:bg-white/10'
               )}
             >
@@ -263,7 +263,7 @@ export function DocumentUploadModal({
                 className={cn(
                   'border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-all',
                   selectedFile
-                    ? 'border-emerald-500/50 bg-emerald-500/5'
+                    ? 'border-cream-500/50 bg-amber-500/5'
                     : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20'
                 )}
               >
@@ -276,7 +276,7 @@ export function DocumentUploadModal({
                 />
                 {selectedFile ? (
                   <div className="space-y-2">
-                    <FileText className="h-8 w-8 text-emerald-400 mx-auto" />
+                    <FileText className="h-8 w-8 text-cream-400 mx-auto" />
                     <p className="text-sm text-white font-medium">{selectedFile.name}</p>
                     <p className="text-xs text-gray-400">
                       {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
@@ -363,7 +363,7 @@ export function DocumentUploadModal({
                 }}
                 placeholder="Add a tag and press Enter"
                 disabled={isLoading}
-                className="flex-1 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                className="flex-1 px-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cream-500/50"
               />
               <FormButton
                 type="button"
@@ -379,14 +379,14 @@ export function DocumentUploadModal({
                 {formData.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="inline-flex items-center gap-1 px-2 py-1 bg-emerald-500/20 text-emerald-400 text-xs rounded-full"
+                    className="inline-flex items-center gap-1 px-2 py-1 bg-cream-500/20 text-cream-400 text-xs rounded-full"
                   >
                     {tag}
                     <button
                       type="button"
                       onClick={() => handleRemoveTag(tag)}
                       disabled={isLoading}
-                      className="hover:text-emerald-300"
+                      className="hover:text-yellow-300"
                     >
                       <XCircle className="h-3 w-3" />
                     </button>
@@ -404,7 +404,7 @@ export function DocumentUploadModal({
               checked={formData.is_confidential || false}
               onChange={(e) => setFormData((prev) => ({ ...prev, is_confidential: e.target.checked }))}
               disabled={isLoading}
-              className="w-4 h-4 text-emerald-600 bg-white/5 border-white/10 rounded focus:ring-emerald-500"
+              className="w-4 h-4 text-amber-600 bg-white/5 border-white/10 rounded focus:ring-cream-500"
             />
             <label htmlFor="is_confidential" className="text-sm text-gray-400">
               Mark as confidential

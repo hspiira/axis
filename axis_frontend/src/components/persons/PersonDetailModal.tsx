@@ -45,7 +45,7 @@ export function PersonDetailModal({ personId, isOpen, onClose, onEdit }: PersonD
     return (
       <div className="fixed inset-0 bg-black/90 backdrop-blur-[2px] flex items-center justify-center z-50">
         <div className="bg-gray-900 rounded-xl p-12 border border-white/10">
-          <Loader2 className="h-12 w-12 text-emerald-400 animate-spin mx-auto" />
+          <Loader2 className="h-12 w-12 text-cream-400 animate-spin mx-auto" />
           <p className="text-gray-400 mt-4">Loading person details...</p>
         </div>
       </div>
@@ -80,11 +80,11 @@ export function PersonDetailModal({ personId, isOpen, onClose, onEdit }: PersonD
             <img
               src={person.profile.image}
               alt={person.profile.full_name}
-              className="h-12 w-12 rounded-full object-cover border-2 border-emerald-500/30"
+              className="h-12 w-12 rounded-full object-cover border-2 border-cream-500/30"
             />
           ) : (
-            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 border-2 border-emerald-500/30 flex items-center justify-center">
-              <span className="text-lg font-bold text-emerald-400">
+            <div className="h-12 w-12 rounded-full bg-gradient-to-br from-cream-500/20 to-cream-600/20 border-2 border-cream-500/30 flex items-center justify-center">
+              <span className="text-lg font-bold text-cream-400">
                 {person.profile?.full_name
                   ?.split(' ')
                   .map((n) => n[0])

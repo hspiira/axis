@@ -213,7 +213,7 @@ export function LandingPage() {
               
               {/* Integrated metrics overlay - bottom - no border, part of background */}
               <div className="absolute bottom-8 left-8">
-                <p className="text-6xl lg:text-7xl font-bold mb-1 drop-shadow-2xl bg-gradient-to-r from-green-400 via-emerald-400 to-green-400 bg-clip-text text-transparent">
+                <p className="text-6xl lg:text-7xl font-bold mb-1 drop-shadow-2xl bg-gradient-to-r from-green-400 via-yellow-400 to-green-400 bg-clip-text text-transparent">
                   {heroAnimatedSatisfaction.toFixed(1)}%
                 </p>
                 <p className="text-sm lg:text-base text-green-300/80 font-medium drop-shadow-lg">Satisfaction Rate</p>

@@ -105,7 +105,7 @@ export function ContractDetailTabs({ contract }: ContractDetailTabsProps) {
                   'flex items-center gap-2 px-4 py-3 text-sm font-medium transition-all duration-200',
                   'border-b-2 whitespace-nowrap',
                   activeTab === tab.id
-                    ? 'border-emerald-500 text-emerald-400'
+                    ? 'border-cream-500 text-cream-400'
                     : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-white/20'
                 )}
               >

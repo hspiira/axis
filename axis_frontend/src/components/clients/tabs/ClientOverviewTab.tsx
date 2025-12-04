@@ -58,7 +58,7 @@ function InfoRow({ label, value, icon, link }: InfoRowProps) {
             href={value as string}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-emerald-400 font-medium hover:underline"
+            className="text-sm text-cream-400 font-medium hover:underline"
           >
             {value}
           </a>
@@ -76,8 +76,8 @@ export function ClientOverviewTab({ client }: ClientOverviewTabProps) {
       {/* Client Header */}
       <div className="flex items-start gap-6 bg-white/5 border border-white/10 rounded-lg p-6">
         <div className="flex-shrink-0">
-          <div className="h-24 w-24 rounded-lg bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 border-2 border-emerald-500/30 flex items-center justify-center">
-            <Building2 className="h-12 w-12 text-emerald-400" />
+          <div className="h-24 w-24 rounded-lg bg-gradient-to-br from-cream-500/20 to-cream-600/20 border-2 border-cream-500/30 flex items-center justify-center">
+            <Building2 className="h-12 w-12 text-cream-400" />
           </div>
         </div>
         <div className="flex-1">
@@ -85,7 +85,7 @@ export function ClientOverviewTab({ client }: ClientOverviewTabProps) {
           <div className="flex items-center gap-3 mb-3">
             <StatusBadge status={client.status} />
             {client.is_verified && (
-              <span className="flex items-center gap-1 text-xs text-emerald-400">
+              <span className="flex items-center gap-1 text-xs text-cream-400">
                 <CheckCircle className="h-3 w-3" />
                 Verified
               </span>
@@ -111,14 +111,14 @@ export function ClientOverviewTab({ client }: ClientOverviewTabProps) {
       {/* Quick Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Basic Information */}
-        <InfoCard icon={<Building2 className="h-5 w-5 text-emerald-400" />} title="Basic Information">
+        <InfoCard icon={<Building2 className="h-5 w-5 text-cream-400" />} title="Basic Information">
           <InfoRow label="Industry" value={client.industry?.name || client.industry_name} />
           <InfoRow label="Tax ID" value={client.tax_id} />
           {client.website && <InfoRow label="Website" value={client.website} link icon={<Globe className="h-4 w-4" />} />}
         </InfoCard>
 
         {/* Contact Information */}
-        <InfoCard icon={<Mail className="h-5 w-5 text-emerald-400" />} title="Contact Person">
+        <InfoCard icon={<Mail className="h-5 w-5 text-cream-400" />} title="Contact Person">
           <InfoRow label="Name" value={client.contact_person} />
           <InfoRow label="Email" value={client.contact_email} icon={<Mail className="h-4 w-4" />} />
           <InfoRow label="Phone" value={client.contact_phone} icon={<Phone className="h-4 w-4" />} />
@@ -126,7 +126,7 @@ export function ClientOverviewTab({ client }: ClientOverviewTabProps) {
         </InfoCard>
 
         {/* Business Stats */}
-        <InfoCard icon={<Briefcase className="h-5 w-5 text-emerald-400" />} title="Business Stats">
+        <InfoCard icon={<Briefcase className="h-5 w-5 text-cream-400" />} title="Business Stats">
           <InfoRow label="Active Contracts" value={client.active_contracts_count} />
           <InfoRow label="Total Employees" value={client.total_employees} />
           <InfoRow label="Timezone" value={client.timezone} />
@@ -134,7 +134,7 @@ export function ClientOverviewTab({ client }: ClientOverviewTabProps) {
       </div>
 
       {/* Location Information */}
-      <InfoCard icon={<MapPin className="h-5 w-5 text-emerald-400" />} title="Location">
+      <InfoCard icon={<MapPin className="h-5 w-5 text-cream-400" />} title="Location">
         {client.address && (
           <div className="mb-2">
             <span className="text-sm text-gray-400">Address</span>

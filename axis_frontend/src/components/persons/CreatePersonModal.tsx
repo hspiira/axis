@@ -80,9 +80,9 @@ export function CreatePersonModal({ onClose, onSuccess, initialClientId }: Creat
                   <button
                     key={option.type}
                     onClick={() => setSelectedType(option.type)}
-                    className="w-full flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-lg text-left transition-all hover:bg-white/10 hover:border-emerald-500/50 group"
+                    className="w-full flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-lg text-left transition-all hover:bg-white/10 hover:border-cream-500/50 group"
                   >
-                    <Icon className="h-6 w-6 text-emerald-500 group-hover:text-emerald-400 flex-shrink-0" />
+                    <Icon className="h-6 w-6 text-amber-500 group-hover:text-cream-400 flex-shrink-0" />
                     <div className="flex-1">
                       <h3 className="font-semibold text-white mb-1">{option.label}</h3>
                       <p className="text-sm text-gray-400">{option.description}</p>
@@ -115,7 +115,7 @@ export function CreatePersonModal({ onClose, onSuccess, initialClientId }: Creat
         {selectedType === PersonType.PLATFORM_STAFF && (
           <div className="p-6">
             <p className="text-gray-400">Platform Staff form coming soon...</p>
-            <button onClick={handleBack} className="mt-4 text-emerald-400">
+            <button onClick={handleBack} className="mt-4 text-cream-400">
               Back to selection
             </button>
           </div>
@@ -123,7 +123,7 @@ export function CreatePersonModal({ onClose, onSuccess, initialClientId }: Creat
         {selectedType === PersonType.SERVICE_PROVIDER && (
           <div className="p-6">
             <p className="text-gray-400">Service Provider form coming soon...</p>
-            <button onClick={handleBack} className="mt-4 text-emerald-400">
+            <button onClick={handleBack} className="mt-4 text-cream-400">
               Back to selection
             </button>
           </div>

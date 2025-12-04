@@ -19,7 +19,7 @@ export function PersonEmploymentTab({ person }: PersonEmploymentTabProps) {
         {/* Employment Details */}
         <div className="bg-white/5 border border-white/10 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <Briefcase className="h-5 w-5 text-emerald-400" />
+            <Briefcase className="h-5 w-5 text-cream-400" />
             Employment Details
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -63,7 +63,7 @@ export function PersonEmploymentTab({ person }: PersonEmploymentTabProps) {
         {/* Organization */}
         <div className="bg-white/5 border border-white/10 rounded-lg p-6">
           <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <Building2 className="h-5 w-5 text-emerald-400" />
+            <Building2 className="h-5 w-5 text-cream-400" />
             Organization
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -91,7 +91,7 @@ export function PersonEmploymentTab({ person }: PersonEmploymentTabProps) {
                   {person.qualifications.map((q, i) => (
                     <span
                       key={i}
-                      className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-sm text-emerald-400"
+                      className="px-3 py-1 bg-amber-500/10 border border-cream-500/20 rounded-full text-sm text-cream-400"
                     >
                       {q}
                     </span>
@@ -106,7 +106,7 @@ export function PersonEmploymentTab({ person }: PersonEmploymentTabProps) {
                   {person.specializations.map((s, i) => (
                     <span
                       key={i}
-                      className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-sm text-emerald-400"
+                      className="px-3 py-1 bg-amber-500/10 border border-cream-500/20 rounded-full text-sm text-cream-400"
                     >
                       {s}
                     </span>
@@ -126,7 +126,7 @@ export function PersonEmploymentTab({ person }: PersonEmploymentTabProps) {
       {/* Relationship Details */}
       <div className="bg-white/5 border border-white/10 rounded-lg p-6">
         <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <Users className="h-5 w-5 text-emerald-400" />
+          <Users className="h-5 w-5 text-cream-400" />
           Relationship Details
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -154,7 +154,7 @@ export function PersonEmploymentTab({ person }: PersonEmploymentTabProps) {
       {/* Effective Client */}
       <div className="bg-white/5 border border-white/10 rounded-lg p-6">
         <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <Building2 className="h-5 w-5 text-emerald-400" />
+          <Building2 className="h-5 w-5 text-cream-400" />
           Effective Client
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

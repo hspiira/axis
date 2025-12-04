@@ -239,11 +239,11 @@ export function BulkUploadModal({ isOpen, onClose, onSuccess }: BulkUploadModalP
           {step === 'upload' && (
             <div className="space-y-6">
               {/* Instructions */}
-              <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-4">
+              <div className="bg-amber-500/10 border border-cream-500/20 rounded-lg p-4">
                 <div className="flex items-start gap-3">
-                  <AlertCircle className="h-5 w-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                  <AlertCircle className="h-5 w-5 text-cream-400 flex-shrink-0 mt-0.5" />
                   <div className="flex-1">
-                    <h3 className="text-sm font-semibold text-emerald-400 mb-2">Upload Instructions</h3>
+                    <h3 className="text-sm font-semibold text-cream-400 mb-2">Upload Instructions</h3>
                     <ul className="text-sm text-gray-300 space-y-1 list-disc list-inside">
                       <li>Download the template file to see the required format</li>
                       <li>Fill in client information (name is required)</li>
@@ -258,7 +258,7 @@ export function BulkUploadModal({ isOpen, onClose, onSuccess }: BulkUploadModalP
               {/* Download Template */}
               <div className="flex items-center justify-between bg-white/5 border border-white/10 rounded-lg p-4">
                 <div className="flex items-center gap-3">
-                  <FileSpreadsheet className="h-5 w-5 text-emerald-400" />
+                  <FileSpreadsheet className="h-5 w-5 text-cream-400" />
                   <div>
                     <p className="text-sm font-medium text-white">Download Template</p>
                     <p className="text-xs text-gray-400">Get the CSV template with all required fields</p>
@@ -266,7 +266,7 @@ export function BulkUploadModal({ isOpen, onClose, onSuccess }: BulkUploadModalP
                 </div>
                 <button
                   onClick={handleDownloadTemplate}
-                  className="px-2.5 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-1.5 text-xs font-medium"
+                  className="px-2.5 py-1.5 bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 font-medium transition-colors flex items-center gap-1.5 text-xs font-medium"
                 >
                   <Download className="h-3.5 w-3.5" />
                   Download
@@ -279,7 +279,7 @@ export function BulkUploadModal({ isOpen, onClose, onSuccess }: BulkUploadModalP
                 onDragOver={handleDragOver}
                 className={cn(
                   'border-2 border-dashed rounded-lg p-12 text-center transition-colors',
-                  'border-white/20 hover:border-emerald-500/50 bg-white/5 hover:bg-white/[0.07]',
+                  'border-white/20 hover:border-cream-500/50 bg-white/5 hover:bg-white/[0.07]',
                   'cursor-pointer'
                 )}
                 onClick={() => document.getElementById('bulk-upload-file-input')?.click()}
@@ -304,7 +304,7 @@ export function BulkUploadModal({ isOpen, onClose, onSuccess }: BulkUploadModalP
                   Supports CSV files (.csv)
                 </p>
                 {file && (
-                  <div className="mt-4 flex items-center justify-center gap-2 text-sm text-emerald-400">
+                  <div className="mt-4 flex items-center justify-center gap-2 text-sm text-cream-400">
                     <FileSpreadsheet className="h-4 w-4" />
                     <span>{file.name}</span>
                     <span className="text-gray-500">

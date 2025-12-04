@@ -75,7 +75,7 @@ export function LandingHeader() {
             ) : (
               <button 
                 onClick={() => setIsSignInOpen(true)}
-                className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/50"
+                className="px-4 py-2 text-sm font-medium text-white bg-linear-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/50"
               >
                 Sign In
               </button>

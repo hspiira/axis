@@ -50,7 +50,7 @@ export function LoadingSpinner({
     >
       <div
         className={cn(
-          'animate-spin rounded-full border-emerald-500 border-t-transparent',
+          'animate-spin rounded-full border-cream-500 border-t-transparent',
           sizeClasses[size]
         )}
         role="status"

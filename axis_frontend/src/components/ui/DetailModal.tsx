@@ -99,7 +99,7 @@ export function DetailModal({
               {onEdit && (
                 <button
                   onClick={onEdit}
-                  className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors flex items-center gap-1.5 text-xs font-medium"
+                  className="px-2.5 py-1.5 bg-cream-600 hover:bg-cream-400 text-white rounded-lg transition-colors flex items-center gap-1.5 text-xs font-medium"
                 >
                   Edit
                 </button>
@@ -153,7 +153,7 @@ function DetailItemDisplay({ label, value, icon, link, className }: DetailItem) 
           href={value.startsWith('http') ? value : `https://${value}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm text-emerald-400 hover:text-emerald-300 flex items-center gap-2 transition-colors"
+          className="text-sm text-cream-400 hover:text-yellow-300 flex items-center gap-2 transition-colors"
         >
           {icon}
           {displayValue}

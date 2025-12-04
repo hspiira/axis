@@ -66,7 +66,7 @@ export function PersonFamilyTab({ person }: PersonFamilyTabProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 text-emerald-500 animate-spin" />
+        <Loader2 className="h-8 w-8 text-amber-500 animate-spin" />
       </div>
     )
   }
@@ -129,11 +129,11 @@ export function PersonFamilyTab({ person }: PersonFamilyTabProps) {
                     <img
                       src={dependent.profile.profile_picture}
                       alt={dependent.profile.full_name}
-                      className="h-12 w-12 rounded-full object-cover border-2 border-emerald-500/30"
+                      className="h-12 w-12 rounded-full object-cover border-2 border-cream-500/30"
                     />
                   ) : (
-                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 border-2 border-emerald-500/30 flex items-center justify-center">
-                      <span className="text-sm font-bold text-emerald-400">
+                    <div className="h-12 w-12 rounded-full bg-gradient-to-br from-cream-500/20 to-cream-600/20 border-2 border-cream-500/30 flex items-center justify-center">
+                      <span className="text-sm font-bold text-cream-400">
                         {dependent.profile?.full_name
                           ?.split(' ')
                           .map((n) => n[0])
@@ -161,7 +161,7 @@ export function PersonFamilyTab({ person }: PersonFamilyTabProps) {
                         )}
                       </div>
                     </div>
-                    <ChevronRight className="h-5 w-5 text-gray-500 group-hover:text-emerald-400 transition-colors flex-shrink-0" />
+                    <ChevronRight className="h-5 w-5 text-gray-500 group-hover:text-cream-400 transition-colors flex-shrink-0" />
                   </div>
 
                   <div className="space-y-1">
@@ -184,7 +184,7 @@ export function PersonFamilyTab({ person }: PersonFamilyTabProps) {
                       </div>
                     )}
                     {dependent.is_eligible && (
-                      <div className="flex items-center gap-2 text-xs text-emerald-400">
+                      <div className="flex items-center gap-2 text-xs text-cream-400">
                         <Heart className="h-3 w-3" />
                         <span>Eligible for services</span>
                       </div>
@@ -219,11 +219,11 @@ export function PersonFamilyTab({ person }: PersonFamilyTabProps) {
                 <img
                   src={primaryEmployee.profile.profile_picture}
                   alt={primaryEmployee.profile.full_name}
-                  className="h-16 w-16 rounded-full object-cover border-2 border-emerald-500/30"
+                  className="h-16 w-16 rounded-full object-cover border-2 border-cream-500/30"
                 />
               ) : (
-                <div className="h-16 w-16 rounded-full bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 border-2 border-emerald-500/30 flex items-center justify-center">
-                  <span className="text-xl font-bold text-emerald-400">
+                <div className="h-16 w-16 rounded-full bg-gradient-to-br from-cream-500/20 to-cream-600/20 border-2 border-cream-500/30 flex items-center justify-center">
+                  <span className="text-xl font-bold text-cream-400">
                     {primaryEmployee.profile?.full_name
                       ?.split(' ')
                       .map((n) => n[0])
@@ -251,7 +251,7 @@ export function PersonFamilyTab({ person }: PersonFamilyTabProps) {
                     )}
                   </div>
                 </div>
-                <ChevronRight className="h-6 w-6 text-gray-500 group-hover:text-emerald-400 transition-colors flex-shrink-0" />
+                <ChevronRight className="h-6 w-6 text-gray-500 group-hover:text-cream-400 transition-colors flex-shrink-0" />
               </div>
 
               <div className="space-y-2">
@@ -274,7 +274,7 @@ export function PersonFamilyTab({ person }: PersonFamilyTabProps) {
                   </div>
                 )}
                 {person.relationship_type && (
-                  <div className="text-sm text-emerald-400 mt-2">
+                  <div className="text-sm text-cream-400 mt-2">
                     Relationship: {person.relationship_type}
                   </div>
                 )}

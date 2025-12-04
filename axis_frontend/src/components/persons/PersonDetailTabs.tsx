@@ -15,11 +15,13 @@ import {
   ClipboardList,
   Activity,
   Users,
+  Calendar,
 } from 'lucide-react'
 import { type Person, PersonType } from '@/api/persons'
 import { cn } from '@/lib/utils'
 import { PersonOverviewTab } from './tabs/PersonOverviewTab'
 import { PersonServicesTab } from './tabs/PersonServicesTab'
+import { PersonSessionsTab } from './tabs/PersonSessionsTab'
 import { PersonDocumentsTab } from './tabs/PersonDocumentsTab'
 import { PersonNotesTab } from './tabs/PersonNotesTab'
 import { PersonActivityTab } from './tabs/PersonActivityTab'
@@ -31,7 +33,7 @@ interface PersonDetailTabsProps {
   onEdit?: () => void
 }
 
-type TabId = 'overview' | 'family' | 'services' | 'documents' | 'notes' | 'activity'
+type TabId = 'overview' | 'family' | 'services' | 'sessions' | 'documents' | 'notes' | 'activity'
 
 interface Tab {
   id: TabId
@@ -81,6 +83,12 @@ export function PersonDetailTabs({ person, activeTab: propActiveTab, onEdit }: P
       component: PersonServicesTab,
     },
     {
+      id: 'sessions',
+      label: 'Sessions',
+      icon: <Calendar className="h-4 w-4" />,
+      component: PersonSessionsTab,
+    },
+    {
       id: 'documents',
       label: 'Documents',
       icon: <FileText className="h-4 w-4" />,
@@ -117,7 +125,7 @@ export function PersonDetailTabs({ person, activeTab: propActiveTab, onEdit }: P
                   'flex items-center gap-2 px-4 py-3 text-sm font-medium transition-all duration-200',
                   'border-b-2 whitespace-nowrap',
                   activeTab === tab.id
-                    ? 'border-emerald-500 text-emerald-400'
+                    ? 'border-cream-500 text-cream-400'
                     : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-white/20'
                 )}
               >

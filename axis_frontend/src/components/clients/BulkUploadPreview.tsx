@@ -151,7 +151,7 @@ export function BulkUploadPreview({
                             if (e.key === 'Enter') handleCellSave()
                             if (e.key === 'Escape') handleCellCancel()
                           }}
-                          className="w-full px-2 py-1 bg-white/10 border border-white/20 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                          className="w-full px-2 py-1 bg-white/10 border border-white/20 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-cream-500/50"
                           autoFocus
                         />
                       ) : (
@@ -175,7 +175,7 @@ export function BulkUploadPreview({
                             if (e.key === 'Enter') handleCellSave()
                             if (e.key === 'Escape') handleCellCancel()
                           }}
-                          className="w-full px-2 py-1 bg-white/10 border border-white/20 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                          className="w-full px-2 py-1 bg-white/10 border border-white/20 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-cream-500/50"
                           autoFocus
                         />
                       ) : (
@@ -199,7 +199,7 @@ export function BulkUploadPreview({
                             if (e.key === 'Enter') handleCellSave()
                             if (e.key === 'Escape') handleCellCancel()
                           }}
-                          className="w-full px-2 py-1 bg-white/10 border border-white/20 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+                          className="w-full px-2 py-1 bg-white/10 border border-white/20 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-cream-500/50"
                           autoFocus
                         />
                       ) : (
@@ -250,7 +250,7 @@ export function BulkUploadPreview({
           className={cn(
             'px-6 py-2 rounded-lg transition-colors flex items-center gap-2',
             canUpload
-              ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+              ? 'bg-cream-500 text-gray-900 font-medium hover:bg-cream-400'
               : 'bg-gray-700 text-gray-400 cursor-not-allowed'
           )}
         >

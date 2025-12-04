@@ -54,7 +54,7 @@ export function PersonsFilters({ filters, onChange, onCreate }: PersonsFiltersPr
             value={filters.search}
             onChange={(e) => onChange({ ...filters, search: e.target.value })}
             placeholder="Search by name, email, or phone..."
-            className="w-full pl-12 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+            className="w-full pl-12 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50"
           />
         </div>
 
@@ -63,7 +63,7 @@ export function PersonsFilters({ filters, onChange, onCreate }: PersonsFiltersPr
           className={cn(
             'px-2.5 py-1.5 rounded-lg transition-colors relative flex items-center gap-1.5 text-xs font-medium',
             hasActiveFilters
-              ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+              ? 'bg-cream-500 text-gray-900 font-medium hover:bg-cream-400'
               : 'bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10'
           )}
         >
@@ -79,7 +79,7 @@ export function PersonsFilters({ filters, onChange, onCreate }: PersonsFiltersPr
         {onCreate && (
           <button
             onClick={onCreate}
-            className="px-2.5 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-1.5 text-xs font-medium"
+            className="px-2.5 py-1.5 bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 font-medium transition-colors flex items-center gap-1.5 text-xs font-medium"
           >
             <Plus className="h-3.5 w-3.5" />
             Add Person
@@ -97,7 +97,7 @@ export function PersonsFilters({ filters, onChange, onCreate }: PersonsFiltersPr
           <select
             value={filters.personType}
             onChange={(e) => onChange({ ...filters, personType: e.target.value as PersonType | 'all' })}
-            className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+            className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50"
           >
             <option value="all">All Types</option>
             <option value={PersonType.CLIENT_EMPLOYEE}>Employees</option>
@@ -113,7 +113,7 @@ export function PersonsFilters({ filters, onChange, onCreate }: PersonsFiltersPr
           <select
             value={filters.status}
             onChange={(e) => onChange({ ...filters, status: e.target.value as PersonStatus | 'all' })}
-            className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+            className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50"
           >
             <option value="all">All Statuses</option>
             <option value={PersonStatus.ACTIVE}>Active</option>
@@ -129,7 +129,7 @@ export function PersonsFilters({ filters, onChange, onCreate }: PersonsFiltersPr
           <select
             value={filters.employmentStatus}
             onChange={(e) => onChange({ ...filters, employmentStatus: e.target.value as EmploymentStatus | 'all' })}
-            className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+            className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50"
           >
             <option value="all">All Employment</option>
             <option value={EmploymentStatus.FULL_TIME}>Full Time</option>
@@ -150,7 +150,7 @@ export function PersonsFilters({ filters, onChange, onCreate }: PersonsFiltersPr
               ...filters,
               isEligible: e.target.value === 'all' ? 'all' : e.target.value === 'true'
             })}
-            className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+            className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50"
           >
             <option value="all">All</option>
             <option value="true">Eligible</option>

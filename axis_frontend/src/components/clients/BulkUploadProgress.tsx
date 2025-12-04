@@ -17,7 +17,7 @@ export function BulkUploadProgress({ total, progress }: BulkUploadProgressProps)
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <Loader2 className="h-12 w-12 text-emerald-400 animate-spin mx-auto mb-4" />
+        <Loader2 className="h-12 w-12 text-cream-400 animate-spin mx-auto mb-4" />
         <h3 className="text-xl font-semibold text-white mb-2">Uploading Clients</h3>
         <p className="text-sm text-gray-400">
           Please wait while we process your upload...
@@ -34,7 +34,7 @@ export function BulkUploadProgress({ total, progress }: BulkUploadProgressProps)
         </div>
         <div className="w-full bg-white/10 rounded-full h-3 overflow-hidden">
           <div
-            className="bg-emerald-600 h-full transition-all duration-300 ease-out"
+            className="bg-cream-600 h-full transition-all duration-300 ease-out"
             style={{ width: `${progress}%` }}
           />
         </div>

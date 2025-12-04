@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+@theme {
+  --color-cream-50: #FFFEF8;
+  --color-cream-100: #FFFEF0;
+  --color-cream-200: #FFFDE0;
+  --color-cream-300: #FEFCC0;
+  --color-cream-400: #FDFBA0;
+  --color-cream-500: #FDFBD4;
+  --color-cream-600: #F5F3B0;
+  --color-cream-700: #E8E58A;
+  --color-cream-800: #D4D070;
+  --color-cream-900: #B8B550;
+  --color-cream-950: #999830;
+}
+
 @layer base {
   /* Theme variables */
   :root {
@@ -182,12 +196,12 @@ html {
   }
 }
 
-/* Pulse animation for metrics - Wellness colors */
+/* Pulse animation for metrics - Cream colors */
 @keyframes pulse-glow {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 0 20px rgba(253, 251, 212, 0.3);
   }
   50% {
-    box-shadow: 0 0 40px rgba(16, 185, 129, 0.6);
+    box-shadow: 0 0 40px rgba(253, 251, 212, 0.6);
   }
 }

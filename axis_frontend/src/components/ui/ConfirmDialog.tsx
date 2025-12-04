@@ -86,21 +86,21 @@ export function ConfirmDialog({
         }
       case 'warning':
         return {
-          icon: <AlertTriangle className="h-12 w-12 text-yellow-400" />,
+          icon: <AlertTriangle className="h-12 w-12 text-cream-400" />,
           iconBg: 'bg-yellow-500/20',
           borderColor: 'border-yellow-500/30',
         }
       case 'success':
         return {
-          icon: <CheckCircle className="h-12 w-12 text-emerald-400" />,
-          iconBg: 'bg-emerald-500/20',
-          borderColor: 'border-emerald-500/30',
+          icon: <CheckCircle className="h-12 w-12 text-cream-400" />,
+          iconBg: 'bg-cream-500/20',
+          borderColor: 'border-cream-500/30',
         }
       default:
         return {
-          icon: <Info className="h-12 w-12 text-emerald-400" />,
-          iconBg: 'bg-emerald-500/20',
-          borderColor: 'border-emerald-500/30',
+          icon: <Info className="h-12 w-12 text-cream-400" />,
+          iconBg: 'bg-cream-500/20',
+          borderColor: 'border-cream-500/30',
         }
     }
   }
@@ -170,7 +170,7 @@ export function ConfirmDialog({
                 className={cn(
                   'w-full py-2 px-3 bg-white/5 border rounded-lg',
                   'text-white placeholder-gray-500 text-sm',
-                  'focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50',
+                  'focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50',
                   'transition-all duration-200',
                   'backdrop-blur-sm',
                   'disabled:opacity-50 disabled:cursor-not-allowed',

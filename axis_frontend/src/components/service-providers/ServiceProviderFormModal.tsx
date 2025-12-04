@@ -70,8 +70,8 @@ export function ServiceProviderFormModal({
       <div className="bg-gray-900 border border-white/10 rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-500/10 rounded-lg">
-              <Shield className="h-5 w-5 text-emerald-400" />
+            <div className="p-2 bg-amber-500/10 rounded-lg">
+              <Shield className="h-5 w-5 text-cream-400" />
             </div>
             <h2 className="text-xl font-semibold text-white">{title}</h2>
           </div>
@@ -106,7 +106,7 @@ export function ServiceProviderFormModal({
                 value={formData.type}
                 onChange={(e) => handleChange('type', e.target.value as ServiceProviderType)}
                 required
-                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cream-500 focus:border-transparent"
               >
                 <option value={ProviderTypeEnum.COUNSELOR}>Counselor</option>
                 <option value={ProviderTypeEnum.CLINIC}>Clinic</option>
@@ -124,7 +124,7 @@ export function ServiceProviderFormModal({
               <select
                 value={formData.status || ProviderStatusEnum.ACTIVE}
                 onChange={(e) => handleChange('status', e.target.value as ProviderStatus)}
-                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cream-500 focus:border-transparent"
               >
                 <option value={ProviderStatusEnum.ACTIVE}>Active</option>
                 <option value={ProviderStatusEnum.INACTIVE}>Inactive</option>
@@ -176,7 +176,7 @@ export function ServiceProviderFormModal({
                   type="checkbox"
                   checked={formData.is_verified || false}
                   onChange={(e) => handleChange('is_verified', e.target.checked)}
-                  className="w-4 h-4 bg-white/5 border border-white/10 rounded text-emerald-600 focus:ring-2 focus:ring-emerald-500"
+                  className="w-4 h-4 bg-white/5 border border-white/10 rounded text-amber-600 focus:ring-2 focus:ring-cream-500"
                 />
                 <label className="ml-2 text-sm text-gray-300">
                   Provider is verified

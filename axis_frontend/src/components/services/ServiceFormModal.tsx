@@ -72,8 +72,8 @@ export function ServiceFormModal({
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-500/10 rounded-lg">
-              <Stethoscope className="h-5 w-5 text-emerald-400" />
+            <div className="p-2 bg-amber-500/10 rounded-lg">
+              <Stethoscope className="h-5 w-5 text-cream-400" />
             </div>
             <h2 className="text-xl font-semibold text-white">{title}</h2>
           </div>
@@ -183,7 +183,7 @@ export function ServiceFormModal({
                   type="checkbox"
                   checked={formData.is_billable || false}
                   onChange={(e) => handleChange('is_billable', e.target.checked)}
-                  className="h-4 w-4 rounded bg-white/5 border-white/10 text-emerald-600 focus:ring-emerald-500/50"
+                  className="h-4 w-4 rounded bg-white/5 border-white/10 text-amber-600 focus:ring-cream-500/50"
                 />
                 <span className="text-sm text-gray-300">Billable Service</span>
               </label>
@@ -193,7 +193,7 @@ export function ServiceFormModal({
                   type="checkbox"
                   checked={formData.requires_provider || false}
                   onChange={(e) => handleChange('requires_provider', e.target.checked)}
-                  className="h-4 w-4 rounded bg-white/5 border-white/10 text-emerald-600 focus:ring-emerald-500/50"
+                  className="h-4 w-4 rounded bg-white/5 border-white/10 text-amber-600 focus:ring-cream-500/50"
                 />
                 <span className="text-sm text-gray-300">Requires Provider</span>
               </label>

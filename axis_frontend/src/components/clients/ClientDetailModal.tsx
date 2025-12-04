@@ -30,8 +30,8 @@ export function ClientDetailModal({ client, isOpen, onClose, onEdit }: ClientDet
       <div className="bg-gray-900 border-b border-white/10 px-6 py-4 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-4">
           {/* Icon */}
-          <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 border-2 border-emerald-500/30 flex items-center justify-center">
-            <Building2 className="h-6 w-6 text-emerald-400" />
+          <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-cream-500/20 to-cream-600/20 border-2 border-cream-500/30 flex items-center justify-center">
+            <Building2 className="h-6 w-6 text-cream-400" />
           </div>
           <div>
             <h2 className="text-xl font-bold text-white">{client.name}</h2>

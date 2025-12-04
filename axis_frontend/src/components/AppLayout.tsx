@@ -83,7 +83,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top Header Bar */}
-        <header className="h-16 border-b border-theme bg-theme flex items-center justify-between px-4 lg:px-6 gap-4 shrink-0 z-10">
+        <header className="h-16 border-theme bg-theme flex items-center justify-between px-4 lg:px-6 gap-4 shrink-0 z-10">
           <div className="flex items-center gap-4 flex-1 min-w-0">
             <button
               onClick={() => setSidebarOpen(true)}
@@ -274,7 +274,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                 onClick={() => setProfileMenuOpen(!profileMenuOpen)}
                 className="flex items-center gap-2 p-2 hover:bg-white/10 rounded-lg transition-colors"
               >
-                <div className="h-8 w-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white text-xs font-semibold">
+                <div className="h-8 w-8 rounded-full bg-linear-to-br from-cream-500 to-teal-500 flex items-center justify-center text-white text-xs font-semibold">
                   {getUserInitials()}
                 </div>
               </button>

@@ -17,7 +17,7 @@ export function ContractDocumentsTab({ contract }: ContractDocumentsTabProps) {
       <div className="bg-white/5 border border-white/10 rounded-lg p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-white">Contract Documents</h3>
-          <button className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2">
+          <button className="px-4 py-2 bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 font-medium transition-colors flex items-center gap-2">
             <Upload className="h-4 w-4" />
             Upload Document
           </button>
@@ -30,17 +30,17 @@ export function ContractDocumentsTab({ contract }: ContractDocumentsTabProps) {
             <input
               type="text"
               placeholder="Search documents..."
-              className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+              className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cream-500/50"
             />
           </div>
         </div>
 
         {/* Contract Document Link */}
         {contract.document_url && (
-          <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+          <div className="mb-6 p-4 bg-amber-500/10 border border-cream-500/20 rounded-lg">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <FileText className="h-5 w-5 text-emerald-400" />
+                <FileText className="h-5 w-5 text-cream-400" />
                 <div>
                   <p className="text-sm font-medium text-white">Contract Document</p>
                   {contract.signed_by && (

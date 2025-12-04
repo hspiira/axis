@@ -14,6 +14,8 @@ import {
   Users,
   Activity,
   Briefcase,
+  Stethoscope,
+  Calendar,
 } from 'lucide-react'
 import { type ClientDetail } from '@/api/clients'
 import { cn } from '@/lib/utils'
@@ -22,6 +24,8 @@ import { ClientContractsTab } from './tabs/ClientContractsTab'
 import { ClientDocumentsTab } from './tabs/ClientDocumentsTab'
 import { ClientPersonsTab } from './tabs/ClientPersonsTab'
 import { ClientActivityTab } from './tabs/ClientActivityTab'
+import { ClientServicesTab } from './tabs/ClientServicesTab'
+import { ClientSessionsTab } from './tabs/ClientSessionsTab'
 
 interface ClientDetailTabsProps {
   client: ClientDetail
@@ -29,7 +33,7 @@ interface ClientDetailTabsProps {
   onEdit?: () => void
 }
 
-type TabId = 'overview' | 'contracts' | 'documents' | 'persons' | 'activity'
+type TabId = 'overview' | 'contracts' | 'documents' | 'persons' | 'services' | 'sessions' | 'activity'
 
 interface Tab {
   id: TabId
@@ -86,6 +90,18 @@ export function ClientDetailTabs({ client, activeTab: propActiveTab }: ClientDet
       badge: client.total_employees,
     },
     {
+      id: 'services',
+      label: 'Services',
+      icon: <Stethoscope className="h-4 w-4" />,
+      component: ClientServicesTab,
+    },
+    {
+      id: 'sessions',
+      label: 'Sessions',
+      icon: <Calendar className="h-4 w-4" />,
+      component: ClientSessionsTab,
+    },
+    {
       id: 'activity',
       label: 'Activity',
       icon: <Activity className="h-4 w-4" />,
@@ -109,14 +125,14 @@ export function ClientDetailTabs({ client, activeTab: propActiveTab }: ClientDet
                 'flex items-center gap-2 px-4 py-3 text-sm font-medium transition-all duration-200',
                 'border-b-2 whitespace-nowrap',
                 activeTab === tab.id
-                  ? 'border-emerald-500 text-emerald-400'
+                  ? 'border-cream-500 text-cream-400'
                   : 'border-transparent text-gray-400 hover:text-gray-300 hover:border-white/20'
               )}
             >
               {tab.icon}
               {tab.label}
               {tab.badge !== undefined && tab.badge > 0 && (
-                <span className="ml-1 px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs rounded-full">
+                <span className="ml-1 px-2 py-0.5 bg-cream-500/20 text-cream-400 text-xs rounded-full">
                   {tab.badge}
                 </span>
               )}

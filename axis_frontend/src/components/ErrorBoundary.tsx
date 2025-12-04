@@ -136,7 +136,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
                 onClick={this.handleReset}
-                className="px-8 py-4 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition-all"
+                className="px-8 py-4 bg-cream-500 text-gray-900 font-medium rounded-lg font-semibold hover:bg-cream-400 transition-all"
               >
                 Try Again
               </button>

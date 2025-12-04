@@ -23,7 +23,7 @@ function Section({ icon, title, children, variant = 'default' }: SectionProps) {
   const variantClasses = {
     default: 'bg-white/5 border border-white/10',
     warning: 'bg-yellow-500/10 border border-yellow-500/20',
-    success: 'bg-emerald-500/10 border border-emerald-500/20',
+    success: 'bg-amber-500/10 border border-cream-500/20',
   }
 
   return (
@@ -56,8 +56,8 @@ function InfoRow({ label, value }: InfoRowProps) {
 export function ContractBillingTab({ contract }: ContractBillingTabProps) {
   const getPaymentStatusBadge = () => {
     const statusClasses = {
-      [PaymentStatus.PAID]: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-      [PaymentStatus.PENDING]: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
+      [PaymentStatus.PAID]: 'bg-amber-500/10 text-cream-400 border-cream-500/20',
+      [PaymentStatus.PENDING]: 'bg-yellow-500/10 text-cream-400 border-yellow-500/20',
       [PaymentStatus.OVERDUE]: 'bg-red-500/10 text-red-400 border-red-500/20',
     }
 
@@ -76,7 +76,7 @@ export function ContractBillingTab({ contract }: ContractBillingTabProps) {
     <div className="space-y-6">
       {/* Payment Status Overview */}
       <Section
-        icon={<CreditCard className="h-5 w-5 text-emerald-400" />}
+        icon={<CreditCard className="h-5 w-5 text-cream-400" />}
         title="Payment Status"
         variant={
           contract.payment_status === PaymentStatus.PAID
@@ -102,7 +102,7 @@ export function ContractBillingTab({ contract }: ContractBillingTabProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Billing Information */}
-        <Section icon={<DollarSign className="h-5 w-5 text-emerald-400" />} title="Billing Details">
+        <Section icon={<DollarSign className="h-5 w-5 text-cream-400" />} title="Billing Details">
           <div className="space-y-3">
             <InfoRow
               label="Billing Rate"
@@ -122,7 +122,7 @@ export function ContractBillingTab({ contract }: ContractBillingTabProps) {
         </Section>
 
         {/* Payment Schedule */}
-        <Section icon={<Calendar className="h-5 w-5 text-emerald-400" />} title="Payment Schedule">
+        <Section icon={<Calendar className="h-5 w-5 text-cream-400" />} title="Payment Schedule">
           <div className="space-y-3">
             {contract.last_billing_date && (
               <InfoRow label="Last Billing" value={formatDate(contract.last_billing_date)} />
@@ -134,7 +134,7 @@ export function ContractBillingTab({ contract }: ContractBillingTabProps) {
                   <span
                     className={
                       new Date(contract.next_billing_date) < new Date()
-                        ? 'text-yellow-400'
+                        ? 'text-cream-400'
                         : 'text-white'
                     }
                   >
@@ -151,7 +151,7 @@ export function ContractBillingTab({ contract }: ContractBillingTabProps) {
       </div>
 
       {/* Payment History Placeholder */}
-      <Section icon={<CreditCard className="h-5 w-5 text-emerald-400" />} title="Payment History">
+      <Section icon={<CreditCard className="h-5 w-5 text-cream-400" />} title="Payment History">
         <div className="text-center py-8">
           <p className="text-gray-400">Payment history will be displayed here</p>
           <p className="text-sm text-gray-500 mt-2">Feature coming soon</p>

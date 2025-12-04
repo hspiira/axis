@@ -101,7 +101,7 @@ export function BulkUploadResults({
                 strokeDasharray={`${(successRate / 100) * 251.2} 251.2`}
                 className={cn(
                   'transition-all duration-500',
-                  successRate >= 80 ? 'text-green-400' : successRate >= 50 ? 'text-yellow-400' : 'text-red-400'
+                  successRate >= 80 ? 'text-green-400' : successRate >= 50 ? 'text-cream-400' : 'text-red-400'
                 )}
               />
             </svg>
@@ -176,7 +176,7 @@ export function BulkUploadResults({
           </button>
           <button
             onClick={onClose}
-            className="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+            className="px-6 py-2 bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 font-medium transition-colors"
           >
             Done
           </button>

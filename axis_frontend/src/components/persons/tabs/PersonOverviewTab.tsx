@@ -88,11 +88,11 @@ export function PersonOverviewTab({ person }: PersonOverviewTabProps) {
             <img
               src={person.profile.profile_picture}
               alt={person.profile.full_name}
-              className="h-24 w-24 rounded-full object-cover border-2 border-emerald-500/30"
+              className="h-24 w-24 rounded-full object-cover border-2 border-cream-500/30"
             />
           ) : (
-            <div className="h-24 w-24 rounded-full bg-linear-to-br from-emerald-500/20 to-emerald-600/20 border-2 border-emerald-500/30 flex items-center justify-center">
-              <span className="text-3xl font-bold text-emerald-400">
+            <div className="h-24 w-24 rounded-full bg-linear-to-br from-cream-500/20 to-cream-600/20 border-2 border-cream-500/30 flex items-center justify-center">
+              <span className="text-3xl font-bold text-cream-400">
                 {person.profile?.full_name
                   ?.split(' ')
                   .map((n) => n[0])
@@ -119,7 +119,7 @@ export function PersonOverviewTab({ person }: PersonOverviewTabProps) {
                 : person.person_type}
             </span>
             {person.is_eligible && (
-              <span className="flex items-center gap-1 text-xs text-emerald-400 px-2 py-1 bg-emerald-500/10 rounded-full">
+              <span className="flex items-center gap-1 text-xs text-cream-400 px-2 py-1 bg-amber-500/10 rounded-full">
                 <CheckCircle className="h-3 w-3" />
                 Eligible for Services
               </span>
@@ -162,7 +162,7 @@ export function PersonOverviewTab({ person }: PersonOverviewTabProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Personal Information */}
-        <Section icon={<User className="h-5 w-5 text-emerald-400" />} title="Personal Information">
+        <Section icon={<User className="h-5 w-5 text-cream-400" />} title="Personal Information">
           <div className="space-y-3">
             <InfoRow label="Full Name" value={person.profile?.full_name} />
             {person.profile?.date_of_birth && (
@@ -182,7 +182,7 @@ export function PersonOverviewTab({ person }: PersonOverviewTabProps) {
         {/* Employment or Relationship */}
         {isEmployee ? (
           <Section
-            icon={<Briefcase className="h-5 w-5 text-emerald-400" />}
+            icon={<Briefcase className="h-5 w-5 text-cream-400" />}
             title="Employment Details"
           >
             <div className="space-y-3">
@@ -199,7 +199,7 @@ export function PersonOverviewTab({ person }: PersonOverviewTabProps) {
             </div>
           </Section>
         ) : isDependent ? (
-          <Section icon={<Users className="h-5 w-5 text-emerald-400" />} title="Relationship">
+          <Section icon={<Users className="h-5 w-5 text-cream-400" />} title="Relationship">
             <div className="space-y-3">
               <InfoRow label="Relationship Type" value={person.relationship_type} />
               <InfoRow label="Primary Employee ID" value={person.primary_employee} />
@@ -214,7 +214,7 @@ export function PersonOverviewTab({ person }: PersonOverviewTabProps) {
 
       {/* Address Information */}
       {(person.profile?.address || person.profile?.city || person.profile?.country) && (
-        <Section icon={<MapPin className="h-5 w-5 text-emerald-400" />} title="Address">
+        <Section icon={<MapPin className="h-5 w-5 text-cream-400" />} title="Address">
           <div className="space-y-3">
             <InfoRow label="Address" value={person.profile?.address} />
             <InfoRow label="City" value={person.profile?.city} />
@@ -225,20 +225,20 @@ export function PersonOverviewTab({ person }: PersonOverviewTabProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Organization */}
-        <Section icon={<Building2 className="h-5 w-5 text-emerald-400" />} title="Organization">
+        <Section icon={<Building2 className="h-5 w-5 text-cream-400" />} title="Organization">
           <div className="space-y-3">
             <InfoRow label="Client" value={person.client} />
           </div>
         </Section>
 
         {/* Service Information */}
-        <Section icon={<Heart className="h-5 w-5 text-emerald-400" />} title="Service Information">
+        <Section icon={<Heart className="h-5 w-5 text-cream-400" />} title="Service Information">
           <div className="space-y-3">
             <div className="flex items-start gap-2 text-sm">
               <span className="text-gray-400 min-w-fit">Eligibility:</span>
               <span
                 className={`font-medium flex items-center gap-1.5 ${
-                  person.is_eligible ? 'text-emerald-400' : 'text-gray-400'
+                  person.is_eligible ? 'text-cream-400' : 'text-gray-400'
                 }`}
               >
                 {person.is_eligible ? (
@@ -265,7 +265,7 @@ export function PersonOverviewTab({ person }: PersonOverviewTabProps) {
       {/* Emergency Contact */}
       {(person.profile?.emergency_contact_name || person.profile?.emergency_contact_phone) && (
         <Section
-          icon={<AlertCircle className="h-5 w-5 text-yellow-400" />}
+          icon={<AlertCircle className="h-5 w-5 text-cream-400" />}
           title="Emergency Contact"
           variant="warning"
         >
@@ -278,12 +278,12 @@ export function PersonOverviewTab({ person }: PersonOverviewTabProps) {
 
       {/* Specializations - Only for employees */}
       {isEmployee && (person.specializations?.length || 0) > 0 && (
-        <Section icon={<Briefcase className="h-5 w-5 text-emerald-400" />} title="Specializations">
+        <Section icon={<Briefcase className="h-5 w-5 text-cream-400" />} title="Specializations">
           <div className="flex flex-wrap gap-2">
             {person.specializations?.map((spec, i) => (
               <span
                 key={i}
-                className="px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-sm text-emerald-400"
+                className="px-3 py-1.5 bg-amber-500/10 border border-cream-500/20 rounded-full text-sm text-cream-400"
               >
                 {spec}
               </span>
@@ -294,7 +294,7 @@ export function PersonOverviewTab({ person }: PersonOverviewTabProps) {
 
       {/* Notes */}
       {person.notes && (
-        <Section icon={<ClipboardList className="h-5 w-5 text-emerald-400" />} title="Notes">
+        <Section icon={<ClipboardList className="h-5 w-5 text-cream-400" />} title="Notes">
           <p className="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed">{person.notes}</p>
         </Section>
       )}

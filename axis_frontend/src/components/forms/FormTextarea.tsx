@@ -51,7 +51,7 @@ export const FormTextarea = forwardRef<HTMLTextAreaElement, FormTextareaProps>(
           className={cn(
             'w-full py-2 px-3 bg-white/5 border rounded-lg',
             'text-white placeholder-gray-500 text-sm',
-            'focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50',
+            'focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50',
             'transition-all duration-200',
             'backdrop-blur-sm',
             'resize-y min-h-[80px]',

@@ -110,7 +110,7 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
               : 'text-theme-secondary hover:text-theme hover:bg-white/5'
           )}
         >
-          <Icon className="h-[14px] w-[14px] flex-shrink-0" />
+          <Icon className="h-3.5 w-3.5 shrink-0" />
           <span>{item.label}</span>
         </Link>
       )
@@ -131,7 +131,7 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
       <aside
         className={cn(
           'flex flex-col h-screen bg-theme transition-transform duration-300 ease-in-out',
-          'w-64 flex-shrink-0',
+          'w-64 shrink-0',
           // On mobile: fixed positioning with slide animation
           'fixed lg:relative lg:translate-x-0',
           // On mobile: translate based on isOpen
@@ -151,7 +151,7 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
               onClick={onClose}
               className="text-theme-tertiary hover:text-theme-secondary transition-colors"
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
                 <path d="M8 1.33334L14.6667 8.00001L8 14.6667M13.3333 8.00001H1.33334" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </Link>
@@ -188,7 +188,7 @@ export function Sidebar({ isOpen = true, onClose }: SidebarProps) {
 
         {/* Logo Section - Bottom */}
         <div className="px-4 py-4 border-t border-white/10">
-          <Link to="/dashboard" onClick={onClose} className="flex items-center justify-center">
+          <Link to="/dashboard" onClick={onClose} className="flex">
             <Logo size="sm" showText={true} />
           </Link>
         </div>

@@ -18,7 +18,7 @@ export function ContractNotesTab({ contract }: ContractNotesTabProps) {
       <div className="bg-white/5 border border-white/10 rounded-lg p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-white">Contract Notes</h3>
-          <button className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2">
+          <button className="px-4 py-2 bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 font-medium transition-colors flex items-center gap-2">
             <Plus className="h-4 w-4" />
             Add Note
           </button>
@@ -30,7 +30,7 @@ export function ContractNotesTab({ contract }: ContractNotesTabProps) {
             <div className="bg-white/5 border border-white/10 rounded-lg p-4">
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <StickyNote className="h-4 w-4 text-emerald-400" />
+                  <StickyNote className="h-4 w-4 text-cream-400" />
                   <span className="text-sm font-medium text-white">Contract Notes</span>
                 </div>
                 <button className="p-1.5 text-gray-400 hover:text-white hover:bg-white/10 rounded transition-colors">

@@ -312,7 +312,7 @@ export function ClientForm({ initialData, onSubmit, onCancel, isLoading = false 
                   type="checkbox"
                   id="is_verified"
                   {...register('is_verified')}
-                  className="h-4 w-4 rounded bg-white/5 border-white/10 text-emerald-600 focus:ring-emerald-500/50"
+                  className="h-4 w-4 rounded bg-white/5 border-white/10 text-amber-600 focus:ring-cream-500/50"
                 />
                 <label htmlFor="is_verified" className="text-sm text-gray-400">
                   Mark as verified
@@ -347,11 +347,11 @@ export function ClientForm({ initialData, onSubmit, onCancel, isLoading = false 
                   className={cn(
                     'flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all',
                     isActive
-                      ? 'bg-emerald-600 border-emerald-500 text-white'
+                      ? 'bg-cream-600 border-cream-500 text-white'
                       : isCompleted
-                        ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400'
+                        ? 'bg-cream-500/20 border-cream-500 text-cream-400'
                         : 'bg-white/5 border-white/10 text-gray-500',
-                    isClickable && 'cursor-pointer hover:border-emerald-500/50',
+                    isClickable && 'cursor-pointer hover:border-cream-500/50',
                     !isClickable && 'cursor-not-allowed'
                   )}
                 >
@@ -364,7 +364,7 @@ export function ClientForm({ initialData, onSubmit, onCancel, isLoading = false 
                 <span
                   className={cn(
                     'mt-2 text-xs font-medium',
-                    isActive ? 'text-emerald-400' : isCompleted ? 'text-emerald-500/70' : 'text-gray-500'
+                    isActive ? 'text-cream-400' : isCompleted ? 'text-amber-500/70' : 'text-gray-500'
                   )}
                 >
                   {step.title}
@@ -374,7 +374,7 @@ export function ClientForm({ initialData, onSubmit, onCancel, isLoading = false 
                 <div
                   className={cn(
                     'flex-1 h-0.5 mx-2 transition-colors',
-                    currentStep > step.id ? 'bg-emerald-500' : 'bg-white/10'
+                    currentStep > step.id ? 'bg-amber-500' : 'bg-white/10'
                   )}
                 />
               )}
@@ -426,7 +426,7 @@ export function ClientForm({ initialData, onSubmit, onCancel, isLoading = false 
                 e.stopPropagation()
                 handleNext(e)
               }}
-              className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-lg font-semibold text-sm hover:bg-emerald-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-5 py-2.5 bg-cream-500 text-gray-900 font-medium rounded-lg font-semibold text-sm hover:bg-cream-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoading}
             >
               Next
@@ -436,7 +436,7 @@ export function ClientForm({ initialData, onSubmit, onCancel, isLoading = false 
             <button
               type="submit"
               disabled={isLoading}
-              className="px-5 py-2.5 bg-emerald-600 text-white rounded-lg font-semibold text-sm hover:bg-emerald-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-5 py-2.5 bg-cream-500 text-gray-900 font-medium rounded-lg font-semibold text-sm hover:bg-cream-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Saving...' : initialData ? 'Update Client' : 'Create Client'}
             </button>

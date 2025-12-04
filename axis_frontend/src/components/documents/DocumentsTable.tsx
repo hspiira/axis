@@ -38,8 +38,8 @@ interface DocumentsTableProps {
 
 const STATUS_COLORS: Record<DocumentStatus, string> = {
   Draft: 'bg-gray-500/20 text-gray-400',
-  Published: 'bg-emerald-500/20 text-emerald-400',
-  Archived: 'bg-yellow-500/20 text-yellow-400',
+  Published: 'bg-cream-500/20 text-cream-400',
+  Archived: 'bg-yellow-500/20 text-cream-400',
   Expired: 'bg-red-500/20 text-red-400',
 }
 
@@ -178,9 +178,9 @@ export function DocumentsTable({
       return <ChevronsUpDown className="h-4 w-4 text-gray-500" />
     }
     return sortDirection === 'asc' ? (
-      <ChevronUp className="h-4 w-4 text-emerald-400" />
+      <ChevronUp className="h-4 w-4 text-cream-400" />
     ) : (
-      <ChevronDown className="h-4 w-4 text-emerald-400" />
+      <ChevronDown className="h-4 w-4 text-cream-400" />
     )
   }
 
@@ -274,7 +274,7 @@ export function DocumentsTable({
                       )}
                     </div>
                     {document.is_confidential && (
-                      <Lock className="h-3 w-3 text-yellow-400"/>
+                      <Lock className="h-3 w-3 text-cream-400"/>
                     )}
                   </div>
                 </td>

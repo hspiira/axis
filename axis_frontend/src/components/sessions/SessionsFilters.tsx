@@ -63,7 +63,7 @@ export function SessionsFilters({
             placeholder="Search by service, person, or provider..."
             value={searchValue}
             onChange={(e) => handleSearchChange(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-gray-800/50 border border-white/10 rounded-lg text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+            className="w-full pl-10 pr-4 py-2 bg-gray-800/50 border border-white/10 rounded-lg text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50"
           />
         </div>
         <button
@@ -71,14 +71,14 @@ export function SessionsFilters({
           className={cn(
             'px-2.5 py-1.5 rounded-lg transition-all relative flex items-center gap-1.5 text-xs font-medium',
             isOpen || hasActiveFilters
-              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+              ? 'bg-cream-500/20 text-cream-400 border border-cream-500/30'
               : 'bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10 hover:text-white'
           )}
         >
           <Filter className="h-3.5 w-3.5" />
           Filters
           {hasActiveFilters && (
-            <span className="ml-0.5 px-1 py-0.5 bg-emerald-500/30 rounded text-xs">
+            <span className="ml-0.5 px-1 py-0.5 bg-amber-500/30 rounded text-xs">
               {Object.keys(localFilters).filter(k => k !== 'search').length}
             </span>
           )}
@@ -107,7 +107,7 @@ export function SessionsFilters({
         </button>
         <button
           onClick={onCreate}
-          className="px-2.5 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-all flex items-center gap-1.5 text-xs font-medium"
+          className="px-2.5 py-1.5 bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 font-medium transition-all flex items-center gap-1.5 text-xs font-medium"
         >
           <Plus className="h-3.5 w-3.5" />
           Add Session
@@ -123,7 +123,7 @@ export function SessionsFilters({
             <select
               value={localFilters.status || ''}
               onChange={(e) => updateFilter('status', e.target.value as SessionStatus | undefined)}
-              className="w-full px-3 py-2 bg-gray-800/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+              className="w-full px-3 py-2 bg-gray-800/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50"
             >
               <option value="">All Statuses</option>
               {Object.values(SessionStatusEnum).map((status) => (
@@ -145,7 +145,7 @@ export function SessionsFilters({
                   e.target.value === '' ? undefined : e.target.value === 'true'
                 )
               }
-              className="w-full px-3 py-2 bg-gray-800/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+              className="w-full px-3 py-2 bg-gray-800/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50"
             >
               <option value="">All Types</option>
               <option value="false">Individual</option>
@@ -160,7 +160,7 @@ export function SessionsFilters({
               type="date"
               value={localFilters.date_from || ''}
               onChange={(e) => updateFilter('date_from', e.target.value)}
-              className="w-full px-3 py-2 bg-gray-800/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+              className="w-full px-3 py-2 bg-gray-800/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50"
             />
           </div>
 
@@ -171,7 +171,7 @@ export function SessionsFilters({
               type="date"
               value={localFilters.date_to || ''}
               onChange={(e) => updateFilter('date_to', e.target.value)}
-              className="w-full px-3 py-2 bg-gray-800/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500/50"
+              className="w-full px-3 py-2 bg-gray-800/50 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:ring-2 focus:ring-cream-500/50 focus:border-cream-500/50"
             />
           </div>
         </div>
