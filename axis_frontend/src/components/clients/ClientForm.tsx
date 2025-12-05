@@ -1,9 +1,15 @@
 /**
- * Client Form Component - Multi-Step Form
+ * Client Form Component - Tabbed Single-Page Form
  *
  * SOLID Principles:
  * - Single Responsibility: Handle client form input and validation
  * - Open/Closed: Extensible with additional fields
+ *
+ * Redesigned for better UX:
+ * - Single-page tabbed interface instead of multi-step wizard
+ * - All fields accessible at once
+ * - Visual grouping with collapsible sections
+ * - Cleaner navigation
  */
 
 import { useState } from 'react'
@@ -21,9 +27,6 @@ import {
   User,
   Briefcase,
   FileText,
-  ChevronRight,
-  ChevronLeft,
-  Check,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { clientFormSchema, type ClientFormValues } from '@/schemas'
@@ -35,25 +38,25 @@ interface ClientFormProps {
   isLoading?: boolean
 }
 
-const STEPS = [
-  { id: 1, title: 'Basic Info', icon: Building2 },
-  { id: 2, title: 'Location', icon: MapPin },
-  { id: 3, title: 'Contact', icon: User },
-  { id: 4, title: 'Classification', icon: Briefcase },
-  { id: 5, title: 'Additional', icon: FileText },
-] as const
+type TabId = 'basic' | 'contact' | 'classification' | 'additional'
+
+const TABS: { id: TabId; label: string; icon: any }[] = [
+  { id: 'basic', label: 'Basic Info', icon: Building2 },
+  { id: 'contact', label: 'Contact & Location', icon: MapPin },
+  { id: 'classification', label: 'Classification', icon: Briefcase },
+  { id: 'additional', label: 'Additional', icon: FileText },
+]
 
 export function ClientForm({ initialData, onSubmit, onCancel, isLoading = false }: ClientFormProps) {
   const { data: industriesData } = useIndustries()
   const industries = Array.isArray(industriesData) ? industriesData : []
-  const [currentStep, setCurrentStep] = useState(1)
+  const [activeTab, setActiveTab] = useState<TabId>('basic')
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
-    trigger,
   } = useForm<ClientFormValues>({
     resolver: zodResolver(clientFormSchema) as any,
     defaultValues: {
@@ -119,48 +122,35 @@ export function ClientForm({ initialData, onSubmit, onCancel, isLoading = false 
 
   const status = watch('status')
 
-  // Validate current step before moving forward
-  const validateStep = async (step: number): Promise<boolean> => {
-    const fieldsToValidate: (keyof ClientFormData)[][] = [
-      ['name', 'status', 'email', 'phone', 'website'], // Step 1
-      ['address', 'billing_address', 'timezone'], // Step 2
-      ['contact_person', 'contact_email', 'contact_phone'], // Step 3
-      ['industry_id', 'preferred_contact_method', 'tax_id'], // Step 4
-      ['notes', 'is_verified'], // Step 5
-    ]
+  return (
+    <form onSubmit={handleSubmit(onSubmitForm)} className="p-6 space-y-4">
+      {/* Tabs */}
+      <div className="flex gap-1 p-1 bg-white/5 rounded-lg">
+        {TABS.map((tab) => {
+          const Icon = tab.icon
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveTab(tab.id)}
+              className={cn(
+                'flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all',
+                activeTab === tab.id
+                  ? 'bg-cream-500 text-gray-900 shadow-sm'
+                  : 'text-gray-400 hover:text-white hover:bg-white/5'
+              )}
+            >
+              <Icon className="h-4 w-4" />
+              <span className="hidden sm:inline">{tab.label}</span>
+            </button>
+          )
+        })}
+      </div>
 
-    const fields = fieldsToValidate[step - 1] || []
-    const result = await trigger(fields as any)
-    return result
-  }
-
-  const handleNext = async (e?: React.MouseEvent<HTMLButtonElement>) => {
-    e?.preventDefault()
-    e?.stopPropagation()
-    const isValid = await validateStep(currentStep)
-    if (isValid && currentStep < STEPS.length) {
-      setCurrentStep(currentStep + 1)
-    }
-  }
-
-  const handlePrevious = (e?: React.MouseEvent<HTMLButtonElement>) => {
-    e?.preventDefault()
-    e?.stopPropagation()
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1)
-    }
-  }
-
-  const handleStepClick = (step: number) => {
-    if (step < currentStep) {
-      setCurrentStep(step)
-    }
-  }
-
-  const renderStepContent = () => {
-    switch (currentStep) {
-      case 1:
-        return (
+      {/* Tab Content */}
+      <div>
+        {/* Basic Info Tab */}
+        {activeTab === 'basic' && (
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
@@ -175,6 +165,7 @@ export function ClientForm({ initialData, onSubmit, onCancel, isLoading = false 
                 label="Status"
                 options={statusOptions}
                 placeholder="Select status"
+                required
                 {...register('status')}
                 error={errors.status}
               />
@@ -206,69 +197,73 @@ export function ClientForm({ initialData, onSubmit, onCancel, isLoading = false 
               error={errors.website}
             />
           </div>
-        )
+        )}
 
-      case 2:
-        return (
+        {/* Contact & Location Tab */}
+        {activeTab === 'contact' && (
           <div className="space-y-4">
-            <FormTextarea
-              label="Address"
-              placeholder="Enter physical address"
-              rows={3}
-              {...register('address')}
-              error={errors.address}
-            />
-            <FormTextarea
-              label="Billing Address"
-              placeholder="Enter billing address (if different)"
-              rows={3}
-              {...register('billing_address')}
-              error={errors.billing_address}
-              helperText="Leave blank if same as physical address"
-            />
-            <FormField
-              label="Timezone"
-              placeholder="e.g., America/New_York"
-              {...register('timezone')}
-              error={errors.timezone}
-              helperText="IANA timezone identifier"
-            />
-          </div>
-        )
+            {/* Primary Contact Section */}
+            <div className="space-y-4">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Primary Contact
+              </label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <FormField
+                  label="Contact Person"
+                  placeholder="Full name"
+                  {...register('contact_person')}
+                  error={errors.contact_person}
+                />
+                <FormField
+                  label="Contact Email"
+                  type="email"
+                  placeholder="contact@example.com"
+                  {...register('contact_email')}
+                  error={errors.contact_email}
+                />
+                <FormField
+                  label="Contact Phone"
+                  type="tel"
+                  placeholder="+1 (555) 000-0000"
+                  {...register('contact_phone')}
+                  error={errors.contact_phone}
+                />
+              </div>
+            </div>
 
-      case 3:
-        return (
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <FormField
-                label="Contact Person"
-                placeholder="Full name"
-                leftIcon={<User className="h-4 w-4" />}
-                {...register('contact_person')}
-                error={errors.contact_person}
+            {/* Location Section */}
+            <div className="space-y-4">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Location Details
+              </label>
+              <FormTextarea
+                label="Physical Address"
+                placeholder="Enter physical address"
+                rows={2}
+                {...register('address')}
+                error={errors.address}
+              />
+              <FormTextarea
+                label="Billing Address"
+                placeholder="Enter billing address (if different)"
+                rows={2}
+                {...register('billing_address')}
+                error={errors.billing_address}
+                helperText="Leave blank if same as physical address"
               />
               <FormField
-                label="Contact Email"
-                type="email"
-                placeholder="contact@example.com"
-                leftIcon={<Mail className="h-4 w-4" />}
-                {...register('contact_email')}
-                error={errors.contact_email}
-              />
-              <FormField
-                label="Contact Phone"
-                type="tel"
-                placeholder="+1 (555) 000-0000"
-                leftIcon={<Phone className="h-4 w-4" />}
-                {...register('contact_phone')}
-                error={errors.contact_phone}
+                label="Timezone"
+                placeholder="e.g., America/New_York"
+                {...register('timezone')}
+                error={errors.timezone}
+                helperText="IANA timezone identifier (optional)"
               />
             </div>
           </div>
-        )
+        )}
 
-      case 4:
-        return (
+        {/* Classification Tab */}
+        {activeTab === 'classification' && (
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormSelect
@@ -293,155 +288,54 @@ export function ClientForm({ initialData, onSubmit, onCancel, isLoading = false 
               {...register('tax_id')}
               error={errors.tax_id}
             />
-          </div>
-        )
-
-      case 5:
-        return (
-          <div className="space-y-4">
-            <FormTextarea
-              label="Notes"
-              placeholder="Internal notes and observations"
-              rows={4}
-              {...register('notes')}
-              error={errors.notes}
-            />
             {status === BaseStatus.ACTIVE && (
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
                   id="is_verified"
                   {...register('is_verified')}
-                  className="h-4 w-4 rounded bg-white/5 border-white/10 text-amber-600 focus:ring-cream-500/50"
+                  className="w-4 h-4 rounded bg-gray-800/50 border-white/10 text-amber-600 focus:ring-cream-500/50"
                 />
-                <label htmlFor="is_verified" className="text-sm text-gray-400">
-                  Mark as verified
+                <label htmlFor="is_verified" className="text-sm font-medium text-gray-300">
+                  Mark this client as verified
                 </label>
               </div>
             )}
           </div>
-        )
+        )}
 
-      default:
-        return null
-    }
-  }
-
-  return (
-    <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-6">
-      {/* Step Progress Indicator */}
-      <div className="flex items-center justify-between mb-6">
-        {STEPS.map((step, index) => {
-          const Icon = step.icon
-          const isActive = currentStep === step.id
-          const isCompleted = currentStep > step.id
-          const isClickable = currentStep > step.id
-
-          return (
-            <div key={step.id} className="flex items-center flex-1">
-              <div className="flex flex-col items-center flex-1">
-                <button
-                  type="button"
-                  onClick={() => handleStepClick(step.id)}
-                  disabled={!isClickable}
-                  className={cn(
-                    'flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all',
-                    isActive
-                      ? 'bg-cream-600 border-cream-500 text-white'
-                      : isCompleted
-                        ? 'bg-cream-500/20 border-cream-500 text-cream-400'
-                        : 'bg-white/5 border-white/10 text-gray-500',
-                    isClickable && 'cursor-pointer hover:border-cream-500/50',
-                    !isClickable && 'cursor-not-allowed'
-                  )}
-                >
-                  {isCompleted ? (
-                    <Check className="h-5 w-5" />
-                  ) : (
-                    <Icon className="h-5 w-5" />
-                  )}
-                </button>
-                <span
-                  className={cn(
-                    'mt-2 text-xs font-medium',
-                    isActive ? 'text-cream-400' : isCompleted ? 'text-amber-500/70' : 'text-gray-500'
-                  )}
-                >
-                  {step.title}
-                </span>
-              </div>
-              {index < STEPS.length - 1 && (
-                <div
-                  className={cn(
-                    'flex-1 h-0.5 mx-2 transition-colors',
-                    currentStep > step.id ? 'bg-amber-500' : 'bg-white/10'
-                  )}
-                />
-              )}
-            </div>
-          )
-        })}
+        {/* Additional Tab */}
+        {activeTab === 'additional' && (
+          <div className="space-y-4">
+            <FormTextarea
+              label="Internal Notes"
+              placeholder="Add internal notes and observations about this client..."
+              rows={8}
+              {...register('notes')}
+              error={errors.notes}
+              helperText="These notes are for internal use only and will not be visible to the client"
+            />
+          </div>
+        )}
       </div>
 
-      {/* Step Content */}
-      <div className="min-h-[300px]">{renderStepContent()}</div>
-
       {/* Form Actions */}
-      <div className="flex items-center justify-between pt-4 border-t border-white/10">
-        <div className="flex gap-3">
-          {currentStep > 1 && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                handlePrevious(e)
-              }}
-              className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-gray-400 hover:text-white transition-colors"
-              disabled={isLoading}
-            >
-              <ChevronLeft className="h-4 w-4" />
-              Previous
-            </button>
-          )}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              onCancel()
-            }}
-            className="px-5 py-2.5 text-sm font-medium text-gray-400 hover:text-white transition-colors"
-            disabled={isLoading}
-          >
-            Cancel
-          </button>
-        </div>
-        <div className="flex gap-3">
-          {currentStep < STEPS.length ? (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                handleNext(e)
-              }}
-              className="flex items-center gap-2 px-5 py-2.5 bg-cream-500 text-gray-900 font-medium rounded-lg font-semibold text-sm hover:bg-cream-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={isLoading}
-            >
-              Next
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          ) : (
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="px-5 py-2.5 bg-cream-500 text-gray-900 font-medium rounded-lg font-semibold text-sm hover:bg-cream-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? 'Saving...' : initialData ? 'Update Client' : 'Create Client'}
-            </button>
-          )}
-        </div>
+      <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
+        <button
+          type="button"
+          onClick={onCancel}
+          disabled={isLoading}
+          className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white bg-white/5 border border-white/10 rounded-lg hover:bg-white/10 transition-colors disabled:opacity-50"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="px-4 py-2 text-sm font-medium bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isLoading ? 'Saving...' : initialData ? 'Update Client' : 'Create Client'}
+        </button>
       </div>
     </form>
   )

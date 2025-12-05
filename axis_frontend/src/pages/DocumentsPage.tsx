@@ -7,14 +7,14 @@
 import { useState, useMemo } from 'react'
 import { ResourcePageLayout } from '@/components/layouts/ResourcePageLayout'
 import { FileText, Search, Download, Upload, Folder, File, X, FileCheck, Archive, Clock } from 'lucide-react'
-import { type DocumentList, type DocumentDetail, DocumentType, DocumentStatus } from '@/api/documents'
+import { type DocumentList, DocumentType, DocumentStatus } from '@/api/documents'
 import { useDocuments, useDocument, useCreateDocument, useDeleteDocument } from '@/hooks/useDocuments'
 import { useModal } from '@/hooks/useModal'
 import { DocumentsTable } from '@/components/documents/DocumentsTable'
 import { DocumentUploadModal } from '@/components/documents/DocumentUploadModal'
 import { DocumentDetailModal } from '@/components/documents/DocumentDetailModal'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
-import { SummaryStats } from '@/components/ui'
+import { SummaryStats, FilterToolbar } from '@/components/ui'
 import { cn } from '@/lib/utils'
 
 export function DocumentsPage() {
@@ -121,10 +121,9 @@ export function DocumentsPage() {
         />
       }
       filters={
-        <div className="space-y-3">
-          {/* Search Bar with Status Filters and Actions */}
-          <div className="flex items-center gap-2 flex-wrap">
-            <div className="flex-1 relative min-w-[300px]">
+        <FilterToolbar
+          searchSlot={
+            <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
@@ -134,9 +133,9 @@ export function DocumentsPage() {
                 className="w-full pl-9 pr-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cream-500/50"
               />
             </div>
-
-            {/* Status Filters */}
-            <div className="flex items-center gap-1.5">
+          }
+          filterSlot={
+            <>
               <button
                 onClick={() => setFilters((prev) => ({ ...prev, status: undefined }))}
                 className={cn(
@@ -178,10 +177,10 @@ export function DocumentsPage() {
                   </button>
                 )
               })}
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex items-center gap-1.5">
+            </>
+          }
+          actionSlot={
+            <>
               <button
                 onClick={() => uploadModal.open()}
                 className="px-2.5 py-1.5 bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 transition-colors flex items-center gap-1.5 text-xs font-medium"
@@ -207,43 +206,43 @@ export function DocumentsPage() {
                   <X className="h-3.5 w-3.5" />
                 </button>
               )}
-            </div>
-          </div>
-
-          {/* Quick Type Filters - Compact Pills */}
-          <div className="flex items-center gap-1.5 flex-wrap">
-            {Object.entries(categoryCounts).map(([type, count]) => {
-              const typeLabels: Record<string, string> = {
-                contract: 'Contracts',
-                certification: 'Certifications',
-                kpi_report: 'KPI Reports',
-                feedback_summary: 'Feedback',
-                billing_report: 'Billing',
-                utilization_report: 'Utilization',
-                other: 'Other',
-              }
-              return (
-                <button
-                  key={type}
-                  onClick={() =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      type: filters.type === type ? undefined : (type as DocumentType),
-                    }))
-                  }
-                  className={cn(
-                    'px-2 py-1 text-xs font-medium rounded-full transition-all',
-                    filters.type === type
-                      ? 'bg-cream-500 text-gray-900 font-medium'
-                      : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
-                  )}
-                >
-                  {typeLabels[type] || type} ({count})
-                </button>
-              )
-            })}
-          </div>
-        </div>
+            </>
+          }
+          secondaryFilterSlot={
+            <>
+              {Object.entries(categoryCounts).map(([type, count]) => {
+                const typeLabels: Record<string, string> = {
+                  contract: 'Contracts',
+                  certification: 'Certifications',
+                  kpi_report: 'KPI Reports',
+                  feedback_summary: 'Feedback',
+                  billing_report: 'Billing',
+                  utilization_report: 'Utilization',
+                  other: 'Other',
+                }
+                return (
+                  <button
+                    key={type}
+                    onClick={() =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        type: filters.type === type ? undefined : (type as DocumentType),
+                      }))
+                    }
+                    className={cn(
+                      'px-2 py-1 text-xs font-medium rounded-full transition-all',
+                      filters.type === type
+                        ? 'bg-cream-500 text-gray-900 font-medium'
+                        : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                    )}
+                  >
+                    {typeLabels[type] || type} ({count})
+                  </button>
+                )
+              })}
+            </>
+          }
+        />
       }
       modals={
         <>

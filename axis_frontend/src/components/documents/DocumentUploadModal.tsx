@@ -7,8 +7,9 @@
  */
 
 import { useState, useEffect, useRef } from 'react'
-import { X, Upload, FileText, Link as LinkIcon, XCircle } from 'lucide-react'
+import { Upload, FileText, Link as LinkIcon, XCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { BaseModal } from '@/components/ui'
 import { FormButton } from '@/components/forms/FormButton'
 import { FormField } from '@/components/forms/FormField'
 import { FormSelect } from '@/components/forms/FormSelect'
@@ -42,7 +43,6 @@ export function DocumentUploadModal({
   contractId,
   isLoading = false,
 }: DocumentUploadModalProps) {
-  const [isAnimating, setIsAnimating] = useState(false)
   const [uploadMethod, setUploadMethod] = useState<'file' | 'url'>('file')
   const [formData, setFormData] = useState<Partial<DocumentCreateInput>>({
     title: '',
@@ -59,8 +59,6 @@ export function DocumentUploadModal({
 
   useEffect(() => {
     if (isOpen) {
-      setIsAnimating(true)
-      document.body.style.overflow = 'hidden'
       // Reset form when opening
       setFormData({
         title: '',
@@ -74,23 +72,8 @@ export function DocumentUploadModal({
       setSelectedFile(null)
       setTagInput('')
       setUploadMethod('file')
-    } else {
-      document.body.style.overflow = ''
-    }
-    return () => {
-      document.body.style.overflow = ''
     }
   }, [isOpen])
-
-  if (!isOpen) return null
-
-  const handleClose = () => {
-    if (isLoading) return
-    setIsAnimating(false)
-    setTimeout(() => {
-      onClose()
-    }, 200)
-  }
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -182,48 +165,18 @@ export function DocumentUploadModal({
     }
 
     await onSubmit(submitData)
-    handleClose()
+    onClose()
   }
 
   return (
-    <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div
-        className={cn(
-          'absolute inset-0 bg-black/30 backdrop-blur-[2px] transition-opacity duration-300',
-          isAnimating ? 'opacity-100' : 'opacity-0'
-        )}
-      />
-
-      {/* Modal */}
-      <div
-        className={cn(
-          'relative w-full max-w-2xl bg-[#100f0a] border border-white/10 shadow-2xl overflow-hidden',
-          'rounded-xl transition-all duration-300',
-          isAnimating
-            ? 'opacity-100 scale-100 translate-y-0'
-            : 'opacity-0 scale-95 translate-y-4'
-        )}
-        onClick={(e) => e.stopPropagation()}
-        style={{ maxHeight: '90vh', overflowY: 'auto' }}
-      >
-        {/* Header */}
-        <div className="sticky top-0 z-10 p-6 border-b border-white/10 bg-[#100f0a]/95 backdrop-blur-sm">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-white">Upload Document</h2>
-            <button
-              onClick={handleClose}
-              className="p-2 text-white hover:text-white hover:bg-white/10 rounded-lg transition-all"
-              aria-label="Close modal"
-              disabled={isLoading}
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Form Content */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Upload Document"
+      isLoading={isLoading}
+      bgColor="bg-[#100f0a]"
+    >
+      <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Upload Method Selection */}
           <div className="flex gap-4">
             <button
@@ -416,7 +369,7 @@ export function DocumentUploadModal({
             <FormButton
               type="button"
               variant="secondary"
-              onClick={handleClose}
+              onClick={onClose}
               disabled={isLoading}
               fullWidth
             >
@@ -427,8 +380,7 @@ export function DocumentUploadModal({
             </FormButton>
           </div>
         </form>
-      </div>
-    </div>
+    </BaseModal>
   )
 }
 
