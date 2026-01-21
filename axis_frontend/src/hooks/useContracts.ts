@@ -1,109 +1,129 @@
 /**
- * React Query Hooks for Contracts API
+ * Custom hooks for contract data management using React Query.
  *
  * SOLID Principles:
- * - Single Responsibility: Handle contract data fetching and mutations
- * - Dependency Inversion: Depends on contracts API abstraction
+ * - Single Responsibility: Each hook manages a specific data operation
+ * - Open/Closed: Easy to add new hooks without modifying existing ones
+ * - Dependency Inversion: Depends on API abstractions, not direct fetch calls
  */
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import {
-  contractsApi,
-  type ContractCreateInput,
-  type ContractUpdateInput,
-} from '@/api/contracts'
-import { queryKeys } from '@/lib/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { contractsApi, type ContractSearchParams, type ContractFormData } from '@/api/contracts'
+import { toast } from '@/lib/toast'
+
+const contractsQueryKey = 'contracts'
 
 /**
- * Fetch all contracts
- *
- * Features:
- * - Automatic caching and revalidation
- * - Loading and error states
- * - Refetch on window focus
+ * Hook to fetch all contracts
  */
-export function useContracts(filters?: string) {
+export function useContracts() {
   return useQuery({
-    queryKey: queryKeys.contracts.list(filters),
-    queryFn: () => contractsApi.list(),
-    staleTime: 1000 * 60 * 10, // 10 minutes (contracts don't change often)
+    queryKey: [contractsQueryKey],
+    queryFn: contractsApi.list,
+    onError: (error) => {
+      toast.error('Failed to fetch contracts', error)
+    },
   })
 }
 
 /**
- * Fetch a single contract by ID
- *
- * Features:
- * - Automatic caching per contract
- * - Loading and error states
+ * Hook to fetch a single contract
  */
 export function useContract(id: string) {
   return useQuery({
-    queryKey: queryKeys.contracts.detail(id),
+    queryKey: [contractsQueryKey, id],
     queryFn: () => contractsApi.get(id),
-    enabled: !!id, // Only fetch if ID exists
-    staleTime: 1000 * 60 * 10, // 10 minutes
+    enabled: !!id, // Only run query if ID is provided
+    onError: (error) => {
+      toast.error(`Failed to fetch contract ${id}`, error)
+    },
   })
 }
 
 /**
- * Create a new contract
- *
- * Features:
- * - Optimistic updates
- * - Automatic cache invalidation
- * - Success/error callbacks
+ * Hook to search contracts with filters
+ */
+export function useSearchContracts(params: ContractSearchParams) {
+  return useQuery({
+    queryKey: [contractsQueryKey, 'search', params],
+    queryFn: () => contractsApi.search(params),
+    enabled: Object.keys(params).length > 0, // Only run if filters are active
+    onError: (error) => {
+      toast.error('Failed to search contracts', error)
+    },
+  })
+}
+
+/**
+ * Hook to create a new contract
  */
 export function useCreateContract() {
   const queryClient = useQueryClient()
-
   return useMutation({
-    mutationFn: (data: ContractCreateInput) => contractsApi.create(data),
-    onSuccess: () => {
-      // Invalidate and refetch contracts list
-      queryClient.invalidateQueries({ queryKey: queryKeys.contracts.all })
+    mutationFn: (data: ContractFormData) => contractsApi.create(data),
+    onSuccess: (newContract) => {
+      toast.success(`Contract for ${newContract.client.name} created successfully`)
+      // Invalidate the main contracts list to refetch
+      queryClient.invalidateQueries({ queryKey: [contractsQueryKey] })
+    },
+    onError: (error) => {
+      toast.error('Failed to create contract', error)
     },
   })
 }
 
 /**
- * Update an existing contract
- *
- * Features:
- * - Optimistic updates
- * - Automatic cache invalidation
- * - Success/error callbacks
+ * Hook to update a contract
  */
 export function useUpdateContract() {
   const queryClient = useQueryClient()
-
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: ContractUpdateInput }) =>
+    mutationFn: ({ id, data }: { id: string; data: Partial<ContractFormData> }) =>
       contractsApi.update(id, data),
-    onSuccess: (_, variables) => {
-      // Invalidate specific contract and list
-      queryClient.invalidateQueries({ queryKey: queryKeys.contracts.detail(variables.id) })
-      queryClient.invalidateQueries({ queryKey: queryKeys.contracts.lists() })
+    onSuccess: (updatedContract) => {
+      toast.success(`Contract for ${updatedContract.client.name} updated successfully`)
+      // Invalidate both the list and the specific contract detail query
+      queryClient.invalidateQueries({ queryKey: [contractsQueryKey] })
+    },
+    onError: (error) => {
+      toast.error('Failed to update contract', error)
     },
   })
 }
 
 /**
- * Delete a contract (soft delete)
- *
- * Features:
- * - Optimistic updates
- * - Automatic cache invalidation
- * - Success/error callbacks
+ * Hook to delete a contract
  */
 export function useDeleteContract() {
   const queryClient = useQueryClient()
-
   return useMutation({
     mutationFn: (id: string) => contractsApi.delete(id),
     onSuccess: () => {
-      // Invalidate contracts list
-      queryClient.invalidateQueries({ queryKey: queryKeys.contracts.all })
+      toast.success('Contract deleted successfully')
+      queryClient.invalidateQueries({ queryKey: [contractsQueryKey] })
+    },
+    onError: (error) => {
+      toast.error('Failed to delete contract', error)
+    },
+  })
+}
+
+/**
+ * Hook for contract lifecycle actions (activate, terminate, etc.)
+ */
+export function useContractAction<T = void>(
+  action: (id: string, params?: T) => Promise<any>,
+  actionName: string
+) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, params }: { id: string; params?: T }) => action(id, params),
+    onSuccess: (data, variables) => {
+      toast.success(`Contract ${variables.id} ${actionName} successfully`)
+      queryClient.invalidateQueries({ queryKey: [contractsQueryKey] })
+    },
+    onError: (error, variables) => {
+      toast.error(`Failed to ${actionName.toLowerCase()} contract ${variables.id}`, error)
     },
   })
 }

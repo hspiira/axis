@@ -1,50 +1,36 @@
 /**
- * Contracts API Client
+ * API functions for interacting with the contracts endpoint.
  *
  * SOLID Principles:
- * - Single Responsibility: Handle all contract-related API requests
- * - Dependency Inversion: Depends on configured axios instance
+ * - Single Responsibility: Functions for contract-related API calls
+ * - Open/Closed: Extensible with new contract API functions
+ * - Dependency Inversion: Depends on apiClient abstraction
  */
 
 import { apiClient } from './axios-config'
+import type { Paginated } from '@/types/api'
 
-// =========================================
-// Enums
-// =========================================
+// === Enums & Types ===
 
-export const ContractStatus = {
-  ACTIVE: 'Active',
-  EXPIRED: 'Expired',
-  RENEWED: 'Renewed',
-  TERMINATED: 'Terminated',
-} as const
-
-export type ContractStatus = (typeof ContractStatus)[keyof typeof ContractStatus]
-
-export const PaymentStatus = {
-  PENDING: 'Pending',
-  PAID: 'Paid',
-  OVERDUE: 'Overdue',
-} as const
-
-export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
-
-// =========================================
-// Types
-// =========================================
-
-export interface ContractClient {
-  id: string
-  name: string
-  email: string | null
+export enum ContractStatus {
+  ACTIVE = 'Active',
+  EXPIRED = 'Expired',
+  RENEWED = 'Renewed',
+  TERMINATED = 'Terminated',
 }
 
-export interface ContractListItem {
+export enum PaymentStatus {
+  PAID = 'Paid',
+  PENDING = 'Pending',
+  OVERDUE = 'Overdue',
+}
+
+export interface ContractList {
   id: string
   client_name: string
   start_date: string
   end_date: string
-  billing_rate: string
+  billing_rate: number
   currency: string
   status: ContractStatus
   payment_status: PaymentStatus
@@ -55,37 +41,29 @@ export interface ContractListItem {
   updated_at: string
 }
 
-export interface ContractDetail {
-  id: string
-  client: ContractClient | null
-  start_date: string
-  end_date: string
-  renewal_date: string | null
-  billing_rate: string
-  currency: string
-  payment_frequency: string | null
-  payment_terms: string | null
-  payment_status: PaymentStatus
-  last_billing_date: string | null
-  next_billing_date: string | null
+export interface ContractDetail extends Omit<ContractList, 'client_name'> {
+  client: {
+    id: string
+    name: string
+    email: string
+  }
+  renewal_date?: string
+  payment_frequency?: string
+  payment_terms?: string
+  last_billing_date?: string
+  next_billing_date?: string
   is_renewable: boolean
   is_auto_renew: boolean
-  document_url: string | null
-  signed_by: string | null
-  signed_at: string | null
-  status: ContractStatus
-  termination_reason: string | null
-  notes: string | null
-  is_active: boolean
-  is_expired: boolean
+  document_url?: string
+  signed_by?: string
+  signed_at?: string
+  termination_reason?: string
+  notes?: string
   is_pending_renewal: boolean
-  days_remaining: number
   is_payment_overdue: boolean
-  created_at: string
-  updated_at: string
 }
 
-export interface ContractCreateInput {
+export type ContractFormData = {
   client_id: string
   start_date: string
   end_date: string
@@ -102,146 +80,108 @@ export interface ContractCreateInput {
   notes?: string
 }
 
-export interface ContractUpdateInput {
-  start_date?: string
-  end_date?: string
-  billing_rate?: number
-  currency?: string
-  payment_frequency?: string
-  payment_terms?: string
-  renewal_date?: string
+export type ContractSearchParams = {
+  search?: string
+  client_id?: string
+  status?: ContractStatus
+  payment_status?: PaymentStatus
   is_renewable?: boolean
   is_auto_renew?: boolean
-  document_url?: string
-  signed_by?: string
-  signed_at?: string
-  notes?: string
+  page?: number
+  page_size?: number
 }
 
-// =========================================
-// API Functions
-// =========================================
+// === API Functions ===
 
+/**
+ * Fetch all contracts
+ */
+export async function getContracts(): Promise<ContractList[]> {
+  const response = await apiClient.get<Paginated<ContractList>>('/contracts/')
+  return response.data.results
+}
+
+/**
+ * Fetch a single contract by ID
+ */
+export async function getContract(id: string): Promise<ContractDetail> {
+  const response = await apiClient.get<ContractDetail>(`/contracts/${id}/`)
+  return response.data
+}
+
+/**
+ * Create a new contract
+ */
+export async function createContract(data: ContractFormData): Promise<ContractDetail> {
+  const response = await apiClient.post<ContractDetail>('/contracts/', data)
+  return response.data
+}
+
+/**
+ * Update an existing contract
+ */
+export async function updateContract(id: string, data: Partial<ContractFormData>): Promise<ContractDetail> {
+  const response = await apiClient.patch<ContractDetail>(`/contracts/${id}/`, data)
+  return response.data
+}
+
+/**
+ * Delete a contract
+ */
+export async function deleteContract(id: string): Promise<void> {
+  await apiClient.delete(`/contracts/${id}/`)
+}
+
+/**
+ * Search contracts with filters
+ */
+export async function searchContracts(params: ContractSearchParams): Promise<ContractList[]> {
+  const response = await apiClient.get<Paginated<ContractList>>('/contracts/search/', { params })
+  return response.data.results
+}
+
+/**
+ * Activate a contract
+ */
+export async function activateContract(id: string): Promise<ContractDetail> {
+    const response = await apiClient.post(`/contracts/${id}/activate/`);
+    return response.data;
+}
+
+/**
+ * Terminate a contract
+ */
+export async function terminateContract(id: string, reason: string): Promise<ContractDetail> {
+    const response = await apiClient.post(`/contracts/${id}/terminate/`, { reason });
+    return response.data;
+}
+
+/**
+ * Renew a contract
+ */
+export async function renewContract(id: string, new_end_date: string, new_billing_rate?: number): Promise<ContractDetail> {
+    const response = await apiClient.post(`/contracts/${id}/renew/`, { new_end_date, new_billing_rate });
+    return response.data;
+}
+
+/**
+ * Mark a contract payment as paid
+ */
+export async function markContractPaid(id: string): Promise<ContractDetail> {
+    const response = await apiClient.post(`/contracts/${id}/mark_paid/`);
+    return response.data;
+}
+
+// Export a centralized API object
 export const contractsApi = {
-  /**
-   * List all contracts
-   */
-  list: async (): Promise<ContractListItem[]> => {
-    const response = await apiClient.get<ContractListItem[]>('/contracts/')
-    return response.data
-  },
-
-  /**
-   * Get contract by ID
-   */
-  get: async (id: string): Promise<ContractDetail> => {
-    const response = await apiClient.get<ContractDetail>(`/contracts/${id}/`)
-    return response.data
-  },
-
-  /**
-   * Create new contract
-   */
-  create: async (data: ContractCreateInput): Promise<ContractDetail> => {
-    const response = await apiClient.post<ContractDetail>('/contracts/', data)
-    return response.data
-  },
-
-  /**
-   * Update contract
-   */
-  update: async (id: string, data: ContractUpdateInput): Promise<ContractDetail> => {
-    const response = await apiClient.patch<ContractDetail>(`/contracts/${id}/`, data)
-    return response.data
-  },
-
-  /**
-   * Delete contract (soft delete)
-   */
-  delete: async (id: string): Promise<void> => {
-    await apiClient.delete(`/contracts/${id}/`)
-  },
-
-  /**
-   * Get active contracts
-   */
-  getActive: async (): Promise<ContractListItem[]> => {
-    const response = await apiClient.get<ContractListItem[]>('/contracts/active/')
-    return response.data
-  },
-
-  /**
-   * Get contracts by client
-   */
-  getByClient: async (clientId: string): Promise<ContractListItem[]> => {
-    const response = await apiClient.get<ContractListItem[]>(`/contracts/client/${clientId}/`)
-    return response.data
-  },
-
-  /**
-   * Get contracts expiring soon
-   */
-  getExpiringSoon: async (days: number = 30): Promise<ContractListItem[]> => {
-    const response = await apiClient.get<ContractListItem[]>(`/contracts/expiring_soon/?days=${days}`)
-    return response.data
-  },
-
-  /**
-   * Get contracts pending renewal
-   */
-  getPendingRenewal: async (): Promise<ContractListItem[]> => {
-    const response = await apiClient.get<ContractListItem[]>('/contracts/pending_renewal/')
-    return response.data
-  },
-
-  /**
-   * Get contracts with overdue payments
-   */
-  getOverduePayments: async (): Promise<ContractListItem[]> => {
-    const response = await apiClient.get<ContractListItem[]>('/contracts/overdue_payments/')
-    return response.data
-  },
-
-  /**
-   * Activate contract
-   */
-  activate: async (id: string): Promise<ContractDetail> => {
-    const response = await apiClient.post<ContractDetail>(`/contracts/${id}/activate/`)
-    return response.data
-  },
-
-  /**
-   * Terminate contract
-   */
-  terminate: async (id: string, reason: string): Promise<ContractDetail> => {
-    const response = await apiClient.post<ContractDetail>(`/contracts/${id}/terminate/`, { reason })
-    return response.data
-  },
-
-  /**
-   * Renew contract
-   */
-  renew: async (id: string, newEndDate: string, newBillingRate?: number): Promise<ContractDetail> => {
-    const response = await apiClient.post<ContractDetail>(`/contracts/${id}/renew/`, {
-      new_end_date: newEndDate,
-      new_billing_rate: newBillingRate,
-    })
-    return response.data
-  },
-
-  /**
-   * Mark payment as paid
-   */
-  markPaid: async (id: string): Promise<ContractDetail> => {
-    const response = await apiClient.post<ContractDetail>(`/contracts/${id}/mark_paid/`)
-    return response.data
-  },
-
-  /**
-   * Mark payment as overdue
-   */
-  markOverdue: async (id: string): Promise<ContractDetail> => {
-    const response = await apiClient.post<ContractDetail>(`/contracts/${id}/mark_overdue/`)
-    return response.data
-  },
+  list: getContracts,
+  get: getContract,
+  create: createContract,
+  update: updateContract,
+  delete: deleteContract,
+  search: searchContracts,
+  activate: activateContract,
+  terminate: terminateContract,
+  renew: renewContract,
+  markPaid: markContractPaid,
 }

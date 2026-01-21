@@ -132,7 +132,7 @@ export function ClientsFilters({
           {onCreate && (
             <button
               onClick={onCreate}
-              className="px-2.5 py-1.5 bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 font-medium transition-all flex items-center gap-1.5 text-xs font-medium"
+              className="px-2.5 py-1.5 bg-cream-500 text-gray-900 rounded-lg hover:bg-cream-400 font-medium transition-all flex items-center gap-1.5 text-xs"
             >
               <Plus className="h-3.5 w-3.5" />
               Add Client
