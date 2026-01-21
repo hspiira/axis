@@ -1,0 +1,47 @@
+# Safety CI/CD configuration for dependency vulnerability scanning
+# Safety checks Python dependencies against known security vulnerabilities
+
+# Security policy settings
+security:
+  # Ignore specific vulnerabilities (with justification)
+  ignore-vulnerabilities:
+    # Example: 12345 - Low severity, not exploitable in our use case
+    # Add vulnerability IDs here if needed after review
+
+  # Ignore specific packages (with justification)
+  ignore-packages:
+    # Example: django==3.2.0 - Waiting for upstream fix
+    # Add packages here if needed after review
+
+  # Continue on error (set to false in CI/CD)
+  continue-on-error: false
+
+  # Alert severity threshold
+  # Options: critical, high, medium, low
+  alert-severity: medium
+
+# File patterns to scan
+files:
+  - requirements.txt
+  - requirements/base.txt
+  - requirements/development.txt
+  - requirements/production.txt
+
+# Reporting
+report:
+  # Output format: json, text, bare
+  format: text
+
+  # Generate detailed report
+  full-report: true
+
+# Integration settings
+integrations:
+  # GitHub integration (if using GitHub Actions)
+  github:
+    enabled: true
+    pr-comments: true
+
+  # Slack integration (optional)
+  slack:
+    enabled: false

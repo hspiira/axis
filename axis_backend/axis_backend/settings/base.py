@@ -45,7 +45,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'audit.middleware.AuditMiddleware',  # TODO: Implement audit middleware
+    'axis_backend.middleware.security.SecurityHeadersMiddleware',  # CSP and security headers
+    'axis_backend.middleware.audit.AuditMiddleware',  # Audit logging for sensitive operations
 ]
 
 ROOT_URLCONF = 'axis_backend.urls'
@@ -125,15 +126,18 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
-    # Throttling disabled by default (enable in production)
-    # 'DEFAULT_THROTTLE_CLASSES': [
-    #     'rest_framework.throttling.AnonRateThrottle',
-    #     'rest_framework.throttling.UserRateThrottle',
-    # ],
-    # 'DEFAULT_THROTTLE_RATES': {
-    #     'anon': '100/hour',
-    #     'user': '1000/hour',
-    # },
+    # Throttling configuration (environment-specific rates in dev/prod settings)
+    'DEFAULT_THROTTLE_CLASSES': [
+        'axis_backend.throttling.StrictAnonRateThrottle',
+        'axis_backend.throttling.BurstRateThrottle',
+        'axis_backend.throttling.SustainedRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/hour',       # Unauthenticated users - strict limit
+        'burst': '60/minute',     # Short-term burst limit for authenticated users
+        'sustained': '1000/hour', # Long-term sustained limit for authenticated users
+        'auth': '5/minute',       # Authentication endpoints (login/register) - very strict
+    },
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
     ],
@@ -141,7 +145,7 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.JSONParser',
     ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-    # 'EXCEPTION_HANDLER': 'axis_backend.utils.custom_exception_handler',  # TODO: Implement custom exception handler
+    'EXCEPTION_HANDLER': 'axis_backend.exception_handlers.custom_exception_handler',
 }
 
 # drf-spectacular Configuration
@@ -169,11 +173,9 @@ SIMPLE_JWT = {
 }
 
 # CORS Configuration
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-]
-CORS_ALLOW_CREDENTIALS = True
+# NOTE: CORS origins are configured in environment-specific settings
+# - development.py: localhost origins
+# - production.py: environment variable CORS_ALLOWED_ORIGINS
 
 # Microsoft Entra ID Configuration
 MICROSOFT_CLIENT_ID = os.getenv('MICROSOFT_CLIENT_ID')

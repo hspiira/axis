@@ -37,6 +37,14 @@ class ProfileNestedSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'age']
 
 
+class ProfileListNestedSerializer(serializers.ModelSerializer):
+    """Minimal profile serializer for list views"""
+    class Meta:
+        model = Profile
+        fields = ['full_name', 'email', 'phone']
+        read_only_fields = ['full_name', 'email', 'phone']
+
+
 class PersonListSerializer(BaseListSerializer, NestedRelationshipMixin):
     """
     Lightweight serializer for person lists.
@@ -46,8 +54,7 @@ class PersonListSerializer(BaseListSerializer, NestedRelationshipMixin):
     Extends: BaseListSerializer for common list patterns
     """
 
-    profile_name = serializers.CharField(source='profile.full_name', read_only=True)
-    profile_email = serializers.CharField(source='profile.email', read_only=True)
+    profile = ProfileListNestedSerializer(read_only=True)
     client_name = serializers.CharField(source='client.name', read_only=True, allow_null=True)
     is_eligible = serializers.BooleanField(source='is_eligible_for_services', read_only=True)
 
@@ -56,8 +63,7 @@ class PersonListSerializer(BaseListSerializer, NestedRelationshipMixin):
         fields = [
             'id',
             'person_type',
-            'profile_name',
-            'profile_email',
+            'profile',
             'client_name',
             'employee_role',
             'employment_status',
@@ -128,9 +134,10 @@ class PersonDetailSerializer(BaseDetailSerializer, TimestampMixin, NestedRelatio
             'employment_start_date',
             'employment_end_date',
             'employment_status',
-            'qualifications',
+            'employee_department',
+            'employee_id_number',
+            # Service provider fields (may be null for employees)
             'specializations',
-            'preferred_working_hours',
             # Dependent fields
             'relationship_to_employee',
             'is_employee_dependent',
@@ -177,50 +184,104 @@ class CreateEmployeeSerializer(BaseCreateSerializer):
     Single Responsibility: Employee creation validation
     Extends: BaseCreateSerializer for common creation patterns
     Validates: All required fields for employee
+
+    NOTE: Accepts profile data directly and creates profile automatically
     """
 
-    profile_id = serializers.CharField(
-        help_text="Profile ID"
+    # Profile fields (will be used to create Profile)
+    full_name = serializers.CharField(
+        max_length=255,
+        help_text="Employee full name"
     )
-    user_id = serializers.CharField(
-        help_text="User ID for authentication"
+    email = serializers.EmailField(
+        required=False,
+        allow_null=True,
+        help_text="Employee email"
     )
+    phone = serializers.CharField(
+        required=False,
+        allow_null=True,
+        max_length=20,
+        help_text="Employee phone"
+    )
+    date_of_birth = serializers.DateField(
+        required=False,
+        allow_null=True,
+        input_formats=['iso-8601', '%Y-%m-%d'],
+        help_text="Date of birth (format: YYYY-MM-DD or ISO-8601)"
+    )
+    gender = serializers.CharField(
+        required=False,
+        allow_null=True,
+        allow_blank=True,
+        max_length=50,
+        help_text="Gender"
+    )
+    address = serializers.CharField(
+        required=False,
+        allow_null=True,
+        allow_blank=True,
+        help_text="Address"
+    )
+    city = serializers.CharField(
+        required=False,
+        allow_null=True,
+        allow_blank=True,
+        max_length=100,
+        help_text="City"
+    )
+    country = serializers.CharField(
+        required=False,
+        allow_null=True,
+        allow_blank=True,
+        max_length=100,
+        help_text="Country"
+    )
+
+    # Client and employment fields
     client_id = serializers.CharField(
         help_text="Client (employer) ID"
     )
-    employee_role = serializers.ChoiceField(
-        choices=StaffRole.choices,
-        help_text="Employee role"
+    employee_department = serializers.CharField(
+        required=False,
+        allow_null=True,
+        allow_blank=True,
+        help_text="Department"
+    )
+    employee_id_number = serializers.CharField(
+        required=False,
+        allow_null=True,
+        allow_blank=True,
+        help_text="Employee ID number"
+    )
+    job_title = serializers.CharField(
+        required=False,
+        allow_null=True,
+        allow_blank=True,
+        help_text="Job title"
     )
     employment_start_date = serializers.DateField(
-        help_text="Employment start date"
+        required=False,
+        allow_null=True,
+        input_formats=['iso-8601', '%Y-%m-%d'],
+        help_text="Employment start date (format: YYYY-MM-DD or ISO-8601)"
     )
     employment_end_date = serializers.DateField(
         required=False,
         allow_null=True,
-        help_text="Employment end date (optional)"
+        input_formats=['iso-8601', '%Y-%m-%d'],
+        help_text="Employment end date (format: YYYY-MM-DD or ISO-8601)"
     )
-    employment_status = serializers.ChoiceField(
-        choices=WorkStatus.choices,
-        default=WorkStatus.ACTIVE,
-        help_text="Employment status"
-    )
-    qualifications = serializers.ListField(
-        child=serializers.CharField(),
-        required=False,
-        default=list,
-        help_text="List of qualifications/certifications"
-    )
-    specializations = serializers.ListField(
-        child=serializers.CharField(),
-        required=False,
-        default=list,
-        help_text="List of specializations/departments"
-    )
-    preferred_working_hours = serializers.JSONField(
+    employment_status = serializers.CharField(
         required=False,
         allow_null=True,
-        help_text="Work schedule preferences"
+        allow_blank=True,
+        help_text="Employment status"
+    )
+    manager_id = serializers.CharField(
+        required=False,
+        allow_null=True,
+        help_text="Manager/Supervisor ID"
     )
     emergency_contact_name = serializers.CharField(
         required=False,
@@ -270,7 +331,7 @@ class CreateEmployeeSerializer(BaseCreateSerializer):
         data = super().validate(data)
 
         # Validate employment dates
-        if data.get('employment_end_date'):
+        if data.get('employment_end_date') and data.get('employment_start_date'):
             if data['employment_end_date'] < data['employment_start_date']:
                 raise serializers.ValidationError({
                     'employment_end_date': 'Employment end date must be after start date'
@@ -286,26 +347,60 @@ class CreateDependentSerializer(BaseCreateSerializer):
     Single Responsibility: Dependent creation validation
     Extends: BaseCreateSerializer for common creation patterns
     Validates: All required fields for dependent
+
+    NOTE: Accepts profile data directly and creates profile automatically
     """
 
-    profile_id = serializers.CharField(
-        help_text="Profile ID"
+    # Profile fields (will be used to create Profile)
+    full_name = serializers.CharField(
+        max_length=255,
+        help_text="Dependent full name"
     )
-    user_id = serializers.CharField(
-        help_text="User ID for authentication"
+    email = serializers.EmailField(
+        required=False,
+        allow_null=True,
+        allow_blank=True,
+        help_text="Dependent email"
     )
+    phone = serializers.CharField(
+        required=False,
+        allow_null=True,
+        allow_blank=True,
+        max_length=20,
+        help_text="Dependent phone"
+    )
+    date_of_birth = serializers.DateField(
+        required=False,
+        allow_null=True,
+        input_formats=['iso-8601', '%Y-%m-%d'],
+        help_text="Date of birth (format: YYYY-MM-DD or ISO-8601)"
+    )
+    gender = serializers.CharField(
+        required=False,
+        allow_null=True,
+        allow_blank=True,
+        max_length=50,
+        help_text="Gender"
+    )
+
+    # Dependent relationship fields
     primary_employee_id = serializers.CharField(
         help_text="Primary employee (parent) ID"
     )
     relationship_to_employee = serializers.ChoiceField(
         choices=RelationType.choices,
-        help_text="Relationship to primary employee"
-    )
-    guardian_id = serializers.CharField(
         required=False,
         allow_null=True,
-        help_text="Guardian user ID (required for minors)"
+        help_text="Relationship to primary employee"
     )
+    # Support both field names for compatibility (frontend sends relationship_type)
+    relationship_type = serializers.ChoiceField(
+        choices=RelationType.choices,
+        required=False,
+        allow_null=True,
+        help_text="Relationship to primary employee (alias for relationship_to_employee)"
+    )
+    # Guardian will be determined automatically if needed (for minors)
     is_employee_dependent = serializers.BooleanField(
         default=False,
         help_text="Whether dependent is also an employee (e.g., spouse)"
@@ -337,6 +432,49 @@ class CreateDependentSerializer(BaseCreateSerializer):
         allow_null=True,
         help_text="Additional flexible attributes"
     )
+
+    def validate(self, data):
+        """
+        Validate dependent creation data.
+
+        Maps relationship_type to relationship_to_employee if needed.
+        Cleans empty strings to None for optional fields.
+
+        Args:
+            data: Validated field data
+
+        Returns:
+            Validated data
+
+        Raises:
+            serializers.ValidationError: If validation fails
+        """
+        # Call parent validation
+        data = super().validate(data)
+
+        # Clean empty strings to None for optional fields (matching employee serializer behavior)
+        for field in ['email', 'phone', 'date_of_birth', 'gender']:
+            if field in data and data[field] == '':
+                data[field] = None
+
+        # Map relationship_type to relationship_to_employee if provided
+        relationship_value = None
+        if 'relationship_type' in data and data['relationship_type']:
+            relationship_value = data.pop('relationship_type')
+        
+        if 'relationship_to_employee' in data and data['relationship_to_employee']:
+            # relationship_to_employee takes precedence
+            relationship_value = data['relationship_to_employee']
+        
+        # Ensure relationship_to_employee is set
+        if not relationship_value:
+            raise serializers.ValidationError({
+                'relationship_to_employee': 'Relationship to employee is required. Provide either relationship_to_employee or relationship_type.'
+            })
+        
+        data['relationship_to_employee'] = relationship_value
+
+        return data
 
 
 class PersonCreateSerializer(serializers.ModelSerializer):

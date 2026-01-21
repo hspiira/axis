@@ -105,6 +105,31 @@ class Client(BaseModel):
         db_index=True,
         help_text="Business sector classification"
     )
+    tags = models.ManyToManyField(
+        'ClientTag',
+        blank=True,
+        related_name='clients',
+        help_text="Flexible categorization tags (VIP, Enterprise, etc.)"
+    )
+    # TODO: Uncomment when staff app is created
+    # account_manager = models.ForeignKey(
+    #     'staff.Staff',
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     blank=True,
+    #     related_name='managed_clients',
+    #     db_index=True,
+    #     help_text="Staff member responsible for this client"
+    # )
+    parent_client = models.ForeignKey(
+        'self',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='subsidiaries',
+        db_index=True,
+        help_text="Parent organization for client hierarchy"
+    )
 
     # === Status & Configuration ===
     status = models.CharField(
@@ -126,6 +151,14 @@ class Client(BaseModel):
         default=False,
         db_index=True,
         help_text="Organization verification status"
+    )
+
+    # === Engagement Tracking ===
+    last_contact_date = models.DateTimeField(
+        null=True,
+        blank=True,
+        db_index=True,
+        help_text="Most recent interaction or communication date"
     )
 
     # === Additional Data ===
@@ -153,6 +186,9 @@ class Client(BaseModel):
             models.Index(fields=['industry']),
             models.Index(fields=['is_verified']),
             models.Index(fields=['preferred_contact_method']),
+            # models.Index(fields=['account_manager']),  # TODO: Uncomment when staff app exists
+            models.Index(fields=['parent_client']),
+            models.Index(fields=['last_contact_date']),
             models.Index(fields=['deleted_at']),
         ]
 
